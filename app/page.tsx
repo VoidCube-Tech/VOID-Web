@@ -72,13 +72,13 @@ export default function Home() {
           <div className="hero-ambient" aria-hidden="true" />
           <div className="section-shell relative z-10 grid w-full items-center gap-12 pb-24 lg:grid-cols-[1.05fr_.95fr] lg:gap-8 lg:pb-20">
             <div className="hero-copy max-w-4xl pt-8 lg:pt-0">
-              <p className="eyebrow mb-7">
+              <p className="eyebrow hero-kicker mb-7">
                 Infraestrutura digital <span aria-hidden="true">·</span> Produtos
                 imersivos
               </p>
               <h1 className="font-display text-[clamp(3.4rem,8vw,8.9rem)] font-semibold leading-[0.86] tracking-[-0.075em]">
                 O invisível
-                <span className="block text-copper">precisa funcionar.</span>
+                <span className="block text-signal-blue">precisa funcionar.</span>
                 <span className="mt-3 block text-[.54em] font-normal tracking-[-0.045em] text-porcelain/78">
                   O inesquecível, também.
                 </span>
@@ -121,7 +121,10 @@ export default function Home() {
                 </div>
               </div>
               <p className="mt-4 flex items-center justify-center gap-3 font-mono text-[10px] uppercase tracking-[0.24em] text-mineral">
-                <span className="inline-block h-px w-8 bg-copper" aria-hidden="true" />
+                <span
+                  className="inline-block h-px w-8 bg-signal-blue"
+                  aria-hidden="true"
+                />
                 Mova o cursor · arraste para explorar
               </p>
             </div>

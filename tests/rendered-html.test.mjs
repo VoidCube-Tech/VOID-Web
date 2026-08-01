@@ -53,17 +53,28 @@ test("renderiza as rotas empresariais", async () => {
 });
 
 test("remove a prévia temporária do projeto", async () => {
-  const [page, layout, packageJson, cube] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/VoidCube.tsx", import.meta.url), "utf8"),
-  ]);
+  const [page, layout, packageJson, cube, coreStory, globals] =
+    await Promise.all([
+      readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../package.json", import.meta.url), "utf8"),
+      readFile(new URL("../app/components/VoidCube.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/components/CoreStory.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    ]);
 
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|next\/font\/google/);
   assert.doesNotMatch(packageJson, /react-loading-skeleton/);
   assert.match(cube, /window\.addEventListener\("pointermove", handleCursorMove/);
   assert.match(cube, /prefers-reduced-motion/);
+  assert.match(cube, /goldNodes/);
+  assert.match(cube, /MATERIAL\.cobalt/);
+  assert.match(cube, /smoothstep\(0\.72, 0\.97, storyProgress\)/);
+  assert.match(coreStory, /min-h-\[260svh\]/);
+  assert.match(coreStory, /progress=\{storyProgress\}/);
+  assert.match(coreStory, /role="progressbar"/);
+  assert.match(globals, /--signal-blue:/);
+  assert.match(globals, /--node-gold:/);
   await assert.rejects(access(new URL("app/_sites-preview", projectRoot)));
 });

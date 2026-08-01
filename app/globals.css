@@ -7,6 +7,9 @@
   --porcelain: #eeece5;
   --mineral: #a5a39e;
   --copper: #b8613e;
+  --signal-blue: #3d6cff;
+  --signal-deep: #17358f;
+  --node-gold: #c7a15d;
   --ease-signature: cubic-bezier(0.2, 0, 0, 1);
 }
 
@@ -17,6 +20,9 @@
   --color-porcelain: #eeece5;
   --color-mineral: #a5a39e;
   --color-copper: #b8613e;
+  --color-signal-blue: #3d6cff;
+  --color-signal-deep: #17358f;
+  --color-node-gold: #c7a15d;
   --font-display: "Geologica Variable", sans-serif;
   --font-sans: "IBM Plex Sans Variable", sans-serif;
   --font-mono: "IBM Plex Mono", monospace;
@@ -122,7 +128,7 @@ h3 {
   height: 50rem;
   border-radius: 50%;
   opacity: 0.14;
-  background: radial-gradient(circle, var(--copper) 0%, transparent 68%);
+  background: radial-gradient(circle, var(--signal-blue) 0%, transparent 68%);
   filter: blur(30px);
   animation: ambient-breathe 7s ease-in-out infinite;
 }
@@ -142,7 +148,7 @@ h3 {
   place-items: center;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.12);
-  background: rgb(12 12 12 / 0.6);
+  background: color-mix(in srgb, var(--signal-deep) 8%, rgb(12 12 12 / 0.6));
   clip-path: polygon(
     0 0,
     calc(100% - 34px) 0,
@@ -162,7 +168,7 @@ h3 {
 
 .hero-stage::before {
   inset: 9%;
-  border: 1px solid rgb(184 97 62 / 0.25);
+  border: 1px solid color-mix(in srgb, var(--signal-blue) 28%, transparent);
   clip-path: inherit;
 }
 
@@ -174,9 +180,22 @@ h3 {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(184 97 62 / 0.65),
+    color-mix(in srgb, var(--signal-blue) 68%, transparent),
     transparent
   );
+}
+
+.hero-stage [data-cube-variant="hero"] > div:first-child {
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--signal-blue) 22%, transparent) 0%,
+    color-mix(in srgb, var(--signal-blue) 7%, transparent) 38%,
+    transparent 72%
+  );
+}
+
+.hero-kicker {
+  color: var(--node-gold);
 }
 
 .stage-index {
@@ -187,6 +206,15 @@ h3 {
   font-size: 0.6rem;
   letter-spacing: 0.2em;
   color: rgb(255 255 255 / 0.35);
+}
+
+.stage-index::before {
+  content: "";
+  display: inline-block;
+  width: 0.3rem;
+  height: 0.3rem;
+  margin-right: 0.55rem;
+  background: var(--node-gold);
 }
 
 .button-primary,
@@ -210,8 +238,12 @@ h3 {
 }
 
 .button-primary {
-  background: var(--copper);
+  background: var(--signal-blue);
   color: var(--void);
+}
+
+.button-primary:hover {
+  background: color-mix(in srgb, var(--signal-blue) 86%, white);
 }
 
 .button-primary:hover,

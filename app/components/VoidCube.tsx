@@ -5,6 +5,20 @@ import Zdog from "zdog";
 
 const TAU = Math.PI * 2;
 
+const MATERIAL = {
+  obsidian: "#07080A",
+  obsidianDeep: "#020304",
+  obsidianMid: "#101216",
+  obsidianLight: "#1A1D22",
+  cobalt: "#0C3CB7",
+  cobaltDeep: "#061746",
+  cobaltMid: "#082B88",
+  cobaltLight: "#195CF1",
+  gold: "#D7AF55",
+  goldShade: "#76551B",
+  goldLight: "#F0D181",
+} as const;
+
 type CubeVariant = "hero" | "opening";
 
 export interface VoidCubeProps {
@@ -29,12 +43,17 @@ function clamp(value: number, min = 0, max = 1) {
   return Math.min(max, Math.max(min, value));
 }
 
+function smoothstep(start: number, end: number, value: number) {
+  const normalized = clamp((value - start) / (end - start));
+  return normalized * normalized * (3 - 2 * normalized);
+}
+
 export function VoidCube({
   className = "",
   variant = "hero",
   progress = 0,
   interactive,
-  label = "Cubo modular preto com núcleo de cobre",
+  label = "Cubo modular de obsidiana com interior cobalto e pequenos nós dourados",
 }: VoidCubeProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const targetProgressRef = useRef(clamp(progress));
@@ -85,18 +104,44 @@ export function VoidCube({
     const assembly = new Zdog.Anchor({ addTo: illustration });
     const core = new Zdog.Box({
       addTo: assembly,
-      width: 27,
-      height: 27,
-      depth: 27,
-      stroke: 0.7,
-      color: "#B8613E",
-      frontFace: "#B8613E",
-      rearFace: "#5F2A1D",
-      leftFace: "#8D422D",
-      rightFace: "#703120",
-      topFace: "#D1805E",
-      bottomFace: "#4D2118",
+      width: 28,
+      height: 28,
+      depth: 28,
+      stroke: 0.65,
+      color: MATERIAL.cobalt,
+      frontFace: MATERIAL.cobalt,
+      rearFace: MATERIAL.cobaltDeep,
+      leftFace: MATERIAL.cobaltMid,
+      rightFace: "#0D36A2",
+      topFace: MATERIAL.cobaltLight,
+      bottomFace: "#041137",
     });
+
+    const goldNodePositions = [
+      { x: 0, y: -15.2, z: 0 },
+      { x: 15.2, y: 2, z: 0 },
+      { x: -5, y: 0, z: 15.2 },
+      { x: 0, y: 8, z: -15.2 },
+    ] as const;
+
+    const goldNodes = goldNodePositions.map(
+      (translate) =>
+        new Zdog.Box({
+          addTo: core,
+          width: 3.2,
+          height: 3.2,
+          depth: 3.2,
+          translate,
+          stroke: 0.35,
+          color: MATERIAL.gold,
+          frontFace: MATERIAL.gold,
+          rearFace: MATERIAL.goldShade,
+          leftFace: "#A47C2E",
+          rightFace: "#C99E46",
+          topFace: MATERIAL.goldLight,
+          bottomFace: MATERIAL.goldShade,
+        }),
+    );
 
     const signs = [-1, 1] as const;
     const blocks: CubeBlock[] = [];
@@ -109,14 +154,16 @@ export function VoidCube({
             width: 42,
             height: 42,
             depth: 42,
-            stroke: 0.85,
-            color: "#0E1011",
-            frontFace: z > 0 ? "#171A1C" : "#0C0E0F",
-            rearFace: "#050505",
-            leftFace: x < 0 ? "#0A0B0C" : "#111315",
-            rightFace: x > 0 ? "#1A1D1F" : "#0A0C0D",
-            topFace: y < 0 ? "#242729" : "#131516",
-            bottomFace: "#070808",
+            stroke: 0.75,
+            color: MATERIAL.obsidian,
+            // Faces away from the origin stay obsidian. Their opposites form
+            // the cobalt lining that is exposed only while the shell is open.
+            frontFace: z > 0 ? MATERIAL.obsidianMid : MATERIAL.cobalt,
+            rearFace: z < 0 ? MATERIAL.obsidianDeep : MATERIAL.cobaltDeep,
+            leftFace: x < 0 ? MATERIAL.obsidian : MATERIAL.cobaltMid,
+            rightFace: x > 0 ? MATERIAL.obsidianLight : "#1049D0",
+            topFace: y < 0 ? "#202329" : MATERIAL.cobaltLight,
+            bottomFace: y > 0 ? MATERIAL.obsidianDeep : "#071D5E",
           });
 
           blocks.push({ node, signs: [x, y, z] });
@@ -125,25 +172,40 @@ export function VoidCube({
     }
 
     const renderGeometry = (nextProgress: number) => {
-      const opening = variant === "opening" ? clamp(nextProgress) : 0;
-      const easedOpening = 1 - Math.pow(1 - opening, 3);
-      const offset = 25.5 + easedOpening * 23;
+      const storyProgress = variant === "opening" ? clamp(nextProgress) : 0;
+      const reveal = smoothstep(0.03, 0.3, storyProgress);
+      const recompose = smoothstep(0.72, 0.97, storyProgress);
+      const openness = reveal * (1 - recompose);
+      const offset = 25.5 + openness * 23;
 
       for (const { node, signs: [x, y, z] } of blocks) {
         node.translate.x = x * offset;
         node.translate.y = y * offset;
         node.translate.z = z * offset;
-        node.rotate.x = y * z * easedOpening * 0.055;
-        node.rotate.y = x * z * easedOpening * 0.07;
-        node.rotate.z = x * y * easedOpening * 0.045;
+        node.rotate.x = y * z * openness * 0.055;
+        node.rotate.y = x * z * openness * 0.07;
+        node.rotate.z = x * y * openness * 0.045;
       }
 
-      const coreScale = 0.84 + easedOpening * 0.2;
+      const coreScale = 0.8 + openness * 0.22;
       core.scale.x = coreScale;
       core.scale.y = coreScale;
       core.scale.z = coreScale;
-      core.rotate.x = easedOpening * -0.24;
-      core.rotate.y = easedOpening * 0.52;
+      core.rotate.x = openness * -0.16;
+      core.rotate.y = openness * 0.42;
+
+      const nodeScale = 0.58 + openness * 0.42;
+      for (const node of goldNodes) {
+        node.scale.x = nodeScale;
+        node.scale.y = nodeScale;
+        node.scale.z = nodeScale;
+      }
+
+      // Scroll turns toward the lining, holds, then returns to the initial axis.
+      const narrativeRoll = Math.sin(storyProgress * Math.PI) * 0.018;
+      assembly.rotate.x = cursorY * -0.16 - openness * 0.055;
+      assembly.rotate.y = cursorX * 0.24 + openness * 0.2;
+      assembly.rotate.z = cursorX * -0.022 + narrativeRoll;
     };
 
     const renderNow = () => {
@@ -185,10 +247,6 @@ export function VoidCube({
         cursorX += (cursorTargetX - cursorX) * cursorEase;
         cursorY += (cursorTargetY - cursorY) * cursorEase;
       }
-
-      assembly.rotate.x = cursorY * -0.18;
-      assembly.rotate.y = cursorX * 0.28;
-      assembly.rotate.z = cursorX * -0.025;
 
       if (!reducedMotion && !isDragging && now > pauseSpinUntil) {
         illustration.rotate.y += delta * (variant === "hero" ? 0.24 : 0.12);
@@ -238,9 +296,6 @@ export function VoidCube({
         cursorTargetY = 0;
         cursorX = 0;
         cursorY = 0;
-        assembly.rotate.x = 0;
-        assembly.rotate.y = 0;
-        assembly.rotate.z = 0;
       }
       currentProgress =
         variant === "opening" ? targetProgressRef.current : 0;
@@ -413,11 +468,11 @@ export function VoidCube({
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[18%] -z-10 rounded-full bg-[radial-gradient(circle,rgba(184,97,62,0.16)_0%,rgba(184,97,62,0.045)_38%,transparent_72%)] blur-2xl"
+        className="pointer-events-none absolute inset-[18%] -z-10 rounded-full bg-[radial-gradient(circle,rgba(25,92,241,0.17)_0%,rgba(12,60,183,0.05)_40%,transparent_72%)] blur-2xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-[12%] -z-10 border border-white/[0.035] [clip-path:polygon(0_0,18%_0,18%_1px,1px_1px,1px_18%,0_18%,0_0,100%_0,100%_18%,calc(100%-1px)_18%,calc(100%-1px)_1px,82%_1px,82%_0,100%_0,100%_100%,82%_100%,82%_calc(100%-1px),calc(100%-1px)_calc(100%-1px),calc(100%-1px)_82%,100%_82%,100%_100%,0_100%,0_82%,1px_82%,1px_calc(100%-1px),18%_calc(100%-1px),18%_100%,0_100%)]"
+        className="pointer-events-none absolute inset-[12%] -z-10 border border-[#195CF1]/[0.07] [clip-path:polygon(0_0,18%_0,18%_1px,1px_1px,1px_18%,0_18%,0_0,100%_0,100%_18%,calc(100%-1px)_18%,calc(100%-1px)_1px,82%_1px,82%_0,100%_0,100%_100%,82%_100%,82%_calc(100%-1px),calc(100%-1px)_calc(100%-1px),calc(100%-1px)_82%,100%_82%,100%_100%,0_100%,0_82%,1px_82%,1px_calc(100%-1px),18%_calc(100%-1px),18%_100%,0_100%)]"
       />
       <canvas
         ref={canvasRef}
@@ -427,19 +482,19 @@ export function VoidCube({
         aria-label={label}
         aria-describedby={descriptionId}
         tabIndex={canInteract ? 0 : undefined}
-        className={`block h-full w-full touch-none bg-transparent outline-none focus-visible:ring-1 focus-visible:ring-[#B8613E] focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] ${
+        className={`block h-full w-full touch-none bg-transparent outline-none focus-visible:ring-1 focus-visible:ring-[#2F66FF] focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] ${
           canInteract
             ? "cursor-grab data-[dragging=true]:cursor-grabbing"
             : "cursor-default"
         }`}
       >
-        Representação tridimensional de oito módulos pretos envolvendo um
-        núcleo de cobre.
+        Representação tridimensional de oito módulos de obsidiana envolvendo
+        um interior cobalto com pequenos nós dourados.
       </canvas>
       <p id={descriptionId} className="sr-only">
         {canInteract
           ? "Mova o cursor para inclinar o cubo. Arraste para girar livremente. Use as setas do teclado para ajustar a rotação e Home para restaurar a posição inicial."
-          : "O cubo se abre conforme o avanço desta seção."}
+          : "O cubo se abre, mantém o interior cobalto exposto e volta a se recompor conforme o avanço desta seção."}
       </p>
     </div>
   );

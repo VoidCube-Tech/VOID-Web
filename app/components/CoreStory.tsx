@@ -7,17 +7,61 @@ export interface CoreStoryProps {
   className?: string;
 }
 
-const companyData = [
-  ["Base", "Brasil · operação remota"],
-  ["Atuação", "Produtos B2B, plataformas e lançamentos"],
-  ["Modelo", "Projeto fechado ou evolução contínua"],
-  ["Especialidades", "Web, cloud, APIs e WebGL"],
+const layers = [
+  {
+    number: "01",
+    name: "Estratégia",
+    verb: "Escolher o que merece existir.",
+    description:
+      "Transformamos pressão de negócio em uma direção que produto, engenharia e liderança conseguem defender juntos.",
+    signal: "Contexto → decisão",
+  },
+  {
+    number: "02",
+    name: "Infraestrutura",
+    verb: "Dar chão à promessa.",
+    description:
+      "Arquitetura, cloud e integrações absorvem o uso real sem converter crescimento em fragilidade operacional.",
+    signal: "Carga → resiliência",
+  },
+  {
+    number: "03",
+    name: "Experiência",
+    verb: "Fazer o sistema ser sentido.",
+    description:
+      "Interface, movimento e 3D revelam relações complexas com intenção — respeitando atenção, GPU e acessibilidade.",
+    signal: "Complexidade → presença",
+  },
+  {
+    number: "04",
+    name: "Operação",
+    verb: "Manter o produto vivo.",
+    description:
+      "Observabilidade e evolução contínua fecham o ciclo: cada sinal de produção informa a próxima decisão.",
+    signal: "Sinal → evolução",
+  },
 ] as const;
 
-const method = ["Estratégia", "Infraestrutura", "Experiência", "Operação"];
+const companyData = [
+  ["Base", "Brasil · operação remota"],
+  ["Modelo", "Projeto ou evolução contínua"],
+  ["Campo", "B2B · plataformas · lançamentos"],
+  ["Stack", "Web · cloud · APIs · WebGL"],
+] as const;
 
 function clamp(value: number) {
   return Math.min(1, Math.max(0, value));
+}
+
+function range(value: number, start: number, end: number) {
+  return clamp((value - start) / (end - start));
+}
+
+function easeInOutCubic(value: number) {
+  const next = clamp(value);
+  return next < 0.5
+    ? 4 * next * next * next
+    : 1 - Math.pow(-2 * next + 2, 3) / 2;
 }
 
 function useReducedMotion() {
@@ -41,9 +85,7 @@ export function CoreStory({ className = "" }: CoreStoryProps) {
 
   useEffect(() => {
     const section = sectionRef.current;
-    if (!section) return;
-
-    if (reducedMotion) return;
+    if (!section || reducedMotion) return;
 
     let frameId: number | null = null;
 
@@ -51,11 +93,17 @@ export function CoreStory({ className = "" }: CoreStoryProps) {
       frameId = null;
       const rect = section.getBoundingClientRect();
       const travel = Math.max(1, rect.height - window.innerHeight);
-      setProgress(clamp(-rect.top / travel));
+      const nextProgress = clamp(-rect.top / travel);
+
+      setProgress((current) =>
+        Math.abs(current - nextProgress) < 0.0005 ? current : nextProgress,
+      );
     };
 
     const requestMeasure = () => {
-      if (frameId === null) frameId = window.requestAnimationFrame(measure);
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(measure);
+      }
     };
 
     measure();
@@ -69,132 +117,304 @@ export function CoreStory({ className = "" }: CoreStoryProps) {
     };
   }, [reducedMotion]);
 
-  const storyProgress = reducedMotion ? 0.68 : progress;
+  const storyProgress = reducedMotion ? 0.58 : progress;
   const percent = Math.round(storyProgress * 100);
-  const textShift = reducedMotion ? 0 : (0.5 - storyProgress) * 24;
-  const objectShift = reducedMotion ? 0 : (storyProgress - 0.5) * -34;
+  const activeIndex = Math.min(
+    layers.length - 1,
+    Math.floor(storyProgress * layers.length),
+  );
+  const activeLayer = layers[activeIndex];
+
+  const opening = easeInOutCubic(range(storyProgress, 0.02, 0.34));
+  const recomposition = easeInOutCubic(range(storyProgress, 0.72, 0.99));
+  const cubeOpenAmount = opening * (1 - recomposition);
+
+  const fieldDrift = reducedMotion
+    ? 0
+    : (easeInOutCubic(storyProgress) - 0.5) * -54;
+  const gridDrift = reducedMotion
+    ? 0
+    : (easeInOutCubic(storyProgress) - 0.5) * 24;
+  const cubeLift = reducedMotion
+    ? 0
+    : Math.sin(storyProgress * Math.PI) * -16 + recomposition * 10;
+
+  const cubeState =
+    storyProgress < 0.34
+      ? {
+          code: "Abertura",
+          title: "O invólucro cede espaço.",
+          note: "A estrutura revela o núcleo comum às quatro camadas.",
+        }
+      : storyProgress < 0.72
+        ? {
+            code: "Exposição",
+            title: "O núcleo permanece visível.",
+            note: "A experiência muda; a responsabilidade continua inteira.",
+          }
+        : {
+            code: "Recomposição",
+            title: "As partes voltam a operar juntas.",
+            note: "O resultado não é uma soma de entregas, mas um sistema.",
+          };
 
   return (
     <section
       ref={sectionRef}
       id="nucleo"
       aria-labelledby="core-story-title"
-      className={`relative min-h-[210svh] scroll-mt-20 bg-[#0E1011] text-[#EEECE5] motion-reduce:min-h-screen ${className}`}
+      data-active-layer={activeLayer.name}
+      className={`relative scroll-mt-20 bg-[#020305] text-[#F1EFE8] ${
+        reducedMotion ? "min-h-[100svh]" : "min-h-[260svh]"
+      } ${className}`}
     >
-      <div className="sticky top-0 flex min-h-[100svh] items-center overflow-hidden border-y border-white/[0.07] bg-[#0E1011]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-60 [background-image:linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_right,black,transparent_46%,black)]"
-        />
-
-        <div className="relative mx-auto grid w-full max-w-[1440px] grid-cols-1 gap-3 px-5 py-8 sm:px-8 lg:grid-cols-12 lg:gap-8 lg:px-12 xl:px-16">
+      <div
+        className={`top-0 h-[100svh] overflow-hidden border-y border-white/[0.08] bg-[#020305] ${
+          reducedMotion ? "relative" : "sticky"
+        }`}
+      >
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div
-            className="relative z-10 flex flex-col justify-center lg:col-span-6 lg:min-h-[78svh] lg:pr-12"
-            style={{ transform: `translate3d(0, ${textShift}px, 0)` }}
-          >
-            <div className="mb-5 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.24em] text-[#B8613E] sm:mb-8">
-              <span className="h-px w-8 bg-[#B8613E]" aria-hidden="true" />
-              Corte de núcleo
-            </div>
-
-            <h2
-              id="core-story-title"
-              className="max-w-[12ch] text-balance text-[clamp(2.1rem,5vw,5.4rem)] font-medium leading-[0.94] tracking-[-0.055em]"
-            >
-              Quatro camadas.
-              <span className="block text-[#A5A39E]">Uma responsabilidade.</span>
-            </h2>
-
-            <p className="mt-5 max-w-xl text-pretty text-sm leading-6 text-[#A5A39E] sm:mt-7 sm:text-base sm:leading-7">
-              Estratégia orienta. Infraestrutura sustenta. Interação aproxima.
-              Operação mantém tudo vivo — da primeira hipótese à rotina em
-              produção.
-            </p>
-
-            <dl className="mt-6 grid max-w-2xl grid-cols-2 border-l border-t border-white/[0.09] sm:mt-9">
-              {companyData.map(([term, value]) => (
-                <div
-                  key={term}
-                  className="min-h-16 border-b border-r border-white/[0.09] px-3 py-3 sm:min-h-20 sm:px-4 sm:py-4"
-                >
-                  <dt className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#6F706D]">
-                    {term}
-                  </dt>
-                  <dd className="mt-1.5 text-[11px] leading-4 text-[#EEECE5] sm:mt-2 sm:text-sm">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-
-            <ol className="mt-5 hidden max-w-2xl grid-cols-4 gap-px overflow-hidden border border-white/[0.08] bg-white/[0.08] sm:grid">
-              {method.map((item, index) => {
-                const threshold = index / method.length;
-                const active = clamp((storyProgress - threshold) * 4);
-                return (
-                  <li
-                    key={item}
-                    className="bg-[#0E1011] px-3 py-3 font-mono text-[9px] uppercase tracking-[0.13em] sm:px-4"
-                    style={{ color: `rgba(238,236,229,${0.32 + active * 0.68})` }}
-                  >
-                    <span
-                      className="mr-2 text-[#B8613E]"
-                      aria-hidden="true"
-                    >
-                      0{index + 1}
-                    </span>
-                    {item}
-                  </li>
-                );
-              })}
-            </ol>
+            className="absolute -right-[17vw] top-[5%] h-[88%] w-[74vw] origin-center bg-[#123E9A]/24 [clip-path:polygon(21%_0,100%_0,100%_82%,73%_100%,0_100%,13%_56%)] motion-reduce:transform-none"
+            style={{
+              opacity: 0.55 + cubeOpenAmount * 0.38,
+              transform: `translate3d(0, ${fieldDrift}px, 0) scale(${0.96 + cubeOpenAmount * 0.055})`,
+              willChange: reducedMotion ? "auto" : "transform, opacity",
+            }}
+          />
+          <div
+            className="absolute inset-[-8%] opacity-45 [background-image:linear-gradient(rgba(86,126,224,0.1)_1px,transparent_1px),linear-gradient(90deg,rgba(86,126,224,0.1)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:linear-gradient(to_right,transparent_4%,black_36%,black_82%,transparent)] motion-reduce:transform-none"
+            style={{
+              transform: `translate3d(0, ${gridDrift}px, 0)`,
+              willChange: reducedMotion ? "auto" : "transform",
+            }}
+          />
+          <div className="absolute inset-x-0 top-[42%] h-px bg-[#2454C6]/22" />
+          <div className="absolute bottom-[18%] left-[9%] h-2 w-2 rotate-45 border border-[#D6A95B]" />
+          <div className="absolute right-[8%] top-[18%] flex items-center gap-2 font-mono text-[8px] uppercase tracking-[0.22em] text-[#D6A95B]/70">
+            <span className="h-px w-7 bg-[#D6A95B]/65" />
+            VC / núcleo
           </div>
-
-          <figure
-            className="relative flex min-h-[35svh] items-center justify-center lg:col-span-6 lg:min-h-[78svh]"
-            aria-labelledby="core-object-caption"
-            style={{ transform: `translate3d(0, ${objectShift}px, 0)` }}
-          >
-            <div
-              aria-hidden="true"
-              className="absolute left-1/2 top-1/2 h-[58%] w-[58%] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#B8613E]/10"
-              style={{ transform: `translate(-50%, -50%) scale(${0.88 + storyProgress * 0.28})` }}
-            />
-            <VoidCube
-              variant="opening"
-              progress={storyProgress}
-              interactive={false}
-              label="Oito módulos cerâmicos da VoidCube se abrindo para revelar o núcleo de cobre"
-              className="w-[min(78vw,38svh)] sm:w-[min(72vw,52svh)] lg:w-[min(47vw,76svh)]"
-            />
-
-            <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 items-center justify-between font-mono text-[8px] uppercase tracking-[0.2em] text-[#6F706D] sm:text-[9px]">
-              <span className="hidden sm:block">Invólucro / cerâmica</span>
-              <span>Núcleo / cobre</span>
-            </div>
-
-            <figcaption
-              id="core-object-caption"
-              className="absolute bottom-0 right-0 max-w-[29ch] border-t border-white/[0.1] pt-3 text-right font-mono text-[9px] uppercase leading-4 tracking-[0.15em] text-[#6F706D] lg:bottom-4"
-            >
-              O mesmo núcleo acompanha todas as camadas.
-            </figcaption>
-          </figure>
         </div>
 
-        <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between sm:left-8 sm:right-8 lg:bottom-7 lg:left-12 lg:right-12 xl:left-16 xl:right-16">
-          <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-[#6F706D]">
-            Desmonte / {percent.toString().padStart(3, "0")}%
-          </span>
-          <div
-            className="h-px w-24 overflow-hidden bg-white/[0.1] sm:w-40"
-            aria-hidden="true"
-          >
-            <div
-              className="h-full origin-left bg-[#B8613E] motion-reduce:transition-none"
-              style={{ transform: `scaleX(${storyProgress})` }}
-            />
+        <div className="relative mx-auto grid h-full w-full max-w-[1440px] grid-rows-[auto_minmax(0,1fr)_auto] px-5 sm:px-8 lg:px-12 xl:px-16">
+          <header className="flex items-end justify-between border-b border-white/[0.09] pb-3 pt-24 sm:pb-4 sm:pt-28 lg:pt-24">
+            <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-[0.24em] text-[#D6A95B] sm:text-[10px]">
+              <span aria-hidden="true" className="h-px w-7 bg-[#D6A95B]" />
+              Corte de núcleo
+            </div>
+            <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-white/45 sm:text-[9px]">
+              Sequência {activeLayer.number} / 04
+            </p>
+          </header>
+
+          <div className="grid min-h-0 gap-2 lg:grid-cols-12 lg:gap-8">
+            <div className="relative z-10 flex min-h-0 flex-col justify-center py-3 lg:col-span-6 lg:py-6 lg:pr-8 xl:col-span-5">
+              <div>
+                <p className="mb-3 font-mono text-[9px] uppercase tracking-[0.22em] text-[#6E8FE0] sm:mb-4 sm:text-[10px]">
+                  Um sistema / quatro leituras
+                </p>
+                <h2
+                  id="core-story-title"
+                  className="max-w-[12ch] text-balance text-[clamp(2rem,5vw,4.9rem)] font-medium leading-[0.94] tracking-[-0.055em]"
+                >
+                  Quatro camadas.
+                  <span className="block text-white/46">
+                    Uma responsabilidade.
+                  </span>
+                </h2>
+                <p className="mt-3 hidden max-w-lg text-pretty text-sm leading-6 text-[#A5A39E] sm:block lg:mt-5 lg:text-base lg:leading-7">
+                  Estratégia orienta. Infraestrutura sustenta. Experiência
+                  aproxima. Operação mantém tudo vivo.
+                </p>
+              </div>
+
+              <ol
+                aria-label="Camadas do trabalho VoidCube"
+                className="mt-4 grid grid-cols-4 border-y border-white/[0.1] sm:mt-6"
+              >
+                {layers.map((layer, index) => {
+                  const isActive = index === activeIndex;
+                  const layerFill = clamp(storyProgress * layers.length - index);
+
+                  return (
+                    <li
+                      key={layer.number}
+                      aria-current={isActive ? "step" : undefined}
+                      className={`relative min-w-0 border-r border-white/[0.1] px-2 py-2.5 transition-colors duration-500 last:border-r-0 sm:px-3 sm:py-3 motion-reduce:transition-none ${
+                        isActive ? "bg-[#123E9A]/22" : "bg-black/20"
+                      }`}
+                    >
+                      <span
+                        className={`font-mono text-[8px] tracking-[0.18em] transition-colors duration-500 sm:text-[9px] motion-reduce:transition-none ${
+                          isActive ? "text-[#D6A95B]" : "text-white/30"
+                        }`}
+                      >
+                        {layer.number}
+                      </span>
+                      <span
+                        className={`mt-1 block truncate text-[9px] transition-colors duration-500 sm:text-[11px] motion-reduce:transition-none ${
+                          isActive ? "text-white" : "text-white/42"
+                        }`}
+                      >
+                        {layer.name}
+                      </span>
+                      <span className="sr-only">
+                        . {layer.verb} {layer.description}
+                      </span>
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-x-0 bottom-0 h-px origin-left bg-[#D6A95B]"
+                        style={{ transform: `scaleX(${layerFill})` }}
+                      />
+                    </li>
+                  );
+                })}
+              </ol>
+
+              <div className="relative mt-4 min-h-[7.4rem] overflow-hidden sm:mt-6 sm:min-h-[8.5rem]">
+                {layers.map((layer, index) => {
+                  const isActive = index === activeIndex;
+                  const direction = index < activeIndex ? -1 : 1;
+
+                  return (
+                    <article
+                      key={layer.number}
+                      aria-hidden={!isActive}
+                      className="absolute inset-0 border-l border-[#D6A95B]/55 pl-4 sm:pl-5"
+                      style={{
+                        opacity: isActive ? 1 : 0,
+                        transform: `translate3d(0, ${isActive ? 0 : direction * 14}px, 0) scale(${isActive ? 1 : 0.985})`,
+                        transition: reducedMotion
+                          ? "none"
+                          : "opacity 460ms cubic-bezier(0.4, 0, 0.2, 1), transform 520ms cubic-bezier(0.4, 0, 0.2, 1)",
+                        pointerEvents: isActive ? "auto" : "none",
+                      }}
+                    >
+                      <div className="flex items-center gap-3 font-mono text-[8px] uppercase tracking-[0.2em] text-[#D6A95B] sm:text-[9px]">
+                        Camada ativa
+                        <span aria-hidden="true" className="h-px w-5 bg-[#D6A95B]/55" />
+                        {layer.signal}
+                      </div>
+                      <h3 className="mt-2 text-xl font-medium tracking-[-0.025em] sm:text-2xl lg:text-3xl">
+                        {layer.verb}
+                      </h3>
+                      <p className="mt-2 max-w-xl text-xs leading-5 text-[#A5A39E] sm:text-sm sm:leading-6">
+                        {layer.description}
+                      </p>
+                    </article>
+                  );
+                })}
+              </div>
+
+              <dl className="mt-3 hidden grid-cols-2 border-l border-t border-white/[0.08] 2xl:grid">
+                {companyData.map(([term, value]) => (
+                  <div
+                    key={term}
+                    className="border-b border-r border-white/[0.08] px-3 py-2.5"
+                  >
+                    <dt className="font-mono text-[8px] uppercase tracking-[0.18em] text-white/30">
+                      {term}
+                    </dt>
+                    <dd className="mt-1 text-[10px] text-white/65">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <figure
+              aria-labelledby="core-object-caption"
+              className="relative flex min-h-[24svh] items-center justify-center lg:col-span-6 lg:min-h-0 xl:col-span-7"
+            >
+              <div
+                aria-hidden="true"
+                className="absolute left-1/2 top-1/2 aspect-square w-[min(71vw,34svh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[#5279DF]/24 sm:w-[min(62vw,43svh)] lg:w-[min(44vw,70svh)]"
+                style={{
+                  opacity: 0.34 + cubeOpenAmount * 0.46,
+                  transform: `translate(-50%, -50%) scale(${0.88 + cubeOpenAmount * 0.18})`,
+                }}
+              />
+              <div
+                aria-hidden="true"
+                className="absolute left-1/2 top-1/2 aspect-square w-[min(54vw,27svh)] -translate-x-1/2 -translate-y-1/2 rotate-45 border border-[#D6A95B]/13 sm:w-[min(48vw,35svh)] lg:w-[min(34vw,54svh)]"
+                style={{ opacity: 0.12 + cubeOpenAmount * 0.3 }}
+              />
+
+              <div
+                className="relative motion-reduce:transform-none"
+                style={{
+                  transform: `translate3d(0, ${cubeLift}px, 0) scale(${0.94 + cubeOpenAmount * 0.06})`,
+                  willChange: reducedMotion ? "auto" : "transform",
+                }}
+              >
+                <VoidCube
+                  variant="opening"
+                  progress={storyProgress}
+                  interactive={false}
+                  label="Cubo modular da VoidCube que se abre, mantém o núcleo exposto e volta a se recompor conforme a página avança"
+                  className="w-[min(72vw,34svh)] sm:w-[min(64vw,46svh)] lg:w-[min(47vw,70svh)]"
+                />
+              </div>
+
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-0 top-1/2 hidden -translate-y-1/2 items-center justify-between font-mono text-[8px] uppercase tracking-[0.18em] text-white/32 sm:flex"
+              >
+                <span>Invólucro / 08 módulos</span>
+                <span className="text-[#D6A95B]/75">Núcleo / 01</span>
+              </div>
+
+              <figcaption
+                id="core-object-caption"
+                className="absolute bottom-1 right-0 w-full max-w-[22rem] border-t border-white/[0.1] pt-2 text-right sm:bottom-3 sm:pt-3 lg:bottom-5"
+              >
+                <span className="block font-mono text-[8px] uppercase tracking-[0.2em] text-[#D6A95B] sm:text-[9px]">
+                  Estado / {cubeState.code}
+                </span>
+                <span className="mt-1 block text-[10px] leading-4 text-white/62 sm:text-xs">
+                  {cubeState.title} {cubeState.note}
+                </span>
+              </figcaption>
+            </figure>
           </div>
+
+          <footer className="flex items-end gap-5 border-t border-white/[0.09] pb-5 pt-3 sm:gap-8 sm:pb-7 sm:pt-4">
+            <p className="w-28 shrink-0 font-mono text-[8px] uppercase leading-4 tracking-[0.19em] text-white/42 sm:w-36 sm:text-[9px]">
+              Percurso
+              <br />
+              <span className="text-[#D6A95B]">
+                {percent.toString().padStart(3, "0")}%
+              </span>
+            </p>
+            <div
+              role="progressbar"
+              aria-label="Progresso da narrativa em quatro camadas"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={percent}
+              className="relative h-5 flex-1"
+            >
+              <div className="absolute inset-x-0 top-1/2 h-px bg-white/[0.13]">
+                <div
+                  className="h-full origin-left bg-[#5279DF]"
+                  style={{ transform: `scaleX(${storyProgress})` }}
+                />
+              </div>
+              {[0, 1, 2, 3, 4].map((tick) => (
+                <span
+                  key={tick}
+                  aria-hidden="true"
+                  className="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-white/25"
+                  style={{ left: `${tick * 25}%` }}
+                />
+              ))}
+            </div>
+            <p className="hidden w-44 shrink-0 text-right font-mono text-[8px] uppercase leading-4 tracking-[0.18em] text-white/38 sm:block sm:text-[9px]">
+              Role para atravessar
+              <br />
+              <span className="text-white/70">as quatro camadas</span>
+            </p>
+          </footer>
         </div>
       </div>
     </section>
