@@ -114,7 +114,7 @@ export default function Home() {
                 <VoidCube
                   variant="hero"
                   interactive
-                  label="Cubo VoidCube interativo; arraste ou use as setas para girar"
+                  label="Cubo VoidCube interativo; mova o cursor, arraste ou use as setas para girar"
                 />
                 <div className="stage-index" aria-hidden="true">
                   VC / 00
@@ -122,7 +122,7 @@ export default function Home() {
               </div>
               <p className="mt-4 flex items-center justify-center gap-3 font-mono text-[10px] uppercase tracking-[0.24em] text-mineral">
                 <span className="inline-block h-px w-8 bg-copper" aria-hidden="true" />
-                Arraste para inspecionar o núcleo
+                Mova o cursor · arraste para explorar
               </p>
             </div>
           </div>

@@ -53,6 +53,9 @@ export function VoidCube({
     if (!canvas) return;
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const finePointerQuery = window.matchMedia(
+      "(hover: hover) and (pointer: fine)",
+    );
     let reducedMotion = motionQuery.matches;
     let isIntersecting = true;
     let frameId: number | null = null;
@@ -66,6 +69,10 @@ export function VoidCube({
     let dragStartY = 0;
     let startRotationX = 0;
     let startRotationY = 0;
+    let cursorTargetX = 0;
+    let cursorTargetY = 0;
+    let cursorX = 0;
+    let cursorY = 0;
 
     const illustration = new Zdog.Illustration({
       element: canvas,
@@ -169,10 +176,19 @@ export function VoidCube({
 
       if (reducedMotion) {
         currentProgress = target;
+        cursorX = 0;
+        cursorY = 0;
       } else {
         const progressEase = 1 - Math.pow(0.001, delta);
+        const cursorEase = 1 - Math.pow(0.0004, delta);
         currentProgress += (target - currentProgress) * progressEase;
+        cursorX += (cursorTargetX - cursorX) * cursorEase;
+        cursorY += (cursorTargetY - cursorY) * cursorEase;
       }
+
+      assembly.rotate.x = cursorY * -0.18;
+      assembly.rotate.y = cursorX * 0.28;
+      assembly.rotate.z = cursorX * -0.025;
 
       if (!reducedMotion && !isDragging && now > pauseSpinUntil) {
         illustration.rotate.y += delta * (variant === "hero" ? 0.24 : 0.12);
@@ -217,15 +233,61 @@ export function VoidCube({
 
     const handleMotionPreference = (event: MediaQueryListEvent) => {
       reducedMotion = event.matches;
+      if (reducedMotion) {
+        cursorTargetX = 0;
+        cursorTargetY = 0;
+        cursorX = 0;
+        cursorY = 0;
+        assembly.rotate.x = 0;
+        assembly.rotate.y = 0;
+        assembly.rotate.z = 0;
+      }
       currentProgress =
         variant === "opening" ? targetProgressRef.current : 0;
       renderNow();
       requestFrame();
     };
 
+    const updateCursorTarget = (clientX: number, clientY: number) => {
+      const viewportWidth = Math.max(1, window.innerWidth);
+      const viewportHeight = Math.max(1, window.innerHeight);
+      cursorTargetX = clamp((clientX / viewportWidth - 0.5) * 2, -1, 1);
+      cursorTargetY = clamp((clientY / viewportHeight - 0.5) * 2, -1, 1);
+      requestFrame();
+    };
+
+    const handleCursorMove = (event: PointerEvent) => {
+      if (
+        !canInteract ||
+        reducedMotion ||
+        isDragging ||
+        !finePointerQuery.matches
+      ) {
+        return;
+      }
+
+      updateCursorTarget(event.clientX, event.clientY);
+    };
+
+    const resetCursor = () => {
+      cursorTargetX = 0;
+      cursorTargetY = 0;
+      requestFrame();
+    };
+
+    const handlePointerOut = (event: PointerEvent) => {
+      if (event.relatedTarget === null) resetCursor();
+    };
+
+    const handlePointerCapabilityChange = () => {
+      if (!finePointerQuery.matches) resetCursor();
+    };
+
     const handlePointerDown = (event: PointerEvent) => {
       if (!canInteract || event.button !== 0) return;
       isDragging = true;
+      cursorTargetX = 0;
+      cursorTargetY = 0;
       activePointer = event.pointerId;
       dragStartX = event.clientX;
       dragStartY = event.clientY;
@@ -258,6 +320,9 @@ export function VoidCube({
       activePointer = null;
       pauseSpinUntil = performance.now() + 1400;
       delete canvas.dataset.dragging;
+      if (!reducedMotion && finePointerQuery.matches) {
+        updateCursorTarget(event.clientX, event.clientY);
+      }
       requestFrame();
     };
 
@@ -290,15 +355,26 @@ export function VoidCube({
 
       if (!handled) return;
       event.preventDefault();
+      cursorTargetX = 0;
+      cursorTargetY = 0;
       pauseSpinUntil = performance.now() + 1400;
       renderNow();
     };
 
     document.addEventListener("visibilitychange", handleVisibility);
     motionQuery.addEventListener("change", handleMotionPreference);
+    finePointerQuery.addEventListener(
+      "change",
+      handlePointerCapabilityChange,
+    );
     canvas.addEventListener("keydown", handleKeyDown);
 
     if (canInteract) {
+      window.addEventListener("pointermove", handleCursorMove, {
+        passive: true,
+      });
+      window.addEventListener("pointerout", handlePointerOut);
+      window.addEventListener("blur", resetCursor);
       canvas.addEventListener("pointerdown", handlePointerDown);
       canvas.addEventListener("pointermove", handlePointerMove);
       canvas.addEventListener("pointerup", finishPointer);
@@ -315,6 +391,13 @@ export function VoidCube({
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
       motionQuery.removeEventListener("change", handleMotionPreference);
+      finePointerQuery.removeEventListener(
+        "change",
+        handlePointerCapabilityChange,
+      );
+      window.removeEventListener("pointermove", handleCursorMove);
+      window.removeEventListener("pointerout", handlePointerOut);
+      window.removeEventListener("blur", resetCursor);
       canvas.removeEventListener("keydown", handleKeyDown);
       canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointermove", handlePointerMove);
@@ -355,7 +438,7 @@ export function VoidCube({
       </canvas>
       <p id={descriptionId} className="sr-only">
         {canInteract
-          ? "Arraste para girar o cubo. Use as setas do teclado para ajustar a rotação e Home para restaurar a posição inicial."
+          ? "Mova o cursor para inclinar o cubo. Arraste para girar livremente. Use as setas do teclado para ajustar a rotação e Home para restaurar a posição inicial."
           : "O cubo se abre conforme o avanço desta seção."}
       </p>
     </div>
