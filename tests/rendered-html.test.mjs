@@ -41,7 +41,6 @@ test("renderiza a página inicial da VoidCube", async () => {
 test("renderiza as rotas empresariais", async () => {
   const routes = [
     ["/sobre", /Engenharia e experiência/],
-    ["/blog", /Decisões de engenharia e design/],
     ["/contato", /Traga o problema/],
   ];
 

@@ -26,7 +26,7 @@ const initialValues: FormValues = {
 };
 
 const fieldClassName =
-  "mt-2 w-full border-b border-[#EEECE5]/20 bg-transparent px-0 py-3 text-base text-[#EEECE5] outline-none transition-colors placeholder:text-[#A5A39E]/55 focus:border-[#B8613E] focus:ring-0";
+  "mt-2 w-full border-b border-porcelain/20 bg-transparent px-0 py-3 text-base text-porcelain outline-none transition-colors placeholder:text-mineral/55 focus:border-signal-blue focus:ring-0";
 
 function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
@@ -134,9 +134,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="name"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
-            Seu nome <span className="text-[#B8613E]">*</span>
+            Seu nome <span className="text-node-gold">*</span>
           </label>
           <input
             id="name"
@@ -150,7 +150,7 @@ export function ContactForm() {
             placeholder="Como podemos chamar você?"
           />
           {errors.name && (
-            <p id="name-error" className="mt-2 text-xs text-[#D48667]">
+            <p id="name-error" className="mt-2 text-xs text-node-gold">
               {errors.name}
             </p>
           )}
@@ -159,9 +159,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="email"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
-            E-mail de trabalho <span className="text-[#B8613E]">*</span>
+            E-mail de trabalho <span className="text-node-gold">*</span>
           </label>
           <input
             id="email"
@@ -177,7 +177,7 @@ export function ContactForm() {
             placeholder="voce@empresa.com"
           />
           {errors.email && (
-            <p id="email-error" className="mt-2 text-xs text-[#D48667]">
+            <p id="email-error" className="mt-2 text-xs text-node-gold">
               {errors.email}
             </p>
           )}
@@ -186,9 +186,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="company"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
-            Empresa <span className="text-[#B8613E]">*</span>
+            Empresa <span className="text-node-gold">*</span>
           </label>
           <input
             id="company"
@@ -202,7 +202,7 @@ export function ContactForm() {
             placeholder="Nome da organização"
           />
           {errors.company && (
-            <p id="company-error" className="mt-2 text-xs text-[#D48667]">
+            <p id="company-error" className="mt-2 text-xs text-node-gold">
               {errors.company}
             </p>
           )}
@@ -211,9 +211,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="projectType"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
-            Tipo de desafio <span className="text-[#B8613E]">*</span>
+            Tipo de desafio <span className="text-node-gold">*</span>
           </label>
           <select
             id="projectType"
@@ -222,7 +222,7 @@ export function ContactForm() {
             onChange={(event) => updateField("projectType", event.target.value)}
             aria-invalid={Boolean(errors.projectType)}
             aria-describedby={errors.projectType ? "project-type-error" : undefined}
-            className={`${fieldClassName} cursor-pointer bg-[#050505]`}
+            className={`${fieldClassName} cursor-pointer bg-void`}
           >
             <option value="">Selecione uma frente</option>
             <option value="Plataforma ou infraestrutura digital">
@@ -239,7 +239,7 @@ export function ContactForm() {
             </option>
           </select>
           {errors.projectType && (
-            <p id="project-type-error" className="mt-2 text-xs text-[#D48667]">
+            <p id="project-type-error" className="mt-2 text-xs text-node-gold">
               {errors.projectType}
             </p>
           )}
@@ -248,7 +248,7 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="budget"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
             Faixa de investimento
           </label>
@@ -257,7 +257,7 @@ export function ContactForm() {
             name="budget"
             value={values.budget}
             onChange={(event) => updateField("budget", event.target.value)}
-            className={`${fieldClassName} cursor-pointer bg-[#050505]`}
+            className={`${fieldClassName} cursor-pointer bg-void`}
           >
             <option value="">Ainda vamos definir</option>
             <option value="R$ 40 mil — R$ 80 mil">R$ 40 mil — R$ 80 mil</option>
@@ -269,9 +269,9 @@ export function ContactForm() {
         <div>
           <label
             htmlFor="timeline"
-            className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
           >
-            Janela de início <span className="text-[#B8613E]">*</span>
+            Janela de início <span className="text-node-gold">*</span>
           </label>
           <select
             id="timeline"
@@ -280,7 +280,7 @@ export function ContactForm() {
             onChange={(event) => updateField("timeline", event.target.value)}
             aria-invalid={Boolean(errors.timeline)}
             aria-describedby={errors.timeline ? "timeline-error" : undefined}
-            className={`${fieldClassName} cursor-pointer bg-[#050505]`}
+            className={`${fieldClassName} cursor-pointer bg-void`}
           >
             <option value="">Selecione uma janela</option>
             <option value="Agora / até 30 dias">Agora / até 30 dias</option>
@@ -289,7 +289,7 @@ export function ContactForm() {
             <option value="Sem data definida">Sem data definida</option>
           </select>
           {errors.timeline && (
-            <p id="timeline-error" className="mt-2 text-xs text-[#D48667]">
+            <p id="timeline-error" className="mt-2 text-xs text-node-gold">
               {errors.timeline}
             </p>
           )}
@@ -299,9 +299,9 @@ export function ContactForm() {
       <div>
         <label
           htmlFor="objective"
-          className="font-mono text-[10px] uppercase tracking-[0.22em] text-[#A5A39E]"
+          className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
         >
-          O que precisa mudar? <span className="text-[#B8613E]">*</span>
+          O que precisa mudar? <span className="text-node-gold">*</span>
         </label>
         <textarea
           id="objective"
@@ -316,28 +316,28 @@ export function ContactForm() {
         />
         <div className="mt-2 flex items-start justify-between gap-4">
           {errors.objective ? (
-            <p id="objective-error" className="text-xs text-[#D48667]">
+            <p id="objective-error" className="text-xs text-node-gold">
               {errors.objective}
             </p>
           ) : (
-            <p id="objective-hint" className="text-xs text-[#A5A39E]/70">
+            <p id="objective-hint" className="text-xs text-mineral/70">
               Não é preciso ter um escopo fechado.
             </p>
           )}
-          <span className="shrink-0 font-mono text-[10px] text-[#A5A39E]/70">
+          <span className="shrink-0 font-sans text-[10px] font-medium tabular-nums text-mineral/70">
             {values.objective.length} caracteres
           </span>
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 border-t border-[#EEECE5]/12 pt-7 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-md text-xs leading-5 text-[#A5A39E]">
+      <div className="flex flex-col gap-5 border-t border-porcelain/12 pt-7 sm:flex-row sm:items-center sm:justify-between">
+        <p className="max-w-md text-xs leading-5 text-mineral">
           Este formulário prepara o briefing no seu navegador. Você revisa e
           escolhe como enviá-lo no próximo passo.
         </p>
         <button
           type="submit"
-          className="group inline-flex min-h-12 items-center justify-center gap-4 bg-[#EEECE5] px-6 text-sm font-medium uppercase tracking-[0.12em] text-[#050505] outline-none transition-colors hover:bg-[#B8613E] focus-visible:ring-2 focus-visible:ring-[#B8613E] focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505]"
+          className="group inline-flex min-h-12 items-center justify-center gap-4 bg-signal-blue px-6 text-sm font-medium uppercase tracking-[0.1em] text-void outline-none transition-colors hover:bg-porcelain focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:ring-offset-4 focus-visible:ring-offset-void"
         >
           Preparar briefing
           <ArrowUpRight
@@ -349,14 +349,14 @@ export function ContactForm() {
 
       <div aria-live="polite">
         {prepared && (
-          <section className="border border-[#B8613E]/60 bg-[#B8613E]/8 p-5 sm:p-6">
+          <section className="border border-signal-blue/60 bg-signal-deep/25 p-5 sm:p-6">
             <div className="flex items-start gap-4">
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center bg-[#B8613E] text-[#050505]">
+              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center bg-node-gold text-void">
                 <Check aria-hidden="true" className="h-4 w-4" />
               </span>
               <div>
                 <h3 className="text-lg font-medium">Briefing preparado.</h3>
-                <p className="mt-2 max-w-xl text-sm leading-6 text-[#A5A39E]">
+                <p className="mt-2 max-w-xl text-sm leading-6 text-mineral">
                   Nenhuma mensagem foi enviada ainda. Abra um rascunho no seu
                   aplicativo de e-mail ou copie o texto para usar no canal que
                   preferir.
@@ -367,7 +367,7 @@ export function ContactForm() {
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <a
                 href={emailDraftUrl}
-                className="inline-flex min-h-11 items-center justify-center gap-3 bg-[#EEECE5] px-5 text-xs font-medium uppercase tracking-[0.12em] text-[#050505] outline-none transition-colors hover:bg-white focus-visible:ring-2 focus-visible:ring-[#B8613E] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0E1011]"
+                className="inline-flex min-h-11 items-center justify-center gap-3 bg-porcelain px-5 text-xs font-medium uppercase tracking-[0.1em] text-void outline-none transition-colors hover:bg-signal-blue focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:ring-offset-2 focus-visible:ring-offset-basalt"
               >
                 <Mail aria-hidden="true" className="h-4 w-4" />
                 Abrir rascunho no e-mail
@@ -375,7 +375,7 @@ export function ContactForm() {
               <button
                 type="button"
                 onClick={copyBriefing}
-                className="inline-flex min-h-11 items-center justify-center gap-3 border border-[#EEECE5]/20 px-5 text-xs font-medium uppercase tracking-[0.12em] text-[#EEECE5] outline-none transition-colors hover:border-[#B8613E] hover:text-[#B8613E] focus-visible:ring-2 focus-visible:ring-[#B8613E]"
+                className="inline-flex min-h-11 items-center justify-center gap-3 border border-porcelain/20 px-5 text-xs font-medium uppercase tracking-[0.1em] text-porcelain outline-none transition-colors hover:border-signal-blue hover:text-signal-blue focus-visible:ring-2 focus-visible:ring-signal-blue"
               >
                 {copyStatus === "copied" ? (
                   <Check aria-hidden="true" className="h-4 w-4" />
@@ -387,7 +387,7 @@ export function ContactForm() {
             </div>
 
             {copyStatus === "error" && (
-              <p className="mt-3 text-xs text-[#D48667]">
+              <p className="mt-3 text-xs text-node-gold">
                 O navegador bloqueou a cópia. Use o botão de e-mail para abrir
                 o texto completo.
               </p>

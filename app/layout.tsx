@@ -1,8 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import "@fontsource-variable/geologica";
-import "@fontsource-variable/ibm-plex-sans";
-import "@fontsource/ibm-plex-mono/500.css";
+import "@fontsource-variable/antonio/wght.css";
+import "@fontsource-variable/public-sans/wght.css";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,7 +43,7 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "/og.png",
           width: 1536,
           height: 1024,
-          alt: "VoidCube — cubo de cerâmica negra aberto ao redor de um núcleo de cobre.",
+          alt: "VoidCube — cubo de obsidiana aberto ao redor de um núcleo dourado.",
         },
       ],
     },
@@ -62,7 +61,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#050505",
+  themeColor: "#071A33",
   colorScheme: "dark",
 };
 

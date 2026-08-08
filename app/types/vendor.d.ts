@@ -68,8 +68,30 @@ declare module "zdog" {
     closed?: boolean;
     color?: Color;
     fill?: boolean;
+    path?: VectorInput[];
     stroke?: boolean | number;
     visible?: boolean;
+  }
+
+  class Shape extends Anchor {
+    color: Color;
+    stroke: boolean | number;
+
+    constructor(options?: ShapeOptions);
+  }
+
+  interface RoundedRectOptions extends ShapeOptions {
+    cornerRadius?: number;
+    height?: number;
+    width?: number;
+  }
+
+  class RoundedRect extends Shape {
+    cornerRadius: number;
+    height: number;
+    width: number;
+
+    constructor(options?: RoundedRectOptions);
   }
 
   interface BoxOptions extends ShapeOptions {

@@ -32,7 +32,7 @@ const briefingNotes = [
 
 export default function ContatoPage() {
   return (
-    <div className="min-h-screen bg-[#050505] text-[#EEECE5] selection:bg-[#B8613E] selection:text-[#050505]">
+    <div className="min-h-screen bg-basalt text-porcelain selection:bg-signal-blue selection:text-void">
       <SiteHeader />
 
       <main id="conteudo" className="overflow-hidden">
@@ -51,32 +51,32 @@ export default function ContatoPage() {
 
         <section
           aria-labelledby="briefing-heading"
-          className="mx-auto grid w-full max-w-[1440px] border-x border-[#EEECE5]/12 lg:grid-cols-12"
+          className="mx-auto grid w-full max-w-[1440px] border-x border-porcelain/12 lg:grid-cols-12"
         >
-          <aside className="border-b border-[#EEECE5]/12 bg-[#0E1011] lg:col-span-4 lg:border-b-0 lg:border-r">
+          <aside className="border-b border-porcelain/12 bg-signal-deep/15 lg:col-span-4 lg:border-b-0 lg:border-r">
             <div className="p-6 sm:p-10 lg:sticky lg:top-20 lg:p-12">
-              <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#B8613E]">
+              <p className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-node-gold">
                 Antes de escrever
               </p>
               <h2
                 id="briefing-heading"
-                className="mt-5 text-3xl font-medium leading-tight tracking-[-0.035em]"
+                className="mt-5 font-display text-3xl font-medium leading-tight tracking-[-0.035em]"
               >
                 Um bom briefing cabe em quatro sinais.
               </h2>
 
-              <ol className="mt-10 border-t border-[#EEECE5]/12">
+              <ol className="mt-10 border-t border-porcelain/12">
                 {briefingNotes.map((note, index) => (
                   <li
                     key={note.label}
-                    className="grid grid-cols-[2rem_1fr] gap-4 border-b border-[#EEECE5]/12 py-5"
+                    className="grid grid-cols-[2rem_1fr] gap-4 border-b border-porcelain/12 py-5"
                   >
-                    <span className="font-mono text-[10px] text-[#B8613E]">
+                    <span className="font-sans text-[10px] font-medium tabular-nums text-node-gold">
                       0{index + 1}
                     </span>
                     <div>
                       <h3 className="text-sm font-medium">{note.label}</h3>
-                      <p className="mt-1 text-xs leading-5 text-[#A5A39E]">
+                      <p className="mt-1 text-xs leading-5 text-mineral">
                         {note.text}
                       </p>
                     </div>
@@ -84,25 +84,25 @@ export default function ContatoPage() {
                 ))}
               </ol>
 
-              <div className="mt-10 space-y-4 font-mono text-[10px] uppercase leading-5 tracking-[0.16em] text-[#A5A39E]">
+              <div className="mt-10 space-y-4 font-sans text-[10px] font-medium uppercase leading-5 tracking-[0.12em] text-mineral">
                 <p className="flex items-start gap-3">
                   <Clock3
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[#B8613E]"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
                   />
                   Briefing preparado no seu navegador
                 </p>
                 <p className="flex items-start gap-3">
                   <MapPin
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[#B8613E]"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
                   />
                   Operação distribuída / Brasil
                 </p>
                 <p className="flex items-start gap-3">
                   <Mail
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[#B8613E]"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
                   />
                   Você escolhe o destinatário antes do envio
                 </p>
@@ -111,11 +111,11 @@ export default function ContatoPage() {
           </aside>
 
           <div className="p-6 sm:p-10 lg:col-span-8 lg:p-12 xl:p-16">
-            <div className="mb-12 flex items-center justify-between border-b border-[#EEECE5]/12 pb-5">
-              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-[#A5A39E]">
+            <div className="mb-12 flex items-center justify-between border-b border-porcelain/12 pb-5">
+              <p className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral">
                 Briefing inicial / VC-F01
               </p>
-              <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#B8613E]">
+              <span className="font-sans text-[10px] font-medium uppercase tracking-[0.12em] text-node-gold">
                 * obrigatório
               </span>
             </div>
@@ -123,9 +123,9 @@ export default function ContatoPage() {
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-[1440px] border-x border-y border-[#EEECE5]/12 lg:grid-cols-12">
-          <div className="p-6 sm:p-10 lg:col-span-4 lg:border-r lg:border-[#EEECE5]/12 lg:p-12">
-            <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-[#B8613E]">
+        <section className="mx-auto grid w-full max-w-[1440px] border-x border-y border-porcelain/12 lg:grid-cols-12">
+          <div className="p-6 sm:p-10 lg:col-span-4 lg:border-r lg:border-porcelain/12 lg:p-12">
+            <p className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-signal-blue">
               Compatibilidade primeiro
             </p>
           </div>

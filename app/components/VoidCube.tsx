@@ -6,17 +6,18 @@ import Zdog from "zdog";
 const TAU = Math.PI * 2;
 
 const MATERIAL = {
-  obsidian: "#07080A",
-  obsidianDeep: "#020304",
-  obsidianMid: "#101216",
-  obsidianLight: "#1A1D22",
-  cobalt: "#0C3CB7",
-  cobaltDeep: "#061746",
-  cobaltMid: "#082B88",
-  cobaltLight: "#195CF1",
-  gold: "#D7AF55",
-  goldShade: "#76551B",
-  goldLight: "#F0D181",
+  obsidian: "#060A12",
+  obsidianDeep: "#01030A",
+  obsidianMid: "#0C1320",
+  obsidianLight: "#18263A",
+  obsidianHighlight: "#293B55",
+  cobalt: "#145BEA",
+  cobaltDeep: "#04143D",
+  cobaltMid: "#083084",
+  cobaltLight: "#4B8DFF",
+  gold: "#C9A45D",
+  goldShade: "#684D1D",
+  goldLight: "#F1D889",
 } as const;
 
 type CubeVariant = "hero" | "opening";
@@ -55,6 +56,7 @@ export function VoidCube({
   interactive,
   label = "Cubo modular de obsidiana com interior cobalto e pequenos nós dourados",
 }: VoidCubeProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const targetProgressRef = useRef(clamp(progress));
   const updateProgressRef = useRef<((value: number) => void) | null>(null);
@@ -68,8 +70,9 @@ export function VoidCube({
   }, [progress]);
 
   useEffect(() => {
+    const container = containerRef.current;
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!container || !canvas) return;
 
     const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const finePointerQuery = window.matchMedia(
@@ -92,6 +95,12 @@ export function VoidCube({
     let cursorTargetY = 0;
     let cursorX = 0;
     let cursorY = 0;
+    let resizeFrameId: number | null = null;
+    let renderedWidth = 0;
+    let renderedHeight = 0;
+    let interactionBounds = container.getBoundingClientRect();
+    let lastEnvironmentX = Number.NaN;
+    let lastEnvironmentY = Number.NaN;
 
     const illustration = new Zdog.Illustration({
       element: canvas,
@@ -104,17 +113,17 @@ export function VoidCube({
     const assembly = new Zdog.Anchor({ addTo: illustration });
     const core = new Zdog.Box({
       addTo: assembly,
-      width: 28,
-      height: 28,
-      depth: 28,
-      stroke: 0.65,
+      width: 27,
+      height: 27,
+      depth: 27,
+      stroke: 0.9,
       color: MATERIAL.cobalt,
       frontFace: MATERIAL.cobalt,
       rearFace: MATERIAL.cobaltDeep,
       leftFace: MATERIAL.cobaltMid,
-      rightFace: "#0D36A2",
+      rightFace: "#1B68F2",
       topFace: MATERIAL.cobaltLight,
-      bottomFace: "#041137",
+      bottomFace: "#020C28",
     });
 
     const goldNodePositions = [
@@ -128,16 +137,16 @@ export function VoidCube({
       (translate) =>
         new Zdog.Box({
           addTo: core,
-          width: 3.2,
-          height: 3.2,
-          depth: 3.2,
+          width: 2.8,
+          height: 2.8,
+          depth: 2.8,
           translate,
-          stroke: 0.35,
+          stroke: 0.42,
           color: MATERIAL.gold,
           frontFace: MATERIAL.gold,
           rearFace: MATERIAL.goldShade,
-          leftFace: "#A47C2E",
-          rightFace: "#C99E46",
+          leftFace: "#92702D",
+          rightFace: "#D4B15F",
           topFace: MATERIAL.goldLight,
           bottomFace: MATERIAL.goldShade,
         }),
@@ -146,24 +155,79 @@ export function VoidCube({
     const signs = [-1, 1] as const;
     const blocks: CubeBlock[] = [];
 
+    for (const axis of ["x", "y", "z"] as const) {
+      for (const direction of signs) {
+        const pathStart = { x: 0, y: 0, z: 0 };
+        const pathEnd = { x: 0, y: 0, z: 0 };
+        pathStart[axis] = direction * 14.5;
+        pathEnd[axis] = direction * 25;
+
+        new Zdog.Shape({
+          addTo: assembly,
+          path: [pathStart, pathEnd],
+          stroke: 1.15,
+          color: direction > 0 ? "#2F6BFF" : "#153B86",
+        });
+      }
+    }
+
     for (const x of signs) {
       for (const y of signs) {
         for (const z of signs) {
           const node = new Zdog.Box({
             addTo: assembly,
-            width: 42,
-            height: 42,
-            depth: 42,
-            stroke: 0.75,
+            width: 40,
+            height: 40,
+            depth: 40,
+            stroke: 1.05,
             color: MATERIAL.obsidian,
             // Faces away from the origin stay obsidian. Their opposites form
             // the cobalt lining that is exposed only while the shell is open.
             frontFace: z > 0 ? MATERIAL.obsidianMid : MATERIAL.cobalt,
             rearFace: z < 0 ? MATERIAL.obsidianDeep : MATERIAL.cobaltDeep,
             leftFace: x < 0 ? MATERIAL.obsidian : MATERIAL.cobaltMid,
-            rightFace: x > 0 ? MATERIAL.obsidianLight : "#1049D0",
-            topFace: y < 0 ? "#202329" : MATERIAL.cobaltLight,
-            bottomFace: y > 0 ? MATERIAL.obsidianDeep : "#071D5E",
+            rightFace: x > 0 ? MATERIAL.obsidianLight : "#1A61E8",
+            topFace: y < 0 ? MATERIAL.obsidianHighlight : MATERIAL.cobaltLight,
+            bottomFace: y > 0 ? MATERIAL.obsidianDeep : "#051E5A",
+          });
+
+          const panelSize = 33.5;
+          const panelOffset = 20.15;
+          const panelStroke = 1.05;
+
+          new Zdog.RoundedRect({
+            addTo: node,
+            width: panelSize,
+            height: panelSize,
+            cornerRadius: 1.4,
+            translate: { z: z * panelOffset },
+            stroke: panelStroke,
+            fill: true,
+            color: z > 0 ? MATERIAL.obsidianMid : MATERIAL.obsidianDeep,
+          });
+
+          new Zdog.RoundedRect({
+            addTo: node,
+            width: panelSize,
+            height: panelSize,
+            cornerRadius: 1.4,
+            translate: { x: x * panelOffset },
+            rotate: { y: TAU / 4 },
+            stroke: panelStroke,
+            fill: true,
+            color: x > 0 ? MATERIAL.obsidianLight : MATERIAL.obsidian,
+          });
+
+          new Zdog.RoundedRect({
+            addTo: node,
+            width: panelSize,
+            height: panelSize,
+            cornerRadius: 1.4,
+            translate: { y: y * panelOffset },
+            rotate: { x: TAU / 4 },
+            stroke: panelStroke,
+            fill: true,
+            color: y < 0 ? MATERIAL.obsidianHighlight : MATERIAL.obsidianDeep,
           });
 
           blocks.push({ node, signs: [x, y, z] });
@@ -176,15 +240,15 @@ export function VoidCube({
       const reveal = smoothstep(0.03, 0.3, storyProgress);
       const recompose = smoothstep(0.72, 0.97, storyProgress);
       const openness = reveal * (1 - recompose);
-      const offset = 25.5 + openness * 23;
+      const offset = 23.5 + openness * 18.5;
 
       for (const { node, signs: [x, y, z] } of blocks) {
         node.translate.x = x * offset;
         node.translate.y = y * offset;
         node.translate.z = z * offset;
-        node.rotate.x = y * z * openness * 0.055;
-        node.rotate.y = x * z * openness * 0.07;
-        node.rotate.z = x * y * openness * 0.045;
+        node.rotate.x = y * z * openness * 0.035;
+        node.rotate.y = x * z * openness * 0.045;
+        node.rotate.z = x * y * openness * 0.028;
       }
 
       const coreScale = 0.8 + openness * 0.22;
@@ -193,6 +257,8 @@ export function VoidCube({
       core.scale.z = coreScale;
       core.rotate.x = openness * -0.16;
       core.rotate.y = openness * 0.42;
+      core.translate.x = cursorX * 0.8;
+      core.translate.y = cursorY * 0.55;
 
       const nodeScale = 0.58 + openness * 0.42;
       for (const node of goldNodes) {
@@ -206,6 +272,35 @@ export function VoidCube({
       assembly.rotate.x = cursorY * -0.16 - openness * 0.055;
       assembly.rotate.y = cursorX * 0.24 + openness * 0.2;
       assembly.rotate.z = cursorX * -0.022 + narrativeRoll;
+
+      const environmentX = Math.round(cursorX * 1000) / 1000;
+      const environmentY = Math.round(cursorY * 1000) / 1000;
+
+      if (
+        environmentX !== lastEnvironmentX ||
+        environmentY !== lastEnvironmentY
+      ) {
+        lastEnvironmentX = environmentX;
+        lastEnvironmentY = environmentY;
+        container.style.setProperty(
+          "--cube-light-x",
+          `${62 + environmentX * 12}%`,
+        );
+        container.style.setProperty(
+          "--cube-light-y",
+          `${28 + environmentY * 9}%`,
+        );
+        container.style.setProperty("--cube-bg-x", `${environmentX * -8}px`);
+        container.style.setProperty("--cube-bg-y", `${environmentY * -5}px`);
+        container.style.setProperty(
+          "--cube-shadow-x",
+          `${environmentX * 5}px`,
+        );
+        container.style.setProperty(
+          "--cube-shadow-y",
+          `${environmentY * 2}px`,
+        );
+      }
     };
 
     const renderNow = () => {
@@ -249,7 +344,7 @@ export function VoidCube({
       }
 
       if (!reducedMotion && !isDragging && now > pauseSpinUntil) {
-        illustration.rotate.y += delta * (variant === "hero" ? 0.24 : 0.12);
+        illustration.rotate.y += delta * (variant === "hero" ? 0.16 : 0.08);
         illustration.rotate.x +=
           Math.sin(now * 0.00042) * delta * (variant === "hero" ? 0.018 : 0.01);
       }
@@ -260,16 +355,29 @@ export function VoidCube({
     };
 
     const resize = () => {
-      const bounds = canvas.getBoundingClientRect();
+      resizeFrameId = null;
+      const bounds = container.getBoundingClientRect();
+      interactionBounds = bounds;
       const width = Math.max(1, Math.round(bounds.width));
       const height = Math.max(1, Math.round(bounds.height));
+
+      if (width === renderedWidth && height === renderedHeight) return;
+
+      renderedWidth = width;
+      renderedHeight = height;
       illustration.zoom = clamp(Math.min(width, height) / 122, 1.5, 4.6);
       illustration.setSize(width, height);
       renderNow();
     };
 
-    const resizeObserver = new ResizeObserver(resize);
-    resizeObserver.observe(canvas);
+    const requestResize = () => {
+      if (resizeFrameId === null) {
+        resizeFrameId = window.requestAnimationFrame(resize);
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(requestResize);
+    resizeObserver.observe(container);
 
     const intersectionObserver = new IntersectionObserver(
       ([entry]) => {
@@ -303,11 +411,29 @@ export function VoidCube({
       requestFrame();
     };
 
+    const updateInteractionBounds = () => {
+      interactionBounds = container.getBoundingClientRect();
+    };
+
     const updateCursorTarget = (clientX: number, clientY: number) => {
-      const viewportWidth = Math.max(1, window.innerWidth);
-      const viewportHeight = Math.max(1, window.innerHeight);
-      cursorTargetX = clamp((clientX / viewportWidth - 0.5) * 2, -1, 1);
-      cursorTargetY = clamp((clientY / viewportHeight - 0.5) * 2, -1, 1);
+      const bounds = interactionBounds;
+      const isInside =
+        clientX >= bounds.left &&
+        clientX <= bounds.right &&
+        clientY >= bounds.top &&
+        clientY <= bounds.bottom;
+
+      if (!isInside) {
+        cursorTargetX = 0;
+        cursorTargetY = 0;
+        requestFrame();
+        return;
+      }
+
+      const localX = (clientX - bounds.left) / Math.max(1, bounds.width);
+      const localY = (clientY - bounds.top) / Math.max(1, bounds.height);
+      cursorTargetX = clamp((localX - 0.5) * 2, -1, 1);
+      cursorTargetY = clamp((localY - 0.5) * 2, -1, 1);
       requestFrame();
     };
 
@@ -360,9 +486,11 @@ export function VoidCube({
         Math.min(canvas.clientWidth, canvas.clientHeight),
       );
       illustration.rotate.y =
-        startRotationY + ((event.clientX - dragStartX) / displaySize) * TAU;
+        startRotationY +
+        ((event.clientX - dragStartX) / displaySize) * Math.PI * 1.25;
       illustration.rotate.x =
-        startRotationX - ((event.clientY - dragStartY) / displaySize) * TAU;
+        startRotationX -
+        ((event.clientY - dragStartY) / displaySize) * Math.PI * 1.25;
       renderNow();
     };
 
@@ -425,7 +553,11 @@ export function VoidCube({
     canvas.addEventListener("keydown", handleKeyDown);
 
     if (canInteract) {
+      container.addEventListener("pointerenter", updateInteractionBounds);
       window.addEventListener("pointermove", handleCursorMove, {
+        passive: true,
+      });
+      window.addEventListener("scroll", updateInteractionBounds, {
         passive: true,
       });
       window.addEventListener("pointerout", handlePointerOut);
@@ -442,6 +574,7 @@ export function VoidCube({
     return () => {
       updateProgressRef.current = null;
       if (frameId !== null) window.cancelAnimationFrame(frameId);
+      if (resizeFrameId !== null) window.cancelAnimationFrame(resizeFrameId);
       resizeObserver.disconnect();
       intersectionObserver.disconnect();
       document.removeEventListener("visibilitychange", handleVisibility);
@@ -451,8 +584,10 @@ export function VoidCube({
         handlePointerCapabilityChange,
       );
       window.removeEventListener("pointermove", handleCursorMove);
+      window.removeEventListener("scroll", updateInteractionBounds);
       window.removeEventListener("pointerout", handlePointerOut);
       window.removeEventListener("blur", resetCursor);
+      container.removeEventListener("pointerenter", updateInteractionBounds);
       canvas.removeEventListener("keydown", handleKeyDown);
       canvas.removeEventListener("pointerdown", handlePointerDown);
       canvas.removeEventListener("pointermove", handlePointerMove);
@@ -463,17 +598,13 @@ export function VoidCube({
 
   return (
     <div
+      ref={containerRef}
       className={`relative isolate aspect-square w-full select-none ${className}`}
       data-cube-variant={variant}
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-[18%] -z-10 rounded-full bg-[radial-gradient(circle,rgba(25,92,241,0.17)_0%,rgba(12,60,183,0.05)_40%,transparent_72%)] blur-2xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-[12%] -z-10 border border-[#195CF1]/[0.07] [clip-path:polygon(0_0,18%_0,18%_1px,1px_1px,1px_18%,0_18%,0_0,100%_0,100%_18%,calc(100%-1px)_18%,calc(100%-1px)_1px,82%_1px,82%_0,100%_0,100%_100%,82%_100%,82%_calc(100%-1px),calc(100%-1px)_calc(100%-1px),calc(100%-1px)_82%,100%_82%,100%_100%,0_100%,0_82%,1px_82%,1px_calc(100%-1px),18%_calc(100%-1px),18%_100%,0_100%)]"
-      />
+      <div aria-hidden="true" className="cube-environment -z-30" />
+      <div aria-hidden="true" className="cube-floor -z-20" />
+      <div aria-hidden="true" className="cube-contact-shadow -z-10" />
       <canvas
         ref={canvasRef}
         width={640}
@@ -482,10 +613,10 @@ export function VoidCube({
         aria-label={label}
         aria-describedby={descriptionId}
         tabIndex={canInteract ? 0 : undefined}
-        className={`block h-full w-full touch-none bg-transparent outline-none focus-visible:ring-1 focus-visible:ring-[#2F66FF] focus-visible:ring-offset-4 focus-visible:ring-offset-[#050505] ${
+        className={`cube-canvas block h-full w-full bg-transparent outline-none ${
           canInteract
-            ? "cursor-grab data-[dragging=true]:cursor-grabbing"
-            : "cursor-default"
+            ? "touch-pan-y cursor-grab data-[dragging=true]:cursor-grabbing"
+            : "touch-pan-y cursor-default"
         }`}
       >
         Representação tridimensional de oito módulos de obsidiana envolvendo
