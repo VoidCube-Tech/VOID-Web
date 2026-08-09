@@ -32,16 +32,19 @@ test("renderiza a página inicial da VoidCube", async () => {
 
   const html = await response.text();
   assert.match(html, /VoidCube/);
-  assert.match(html, /O invisível/);
-  assert.match(html, /precisa funcionar/);
-  assert.match(html, /Do núcleo à superfície/);
+  assert.match(html, /Empresa de tecnologia/);
+  assert.match(html, /Plataformas B2B/);
+  assert.match(html, /Cloud observável/);
+  assert.match(html, /VoidCube Core/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
 test("renderiza as rotas empresariais", async () => {
   const routes = [
-    ["/sobre", /Engenharia e experiência/],
-    ["/contato", /Traga o problema/],
+    ["/sobre", /empresa de tecnologia B2B/],
+    ["/contato", /Conte o que precisa funcionar/],
+    ["/capacidades", /Engenharia de produto para operações B2B/],
+    ["/trabalho", /Trabalho verificável/],
   ];
 
   for (const [pathname, expected] of routes) {
@@ -52,25 +55,27 @@ test("renderiza as rotas empresariais", async () => {
 });
 
 test("remove a prévia temporária do projeto", async () => {
-  const [page, layout, packageJson, cube, coreStory, globals] =
+  const [page, layout, packageJson, stage, model, coreStory, globals] =
     await Promise.all([
       readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
       readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
       readFile(new URL("../package.json", import.meta.url), "utf8"),
-      readFile(new URL("../app/components/VoidCube.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/components/VoidCubeStage.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/components/voidcube-scene/model.ts", import.meta.url), "utf8"),
       readFile(new URL("../app/components/CoreStory.tsx", import.meta.url), "utf8"),
       readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
     ]);
 
   assert.doesNotMatch(page, /SkeletonPreview|codex-preview/);
   assert.doesNotMatch(layout, /Starter Project|next\/font\/google/);
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
-  assert.match(cube, /window\.addEventListener\("pointermove", handleCursorMove/);
-  assert.match(cube, /prefers-reduced-motion/);
-  assert.match(cube, /goldNodes/);
-  assert.match(cube, /MATERIAL\.cobalt/);
-  assert.match(cube, /smoothstep\(0\.72, 0\.97, storyProgress\)/);
-  assert.match(coreStory, /min-h-\[260svh\]/);
+  assert.doesNotMatch(packageJson, /react-loading-skeleton|zdog/);
+  assert.match(packageJson, /"three"/);
+  assert.match(stage, /IntersectionObserver/);
+  assert.match(stage, /prefers-reduced-motion/);
+  assert.match(stage, /createVoidCubeScene/);
+  assert.match(model, /const core = new THREE\.Mesh\(coreGeometry, materials\.gold\)/);
+  assert.match(model, /const signalNodes = new THREE\.InstancedMesh\(nodeGeometry, materials\.core, 4\)/);
+  assert.match(coreStory, /min-h-\[205svh\]/);
   assert.match(coreStory, /progress=\{storyProgress\}/);
   assert.match(coreStory, /role="progressbar"/);
   assert.match(globals, /--signal-blue:/);

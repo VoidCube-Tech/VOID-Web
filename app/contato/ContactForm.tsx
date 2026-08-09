@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import type { FormEvent } from "react";
+import { useMemo, useState } from "react";
 import { ArrowUpRight, Check, Copy, Mail } from "lucide-react";
 
 type FormValues = {
@@ -8,7 +9,7 @@ type FormValues = {
   email: string;
   company: string;
   projectType: string;
-  budget: string;
+  investmentStatus: string;
   timeline: string;
   objective: string;
 };
@@ -20,13 +21,17 @@ const initialValues: FormValues = {
   email: "",
   company: "",
   projectType: "",
-  budget: "",
+  investmentStatus: "",
   timeline: "",
   objective: "",
 };
 
 const fieldClassName =
-  "mt-2 w-full border-b border-porcelain/20 bg-transparent px-0 py-3 text-base text-porcelain outline-none transition-colors placeholder:text-mineral/55 focus:border-signal-blue focus:ring-0";
+  "mt-2 w-full border-b border-porcelain/20 bg-transparent px-0 py-3 text-base text-porcelain outline-none transition-colors placeholder:text-mineral/55 focus:border-spectral-blue focus:ring-0";
+
+const labelClassName = "text-sm font-semibold text-mineral";
+
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() || "";
 
 function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
@@ -44,7 +49,7 @@ function validate(values: FormValues): FormErrors {
   }
 
   if (!values.projectType) {
-    errors.projectType = "Selecione o tipo de desafio.";
+    errors.projectType = "Selecione a frente mais próxima do desafio.";
   }
 
   if (!values.timeline) {
@@ -69,25 +74,26 @@ export function ContactForm() {
   const briefing = useMemo(
     () =>
       [
-        "NOVO BRIEFING — VOIDCUBE",
+        "BRIEFING INICIAL — VOIDCUBE",
         "",
         `Nome: ${values.name}`,
         `E-mail: ${values.email}`,
         `Empresa: ${values.company}`,
-        `Desafio: ${values.projectType}`,
-        `Investimento: ${values.budget || "A definir"}`,
+        `Frente do desafio: ${values.projectType}`,
+        `Situação do investimento: ${values.investmentStatus || "A definir"}`,
         `Janela de início: ${values.timeline}`,
         "",
-        "Objetivo / contexto:",
+        "Contexto e mudança esperada:",
         values.objective,
       ].join("\n"),
     [values],
   );
 
-  const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL?.trim() ?? "";
-  const emailDraftUrl = `mailto:${contactEmail}?subject=${encodeURIComponent(
-    `Briefing — ${values.company || "novo projeto"}`,
-  )}&body=${encodeURIComponent(briefing)}`;
+  const emailDraftUrl = contactEmail
+    ? `mailto:${contactEmail}?subject=${encodeURIComponent(
+        `Briefing — ${values.company || "novo projeto"}`,
+      )}&body=${encodeURIComponent(briefing)}`
+    : "";
 
   function updateField<K extends keyof FormValues>(
     field: K,
@@ -108,15 +114,13 @@ export function ContactForm() {
     if (Object.keys(nextErrors).length > 0) {
       setPrepared(false);
       requestAnimationFrame(() => {
-        const firstInvalid = form.querySelector<HTMLElement>(
-          "[aria-invalid='true']",
-        );
-        firstInvalid?.focus();
+        form.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
       });
       return;
     }
 
     setPrepared(true);
+    setCopyStatus("idle");
   }
 
   async function copyBriefing() {
@@ -132,10 +136,7 @@ export function ContactForm() {
     <form noValidate onSubmit={handleSubmit} className="space-y-10">
       <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
         <div>
-          <label
-            htmlFor="name"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
+          <label htmlFor="name" className={labelClassName}>
             Seu nome <span className="text-node-gold">*</span>
           </label>
           <input
@@ -150,17 +151,14 @@ export function ContactForm() {
             placeholder="Como podemos chamar você?"
           />
           {errors.name && (
-            <p id="name-error" className="mt-2 text-xs text-node-gold">
+            <p id="name-error" className="mt-2 text-sm text-node-gold">
               {errors.name}
             </p>
           )}
         </div>
 
         <div>
-          <label
-            htmlFor="email"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
+          <label htmlFor="email" className={labelClassName}>
             E-mail de trabalho <span className="text-node-gold">*</span>
           </label>
           <input
@@ -177,17 +175,14 @@ export function ContactForm() {
             placeholder="voce@empresa.com"
           />
           {errors.email && (
-            <p id="email-error" className="mt-2 text-xs text-node-gold">
+            <p id="email-error" className="mt-2 text-sm text-node-gold">
               {errors.email}
             </p>
           )}
         </div>
 
         <div>
-          <label
-            htmlFor="company"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
+          <label htmlFor="company" className={labelClassName}>
             Empresa <span className="text-node-gold">*</span>
           </label>
           <input
@@ -202,18 +197,15 @@ export function ContactForm() {
             placeholder="Nome da organização"
           />
           {errors.company && (
-            <p id="company-error" className="mt-2 text-xs text-node-gold">
+            <p id="company-error" className="mt-2 text-sm text-node-gold">
               {errors.company}
             </p>
           )}
         </div>
 
         <div>
-          <label
-            htmlFor="projectType"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
-            Tipo de desafio <span className="text-node-gold">*</span>
+          <label htmlFor="projectType" className={labelClassName}>
+            Frente do desafio <span className="text-node-gold">*</span>
           </label>
           <select
             id="projectType"
@@ -221,56 +213,63 @@ export function ContactForm() {
             value={values.projectType}
             onChange={(event) => updateField("projectType", event.target.value)}
             aria-invalid={Boolean(errors.projectType)}
-            aria-describedby={errors.projectType ? "project-type-error" : undefined}
+            aria-describedby={
+              errors.projectType ? "project-type-error" : undefined
+            }
             className={`${fieldClassName} cursor-pointer bg-void`}
           >
-            <option value="">Selecione uma frente</option>
-            <option value="Plataforma ou infraestrutura digital">
-              Plataforma ou infraestrutura digital
+            <option value="">Selecione a frente mais próxima</option>
+            <option value="Produto digital novo ou em evolução">
+              Produto digital novo ou em evolução
             </option>
-            <option value="Experiência 3D / WebGL">
-              Experiência 3D / WebGL
+            <option value="Plataforma, API ou integração">
+              Plataforma, API ou integração
             </option>
-            <option value="Produto digital ponta a ponta">
-              Produto digital ponta a ponta
+            <option value="Cloud, confiabilidade ou observabilidade">
+              Cloud, confiabilidade ou observabilidade
             </option>
-            <option value="Diagnóstico técnico e criativo">
-              Diagnóstico técnico e criativo
+            <option value="WebGL, 3D ou visualização">
+              WebGL, 3D ou visualização
+            </option>
+            <option value="Diagnóstico e definição técnica">
+              Diagnóstico e definição técnica
             </option>
           </select>
           {errors.projectType && (
-            <p id="project-type-error" className="mt-2 text-xs text-node-gold">
+            <p id="project-type-error" className="mt-2 text-sm text-node-gold">
               {errors.projectType}
             </p>
           )}
         </div>
 
         <div>
-          <label
-            htmlFor="budget"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
-            Faixa de investimento
+          <label htmlFor="investmentStatus" className={labelClassName}>
+            Situação do investimento
           </label>
           <select
-            id="budget"
-            name="budget"
-            value={values.budget}
-            onChange={(event) => updateField("budget", event.target.value)}
+            id="investmentStatus"
+            name="investmentStatus"
+            value={values.investmentStatus}
+            onChange={(event) =>
+              updateField("investmentStatus", event.target.value)
+            }
             className={`${fieldClassName} cursor-pointer bg-void`}
           >
-            <option value="">Ainda vamos definir</option>
-            <option value="R$ 40 mil — R$ 80 mil">R$ 40 mil — R$ 80 mil</option>
-            <option value="R$ 80 mil — R$ 160 mil">R$ 80 mil — R$ 160 mil</option>
-            <option value="Acima de R$ 160 mil">Acima de R$ 160 mil</option>
+            <option value="">Ainda não definido</option>
+            <option value="Existe uma faixa aprovada">
+              Existe uma faixa aprovada
+            </option>
+            <option value="Está em processo de aprovação">
+              Está em processo de aprovação
+            </option>
+            <option value="Precisa ser estimado em conjunto">
+              Precisa ser estimado em conjunto
+            </option>
           </select>
         </div>
 
         <div>
-          <label
-            htmlFor="timeline"
-            className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-          >
+          <label htmlFor="timeline" className={labelClassName}>
             Janela de início <span className="text-node-gold">*</span>
           </label>
           <select
@@ -283,13 +282,15 @@ export function ContactForm() {
             className={`${fieldClassName} cursor-pointer bg-void`}
           >
             <option value="">Selecione uma janela</option>
-            <option value="Agora / até 30 dias">Agora / até 30 dias</option>
+            <option value="Agora ou nos próximos 30 dias">
+              Agora ou nos próximos 30 dias
+            </option>
             <option value="Em 1 a 3 meses">Em 1 a 3 meses</option>
             <option value="Em 3 a 6 meses">Em 3 a 6 meses</option>
             <option value="Sem data definida">Sem data definida</option>
           </select>
           {errors.timeline && (
-            <p id="timeline-error" className="mt-2 text-xs text-node-gold">
+            <p id="timeline-error" className="mt-2 text-sm text-node-gold">
               {errors.timeline}
             </p>
           )}
@@ -297,49 +298,45 @@ export function ContactForm() {
       </div>
 
       <div>
-        <label
-          htmlFor="objective"
-          className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral"
-        >
+        <label htmlFor="objective" className={labelClassName}>
           O que precisa mudar? <span className="text-node-gold">*</span>
         </label>
         <textarea
           id="objective"
           name="objective"
-          rows={5}
+          rows={6}
           value={values.objective}
           onChange={(event) => updateField("objective", event.target.value)}
           aria-invalid={Boolean(errors.objective)}
-          aria-describedby={errors.objective ? "objective-error" : "objective-hint"}
+          aria-describedby={
+            errors.objective ? "objective-error" : "objective-hint"
+          }
           className={`${fieldClassName} resize-y leading-7`}
-          placeholder="Descreva o contexto, o obstáculo e como você reconhecerá um bom resultado."
+          placeholder="Descreva o contexto, o principal obstáculo e como você reconhecerá um bom resultado."
         />
         <div className="mt-2 flex items-start justify-between gap-4">
           {errors.objective ? (
-            <p id="objective-error" className="text-xs text-node-gold">
+            <p id="objective-error" className="text-sm text-node-gold">
               {errors.objective}
             </p>
           ) : (
-            <p id="objective-hint" className="text-xs text-mineral/70">
+            <p id="objective-hint" className="text-sm text-mineral/75">
               Não é preciso ter um escopo fechado.
             </p>
           )}
-          <span className="shrink-0 font-sans text-[10px] font-medium tabular-nums text-mineral/70">
+          <span className="shrink-0 font-mono text-xs tabular-nums text-mineral/70">
             {values.objective.length} caracteres
           </span>
         </div>
       </div>
 
       <div className="flex flex-col gap-5 border-t border-porcelain/12 pt-7 sm:flex-row sm:items-center sm:justify-between">
-        <p className="max-w-md text-xs leading-5 text-mineral">
-          Este formulário prepara o briefing no seu navegador. Você revisa e
-          escolhe como enviá-lo no próximo passo.
+        <p className="max-w-md text-sm leading-6 text-mineral">
+          Os dados ficam neste navegador. O próximo passo apenas prepara o texto
+          para sua revisão.
         </p>
-        <button
-          type="submit"
-          className="group inline-flex min-h-12 items-center justify-center gap-4 bg-signal-blue px-6 text-sm font-medium uppercase tracking-[0.1em] text-void outline-none transition-colors hover:bg-porcelain focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:ring-offset-4 focus-visible:ring-offset-void"
-        >
-          Preparar briefing
+        <button type="submit" className="button-primary group shrink-0">
+          Revisar briefing
           <ArrowUpRight
             aria-hidden="true"
             className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
@@ -349,33 +346,38 @@ export function ContactForm() {
 
       <div aria-live="polite">
         {prepared && (
-          <section className="border border-signal-blue/60 bg-signal-deep/25 p-5 sm:p-6">
+          <section className="border border-signal-blue/55 bg-signal-deep/20 p-5 sm:p-6">
             <div className="flex items-start gap-4">
-              <span className="mt-0.5 grid h-7 w-7 shrink-0 place-items-center bg-node-gold text-void">
+              <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center bg-node-gold text-void">
                 <Check aria-hidden="true" className="h-4 w-4" />
               </span>
               <div>
-                <h3 className="text-lg font-medium">Briefing preparado.</h3>
+                <h3 className="text-lg font-semibold">Briefing pronto para revisão.</h3>
                 <p className="mt-2 max-w-xl text-sm leading-6 text-mineral">
-                  Nenhuma mensagem foi enviada ainda. Abra um rascunho no seu
-                  aplicativo de e-mail ou copie o texto para usar no canal que
-                  preferir.
+                  Nenhuma mensagem foi enviada. Revise o conteúdo abaixo e
+                  escolha como deseja compartilhá-lo.
                 </p>
               </div>
             </div>
 
+            <pre className="mt-6 max-h-80 overflow-auto whitespace-pre-wrap border border-porcelain/12 bg-void/55 p-4 font-mono text-xs leading-6 text-mineral">
+              {briefing}
+            </pre>
+
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={emailDraftUrl}
-                className="inline-flex min-h-11 items-center justify-center gap-3 bg-porcelain px-5 text-xs font-medium uppercase tracking-[0.1em] text-void outline-none transition-colors hover:bg-signal-blue focus-visible:ring-2 focus-visible:ring-signal-blue focus-visible:ring-offset-2 focus-visible:ring-offset-basalt"
-              >
-                <Mail aria-hidden="true" className="h-4 w-4" />
-                Abrir rascunho no e-mail
-              </a>
+              {emailDraftUrl ? (
+                <a
+                  href={emailDraftUrl}
+                  className="inline-flex min-h-11 items-center justify-center gap-3 bg-porcelain px-5 text-sm font-semibold text-void outline-none transition-colors hover:bg-spectral-blue focus-visible:ring-2 focus-visible:ring-spectral-blue focus-visible:ring-offset-2 focus-visible:ring-offset-basalt"
+                >
+                  <Mail aria-hidden="true" className="h-4 w-4" />
+                  Abrir rascunho de e-mail
+                </a>
+              ) : null}
               <button
                 type="button"
                 onClick={copyBriefing}
-                className="inline-flex min-h-11 items-center justify-center gap-3 border border-porcelain/20 px-5 text-xs font-medium uppercase tracking-[0.1em] text-porcelain outline-none transition-colors hover:border-signal-blue hover:text-signal-blue focus-visible:ring-2 focus-visible:ring-signal-blue"
+                className="inline-flex min-h-11 items-center justify-center gap-3 border border-porcelain/20 px-5 text-sm font-semibold text-porcelain outline-none transition-colors hover:border-spectral-blue hover:text-spectral-blue focus-visible:ring-2 focus-visible:ring-spectral-blue"
               >
                 {copyStatus === "copied" ? (
                   <Check aria-hidden="true" className="h-4 w-4" />
@@ -386,10 +388,17 @@ export function ContactForm() {
               </button>
             </div>
 
+            {!emailDraftUrl ? (
+              <p className="mt-4 text-sm leading-6 text-mineral">
+                O endereço de contato não está configurado neste ambiente. Use
+                a cópia para compartilhar o briefing pelo canal que preferir.
+              </p>
+            ) : null}
+
             {copyStatus === "error" && (
-              <p className="mt-3 text-xs text-node-gold">
-                O navegador bloqueou a cópia. Use o botão de e-mail para abrir
-                o texto completo.
+              <p className="mt-4 text-sm text-node-gold">
+                O navegador bloqueou a cópia automática. O texto permanece
+                visível acima para seleção manual.
               </p>
             )}
           </section>

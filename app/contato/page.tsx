@@ -1,138 +1,130 @@
 import type { Metadata } from "next";
-import { Clock3, Mail, MapPin } from "lucide-react";
+import { CircleCheck, Laptop, MapPin } from "lucide-react";
 import { PageIntro } from "../components/PageIntro";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Fale com a VoidCube",
+  title: "Apresente seu desafio",
   description:
-    "Conte à VoidCube sobre seu desafio de infraestrutura digital, produto ou experiência 3D.",
+    "Converse com a VoidCube sobre produto digital, plataformas e APIs, cloud, observabilidade ou WebGL.",
 };
 
 const briefingNotes = [
   {
-    label: "Contexto",
-    text: "O que existe hoje e por que deixou de ser suficiente?",
+    label: "Contexto atual",
+    text: "O que existe hoje e onde o sistema, produto ou operação começou a limitar o negócio?",
   },
   {
-    label: "Sinal de sucesso",
-    text: "O que usuários ou operação conseguirão fazer melhor?",
+    label: "Mudança esperada",
+    text: "O que clientes, equipe ou operação precisam conseguir fazer melhor?",
   },
   {
-    label: "Restrições",
-    text: "Tecnologia, prazo, integração, segurança ou compliance.",
+    label: "Restrições conhecidas",
+    text: "Tecnologia, integrações, segurança, prazo ou outra condição que já esteja definida.",
   },
   {
-    label: "Campo aberto",
-    text: "O que ainda precisa ser descoberto em conjunto?",
+    label: "Questões em aberto",
+    text: "O que ainda precisa ser investigado antes de existir um escopo responsável?",
   },
 ];
 
 export default function ContatoPage() {
   return (
-    <div className="min-h-screen bg-basalt text-porcelain selection:bg-signal-blue selection:text-void">
+    <div className="min-h-screen bg-void text-porcelain selection:bg-signal-blue selection:text-porcelain">
       <SiteHeader />
 
       <main id="conteudo" className="overflow-hidden">
         <PageIntro
-          index="03"
-          eyebrow="Fale conosco"
-          title={
-            <>
-              Traga o problema.
-              <br />
-              O briefing pode vir depois.
-            </>
-          }
-          description="Conte o que precisa funcionar, mudar ou ganhar forma. Contexto incompleto não é um obstáculo; é o ponto de partida da conversa."
+          eyebrow="Nova conversa"
+          title="Conte o que precisa funcionar."
+          description="Pode ser um produto novo, uma plataforma que precisa evoluir, uma integração crítica ou uma experiência WebGL. O contexto inicial já é suficiente para começar."
         />
 
         <section
           aria-labelledby="briefing-heading"
-          className="mx-auto grid w-full max-w-[1440px] border-x border-porcelain/12 lg:grid-cols-12"
+          className="section-shell grid border-x border-porcelain/12 lg:grid-cols-12"
         >
-          <aside className="border-b border-porcelain/12 bg-signal-deep/15 lg:col-span-4 lg:border-b-0 lg:border-r">
-            <div className="p-6 sm:p-10 lg:sticky lg:top-20 lg:p-12">
-              <p className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-node-gold">
-                Antes de escrever
-              </p>
+          <aside className="border-b border-porcelain/12 bg-signal-deep/10 lg:col-span-4 lg:border-b-0 lg:border-r">
+            <div className="p-6 sm:p-10 lg:sticky lg:top-24 lg:p-12">
+              <p className="eyebrow">Para orientar a conversa</p>
               <h2
                 id="briefing-heading"
-                className="mt-5 font-display text-3xl font-medium leading-tight tracking-[-0.035em]"
+                className="mt-5 text-balance font-display text-3xl font-medium leading-tight tracking-[-0.035em]"
               >
-                Um bom briefing cabe em quatro sinais.
+                Um bom ponto de partida responde a quatro perguntas.
               </h2>
 
-              <ol className="mt-10 border-t border-porcelain/12">
-                {briefingNotes.map((note, index) => (
+              <ul className="mt-10 border-t border-porcelain/12">
+                {briefingNotes.map((note) => (
                   <li
                     key={note.label}
-                    className="grid grid-cols-[2rem_1fr] gap-4 border-b border-porcelain/12 py-5"
+                    className="border-b border-porcelain/12 py-5"
                   >
-                    <span className="font-sans text-[10px] font-medium tabular-nums text-node-gold">
-                      0{index + 1}
-                    </span>
-                    <div>
-                      <h3 className="text-sm font-medium">{note.label}</h3>
-                      <p className="mt-1 text-xs leading-5 text-mineral">
-                        {note.text}
-                      </p>
-                    </div>
+                    <h3 className="text-base font-semibold text-porcelain">
+                      {note.label}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-mineral">
+                      {note.text}
+                    </p>
                   </li>
                 ))}
-              </ol>
+              </ul>
 
-              <div className="mt-10 space-y-4 font-sans text-[10px] font-medium uppercase leading-5 tracking-[0.12em] text-mineral">
+              <div className="mt-10 space-y-5 border-t border-porcelain/12 pt-6 text-sm leading-6 text-mineral">
                 <p className="flex items-start gap-3">
-                  <Clock3
+                  <Laptop
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
+                    className="mt-0.5 h-5 w-5 shrink-0 text-spectral-blue"
                   />
-                  Briefing preparado no seu navegador
+                  O formulário prepara o briefing apenas no seu navegador.
                 </p>
                 <p className="flex items-start gap-3">
                   <MapPin
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
+                    className="mt-0.5 h-5 w-5 shrink-0 text-spectral-blue"
                   />
-                  Operação distribuída / Brasil
+                  Operação distribuída no Brasil.
                 </p>
                 <p className="flex items-start gap-3">
-                  <Mail
+                  <CircleCheck
                     aria-hidden="true"
-                    className="mt-0.5 h-4 w-4 shrink-0 text-signal-blue"
+                    className="mt-0.5 h-5 w-5 shrink-0 text-spectral-blue"
                   />
-                  Você escolhe o destinatário antes do envio
+                  Nenhuma mensagem é enviada sem uma ação explícita sua.
                 </p>
               </div>
             </div>
           </aside>
 
           <div className="p-6 sm:p-10 lg:col-span-8 lg:p-12 xl:p-16">
-            <div className="mb-12 flex items-center justify-between border-b border-porcelain/12 pb-5">
-              <p className="font-sans text-[10px] font-medium uppercase tracking-[0.14em] text-mineral">
-                Briefing inicial / VC-F01
-              </p>
-              <span className="font-sans text-[10px] font-medium uppercase tracking-[0.12em] text-node-gold">
-                * obrigatório
-              </span>
+            <div className="mb-12 flex flex-col gap-3 border-b border-porcelain/12 pb-5 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-porcelain">
+                  Briefing inicial
+                </p>
+                <p className="mt-1 text-sm text-mineral">
+                  Leva poucos minutos e permanece no seu dispositivo.
+                </p>
+              </div>
+              <span className="text-sm text-node-gold">* campo obrigatório</span>
             </div>
             <ContactForm />
           </div>
         </section>
 
-        <section className="mx-auto grid w-full max-w-[1440px] border-x border-y border-porcelain/12 lg:grid-cols-12">
+        <section className="section-shell grid border-x border-y border-porcelain/12 lg:grid-cols-12">
           <div className="p-6 sm:p-10 lg:col-span-4 lg:border-r lg:border-porcelain/12 lg:p-12">
-            <p className="font-sans text-[10px] font-medium uppercase tracking-[0.16em] text-signal-blue">
-              Compatibilidade primeiro
+            <p className="text-sm font-medium tracking-[0.06em] text-spectral-blue">
+              Compatibilidade antes da proposta
             </p>
           </div>
           <div className="p-6 pt-0 sm:p-10 sm:pt-0 lg:col-span-8 lg:p-12">
-            <p className="max-w-3xl text-2xl leading-9 tracking-[-0.025em] sm:text-3xl sm:leading-10">
-              Se não formos o time certo, diremos cedo. Uma boa primeira
-              conversa também pode terminar em uma direção mais clara.
+            <p className="max-w-3xl text-balance font-display text-2xl leading-9 tracking-[-0.025em] sm:text-3xl sm:leading-10">
+              A primeira conversa serve para entender o problema e verificar se
+              a VoidCube é o time adequado. Se não for, isso será dito cedo e
+              com clareza.
             </p>
           </div>
         </section>

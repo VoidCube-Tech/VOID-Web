@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
-import "@fontsource-variable/antonio/wght.css";
-import "@fontsource-variable/public-sans/wght.css";
+import "@fontsource-variable/geologica/wght.css";
+import "@fontsource-variable/source-sans-3/wght.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-mono/500.css";
 import "./globals.css";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,11 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(`${protocol}://${host}`),
     title: {
-      default: "VoidCube — Estrutura para operar. Presença para marcar.",
+      default: "VoidCube — Engenharia de produto, cloud e WebGL",
       template: "%s — VoidCube",
     },
     description:
-      "Infraestrutura digital, plataformas e experiências 3D construídas no mesmo núcleo.",
+      "A VoidCube projeta, constrói e opera plataformas B2B, APIs, infraestrutura cloud e experiências WebGL.",
     applicationName: "VoidCube",
     authors: [{ name: "VoidCube" }],
     keywords: [
@@ -30,11 +32,14 @@ export async function generateMetadata(): Promise<Metadata> {
       "experiências 3D",
       "WebGL",
       "cloud",
+      "APIs",
+      "observabilidade",
+      "engenharia de produto",
     ],
     openGraph: {
-      title: "VoidCube — Estrutura para operar. Presença para marcar.",
+      title: "VoidCube — Engenharia de produto, cloud e WebGL",
       description:
-        "Engenharia e experiências imersivas para produtos digitais que precisam funcionar e ser lembrados.",
+        "Sistemas digitais complexos, construídos para operar: plataformas, APIs, cloud, observabilidade e WebGL.",
       type: "website",
       locale: "pt_BR",
       siteName: "VoidCube",
@@ -43,14 +48,15 @@ export async function generateMetadata(): Promise<Metadata> {
           url: "/og.png",
           width: 1536,
           height: 1024,
-          alt: "VoidCube — cubo de obsidiana aberto ao redor de um núcleo dourado.",
+          alt: "VoidCube — sistema modular azul e preto aberto ao redor de um núcleo dourado.",
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: "VoidCube — Estrutura para operar. Presença para marcar.",
-      description: "Infraestrutura digital e experiências 3D no mesmo time.",
+      title: "VoidCube — Engenharia de produto, cloud e WebGL",
+      description:
+        "Plataformas B2B, APIs, infraestrutura cloud e experiências WebGL no mesmo ciclo de engenharia.",
       images: ["/og.png"],
     },
     icons: {
@@ -61,7 +67,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#071A33",
+  themeColor: "#06162F",
   colorScheme: "dark",
 };
 
