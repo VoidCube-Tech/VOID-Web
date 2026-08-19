@@ -1,13 +1,8 @@
 node_modules/
-.next/
-.vinext/
-.wrangler/
 dist/
-.openai/artifacts/
-
+.vite/
 .env
 .env.*
 !.env.example
-
 *.log
-tsconfig.tsbuildinfo
+.DS_Store
