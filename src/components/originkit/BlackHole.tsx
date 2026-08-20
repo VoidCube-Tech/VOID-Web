@@ -11,6 +11,9 @@ type Particle = {
   height: number
   speedOffset: number
   colorIdx: number
+  sizeOffset: number
+  brightness: number
+  arm: number
 }
 
 type Centre = {
@@ -21,6 +24,7 @@ type Centre = {
 
 export type BlackHoleProps = {
   showCenter?: boolean
+  disassemble?: boolean
   centre?: Centre
   particleCount?: number
   particleSize?: number
@@ -54,6 +58,7 @@ const PERSPECTIVE = 1300
 
 function OriginkitBlackHole({
   showCenter = DEFAULTS.showCenter,
+  disassemble = false,
   centre,
   particleCount = DEFAULTS.particleCount,
   particleSize: particleSizeRaw = DEFAULTS.particleSize,
@@ -88,18 +93,30 @@ function OriginkitBlackHole({
   const animationRef = useRef(0)
   const sizeRef = useRef({ w: 600, h: 600 })
   const visibleRef = useRef(true)
+  const disassembleRef = useRef(disassemble)
+  const disassemblyStartedAtRef = useRef(0)
   const resumeRef = useRef<() => void>(() => {})
   const [sizeVersion, setSizeVersion] = useState(0)
+
+  useEffect(() => {
+    if (disassemble && !disassembleRef.current) disassemblyStartedAtRef.current = performance.now()
+    disassembleRef.current = disassemble
+  }, [disassemble])
 
   const initParticles = useCallback((count: number, horizonRadius: number, outerRadiusPx: number, colorsLength: number) => {
     const particles: Particle[] = []
     for (let i = 0; i < count; i++) {
+      const arm = i % 3
+      const radius = horizonRadius + Math.pow(Math.random(), 2.05) * (outerRadiusPx - horizonRadius)
       particles.push({
-        angle: Math.random() * Math.PI * 2,
-        radius: horizonRadius + Math.pow(Math.random(), 2) * (outerRadiusPx - horizonRadius),
-        height: (Math.random() - 0.5) * 16,
-        speedOffset: 0.75 + Math.random() * 0.5,
+        angle: arm * Math.PI * 2 / 3 + radius * 0.038 + (Math.random() - 0.5) * 0.72,
+        radius,
+        height: Math.sin(radius * 0.055 + arm * 2.1) * 4 + (Math.random() - 0.5) * 10,
+        speedOffset: 0.72 + Math.random() * 0.62,
         colorIdx: Math.floor(Math.random() * colorsLength),
+        sizeOffset: 0.62 + Math.random() * 0.86,
+        brightness: 0.58 + Math.random() * 0.42,
+        arm,
       })
     }
     particlesRef.current = particles
@@ -159,7 +176,7 @@ function OriginkitBlackHole({
     let scheduled = false
     let hasStaticFrame = false
 
-    type ProjectedParticle = { x: number; y: number; size: number; alpha: number; z: number; color: string }
+    type ProjectedParticle = { x: number; y: number; size: number; alpha: number; z: number; color: string; coreDensity: number }
 
     const schedule = () => {
       if (!active || scheduled || (reduceMotion && hasStaticFrame)) return
@@ -176,6 +193,20 @@ function OriginkitBlackHole({
 
       const dt = Math.min((now - lastTime) / 16.667, 3)
       lastTime = now
+      const timeline = disassemblyStartedAtRef.current
+        ? Math.min(1, (now - disassemblyStartedAtRef.current) / 2850)
+        : 0
+      const smooth = (value: number) => value * value * (3 - 2 * value)
+      const disassembly = timeline < 0.12
+        ? 0
+        : timeline < 0.43
+          ? smooth((timeline - 0.12) / 0.31)
+          : timeline < 0.58
+            ? 1
+            : timeline < 0.94
+              ? 1 - smooth((timeline - 0.58) / 0.36)
+              : 0
+      if (timeline >= 1) disassemblyStartedAtRef.current = 0
       const { w, h } = sizeRef.current
       const dpr = Math.min(window.devicePixelRatio || 1, 1.5)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
@@ -183,11 +214,12 @@ function OriginkitBlackHole({
       ctx.globalAlpha = foregroundCtx.globalAlpha = 1
 
       ctx.globalCompositeOperation = "destination-out"
-      ctx.fillStyle = `rgba(0, 0, 0, ${trailAlpha})`
+      const activeTrailAlpha = Math.min(0.34, trailAlpha + disassembly * 0.055)
+      ctx.fillStyle = `rgba(0, 0, 0, ${activeTrailAlpha})`
       ctx.fillRect(0, 0, w, h)
       ctx.globalCompositeOperation = "source-over"
       foregroundCtx.globalCompositeOperation = "destination-out"
-      foregroundCtx.fillStyle = `rgba(0, 0, 0, ${trailAlpha})`
+      foregroundCtx.fillStyle = `rgba(0, 0, 0, ${activeTrailAlpha})`
       foregroundCtx.fillRect(0, 0, w, h)
       foregroundCtx.globalCompositeOperation = "source-over"
 
@@ -204,19 +236,23 @@ function OriginkitBlackHole({
 
       for (const particle of particlesRef.current) {
         const speedFactor = Math.sqrt(voidRadius / Math.max(particle.radius, 10))
-        particle.angle += orbitSpeed * speedFactor * particle.speedOffset * 0.012 * dt
-        particle.radius -= pullSpeed * speedFactor * particle.speedOffset * dt
+        const organicPulse = 1 + Math.sin(now * 0.0007 + particle.arm * 2.1 + particle.radius * 0.018) * 0.075
+        particle.angle += orbitSpeed * speedFactor * particle.speedOffset * organicPulse * (1 + disassembly * 0.48) * 0.012 * dt
+        particle.radius -= pullSpeed * speedFactor * particle.speedOffset * (0.82 + organicPulse * 0.18) * dt
 
         if (particle.radius < voidRadius) {
           particle.radius = voidRadius + 0.7 * (outerRadiusPx - voidRadius) + Math.random() * 0.3 * (outerRadiusPx - voidRadius)
-          particle.angle = Math.random() * Math.PI * 2
-          particle.height = (Math.random() - 0.5) * 16
+          particle.angle = particle.arm * Math.PI * 2 / 3 + particle.radius * 0.038 + (Math.random() - 0.5) * 0.72
+          particle.height = Math.sin(particle.radius * 0.055 + particle.arm * 2.1) * 4 + (Math.random() - 0.5) * 10
           continue
         }
 
-        const xBase = particle.radius * Math.cos(particle.angle)
-        const yBase = particle.height
-        const zBase = particle.radius * Math.sin(particle.angle)
+        const radialProgress = Math.max(0, Math.min(1, (particle.radius - voidRadius) / Math.max(1, outerRadiusPx - voidRadius)))
+        const renderedRadius = particle.radius * (1 + disassembly * (0.06 + radialProgress * 0.13))
+        const renderedAngle = particle.angle + disassembly * ((particle.arm - 1) * 0.16 + Math.sin(particle.radius * 0.04) * 0.055)
+        const xBase = renderedRadius * Math.cos(renderedAngle)
+        const yBase = particle.height + Math.sin(renderedAngle * 2 + particle.radius * 0.025) * 3.5 + disassembly * (particle.arm - 1) * 7
+        const zBase = renderedRadius * Math.sin(renderedAngle)
         const x1 = xBase
         const y1 = yBase * Math.cos(tiltRad) + zBase * Math.sin(tiltRad)
         const z1 = -yBase * Math.sin(tiltRad) + zBase * Math.cos(tiltRad)
@@ -227,13 +263,15 @@ function OriginkitBlackHole({
         // size, opacity and foreground/background ordering.
         const depthScale = PERSPECTIVE / (PERSPECTIVE + z1)
 
+        const coreDensity = 1 - radialProgress
         const projected = {
           x: x3d,
           y: y3d,
-          size: Math.max(0.3, particleSize * depthScale),
-          alpha: Math.max(0.35, 1 - ((z1 + outerRadiusPx) / (2 * outerRadiusPx)) * 0.45),
+          size: Math.max(0.24, particleSize * depthScale * particle.sizeOffset * (0.62 + coreDensity * 0.72)),
+          alpha: Math.max(0.1, (1 - ((z1 + outerRadiusPx) / (2 * outerRadiusPx)) * 0.48) * particle.brightness * (0.62 + coreDensity * 0.5) * (1 - disassembly * 0.3)),
           z: z1,
           color: colors[particle.colorIdx % Math.max(1, colors.length)] || "#ffffff",
+          coreDensity,
         }
         projectedSumX += x3d
         projectedSumY += y3d
@@ -247,6 +285,7 @@ function OriginkitBlackHole({
       // correction so the disk cannot drift away from the cube.
       const opticalOffsetX = projectedCount ? projectedSumX / projectedCount : 0
       const opticalOffsetY = projectedCount ? projectedSumY / projectedCount : 0
+      ctx.globalCompositeOperation = "lighter"
       for (const particle of backgroundParticles) {
         particle.x = centerX + particle.x - opticalOffsetX
         particle.y = centerY + particle.y - opticalOffsetY
@@ -256,9 +295,92 @@ function OriginkitBlackHole({
         particle.y = centerY + particle.y - opticalOffsetY
       }
 
+      const projectFieldPoint = (radius: number, angle: number, height = 0) => {
+        const fieldRadius = radius * (1 + disassembly * (0.07 + radius / Math.max(1, outerRadiusPx) * 0.1))
+        const fieldAngle = angle + disassembly * Math.sin(radius * 0.035) * 0.08
+        const xBase = fieldRadius * Math.cos(fieldAngle)
+        const zBase = fieldRadius * Math.sin(fieldAngle)
+        const y1 = height * Math.cos(tiltRad) + zBase * Math.sin(tiltRad)
+        const z1 = -height * Math.sin(tiltRad) + zBase * Math.cos(tiltRad)
+        const x3d = xBase * Math.cos(sidewaysRad) - y1 * Math.sin(sidewaysRad)
+        const y3d = xBase * Math.sin(sidewaysRad) + y1 * Math.cos(sidewaysRad)
+        return { x: centerX + x3d - opticalOffsetX, y: centerY + y3d - opticalOffsetY, z: z1 }
+      }
+
+      // Vector field beneath the particle mass. Spiral guides communicate
+      // attraction; partial rings add layered velocity and orbital depth.
+      ctx.save()
+      ctx.globalCompositeOperation = "lighter"
+      const nucleusGlow = ctx.createRadialGradient(centerX, centerY, voidRadius * 0.22, centerX, centerY, voidRadius * 2.7)
+      nucleusGlow.addColorStop(0, "rgba(212, 243, 255, .075)")
+      nucleusGlow.addColorStop(0.3, "rgba(36, 183, 255, .046)")
+      nucleusGlow.addColorStop(1, "rgba(9, 94, 215, 0)")
+      ctx.fillStyle = nucleusGlow
+      ctx.beginPath()
+      ctx.arc(centerX, centerY, voidRadius * 2.7, 0, Math.PI * 2)
+      ctx.fill()
+
+      // Six fine filaments sit beneath the three denser particle arms. The
+      // additional paths increase perceived energy without doubling the
+      // particle simulation cost.
+      for (let arm = 0; arm < 6; arm++) {
+        ctx.beginPath()
+        for (let step = 0; step <= 84; step++) {
+          const radialProgress = step / 84
+          const radius = outerRadiusPx - radialProgress * (outerRadiusPx - voidRadius - 4)
+          const angle = arm * Math.PI * 2 / 6 + radius * 0.038 + now * 0.00034 * (1 + arm * 0.045)
+          const point = projectFieldPoint(radius, angle, Math.sin(angle * 2.2) * 2.2)
+          if (step === 0) ctx.moveTo(point.x, point.y)
+          else ctx.lineTo(point.x, point.y)
+        }
+        ctx.globalAlpha = (0.032 + (arm % 3) * 0.005) * (1 - disassembly * 0.28)
+        ctx.strokeStyle = arm % 3 === 1 ? "#b6e9ff" : "#279dff"
+        ctx.lineWidth = arm % 3 === 1 ? 0.84 : 0.62
+        ctx.stroke()
+      }
+
+      for (let ring = 0; ring < 6; ring++) {
+        const radius = voidRadius + (outerRadiusPx - voidRadius) * (0.16 + ring * 0.13)
+        const phase = now * 0.00022 * (ring % 2 ? -1 : 1) * (1.35 - ring * 0.12)
+        ctx.beginPath()
+        for (let step = 0; step <= 64; step++) {
+          const angle = phase + step / 64 * Math.PI * 1.62
+          const point = projectFieldPoint(radius, angle, Math.sin(angle * 3 + ring) * (1.2 + ring * 0.45))
+          if (step === 0) ctx.moveTo(point.x, point.y)
+          else ctx.lineTo(point.x, point.y)
+        }
+        ctx.globalAlpha = (0.02 + (5 - ring) * 0.0045) * (1 - disassembly * 0.28)
+        ctx.strokeStyle = ring === 0 ? "#dcf5ff" : "#4ab8ff"
+        ctx.lineWidth = ring === 0 ? 1.05 : 0.65
+        ctx.stroke()
+      }
+
+      // A crisp inner photon ring anchors the orbit around the cube instead
+      // of letting the brightest mass dissolve into an undirected glow.
+      ctx.beginPath()
+      for (let step = 0; step <= 96; step++) {
+        const angle = now * 0.00048 + step / 96 * Math.PI * 2
+        const radius = voidRadius * (1.13 + Math.sin(angle * 3 + now * 0.0012) * 0.025)
+        const point = projectFieldPoint(radius, angle)
+        if (step === 0) ctx.moveTo(point.x, point.y)
+        else ctx.lineTo(point.x, point.y)
+      }
+      ctx.globalAlpha = 0.15 * (1 - disassembly * 0.38)
+      ctx.strokeStyle = "#bdefff"
+      ctx.lineWidth = 0.82
+      ctx.stroke()
+      ctx.restore()
+
       backgroundParticles.sort((a, b) => b.z - a.z)
       foregroundParticles.sort((a, b) => b.z - a.z)
       for (const particle of backgroundParticles) {
+        if (particle.coreDensity > 0.38) {
+          ctx.globalAlpha = particle.alpha * particle.coreDensity * 0.16
+          ctx.fillStyle = particle.color
+          ctx.beginPath()
+          ctx.arc(particle.x, particle.y, particle.size * (2.1 + particle.coreDensity), 0, Math.PI * 2)
+          ctx.fill()
+        }
         ctx.globalAlpha = particle.alpha
         ctx.fillStyle = particle.color
         ctx.beginPath()
@@ -266,6 +388,7 @@ function OriginkitBlackHole({
         ctx.fill()
       }
       ctx.globalAlpha = 1
+      ctx.globalCompositeOperation = "source-over"
 
       if (showCenter) {
         const sphere = ctx.createRadialGradient(centerX - voidRadius * 0.25, centerY - voidRadius * 0.3, voidRadius * 0.05, centerX, centerY, voidRadius)
@@ -288,14 +411,26 @@ function OriginkitBlackHole({
         ctx.fill()
       }
 
+      foregroundCtx.globalCompositeOperation = "lighter"
       for (const particle of foregroundParticles) {
-        foregroundCtx.globalAlpha = particle.alpha
+        const distanceFromCore = Math.hypot(particle.x - centerX, particle.y - centerY)
+        const clarity = Math.max(0, Math.min(1, (distanceFromCore - voidRadius * 0.72) / (voidRadius * 0.92)))
+        const frontAlpha = particle.alpha * (0.14 + clarity * 0.86)
+        if (particle.coreDensity > 0.42 && clarity > 0.28) {
+          foregroundCtx.globalAlpha = frontAlpha * particle.coreDensity * 0.13
+          foregroundCtx.fillStyle = particle.color
+          foregroundCtx.beginPath()
+          foregroundCtx.arc(particle.x, particle.y, particle.size * (2 + particle.coreDensity), 0, Math.PI * 2)
+          foregroundCtx.fill()
+        }
+        foregroundCtx.globalAlpha = frontAlpha
         foregroundCtx.fillStyle = particle.color
         foregroundCtx.beginPath()
         foregroundCtx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
         foregroundCtx.fill()
       }
       foregroundCtx.globalAlpha = 1
+      foregroundCtx.globalCompositeOperation = "source-over"
       hasStaticFrame = true
       schedule()
     }
