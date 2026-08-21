@@ -8,7 +8,7 @@ export default function ContactPage() {
   const [lead, setLead] = useState(initialLead)
   const [errors, setErrors] = useState({})
   const [status, setStatus] = useState('idle')
-  usePageMeta('Contato — Void Systems', 'Conte o processo que sua equipe precisa organizar. Inicie um projeto com a Void Systems.')
+  usePageMeta('VoidCube - Contato', 'Conte o processo que sua equipe precisa organizar. Inicie um projeto com a VoidCube.')
 
   const update = event => {
     const { name, value } = event.target

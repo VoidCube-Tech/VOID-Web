@@ -35,6 +35,6 @@ function FinalCTA() {
 }
 
 export default function HomePage() {
-  usePageMeta('Void Systems — Software para operações reais', 'Engenharia de software, automações e integrações para operações que não podem parar.')
+  usePageMeta('VoidCube', 'Engenharia de software, automações e integrações para operações que não podem parar.')
   return <div id="inicio" className="home-page"><CoreStory/><Projects/><Method/><JournalPreview/><FinalCTA/></div>
 }

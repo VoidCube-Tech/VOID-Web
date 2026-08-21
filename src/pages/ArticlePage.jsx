@@ -7,7 +7,7 @@ import { usePageMeta } from '../hooks/usePageMeta'
 export default function ArticlePage() {
   const { slug } = useParams()
   const item = journalItems.find(entry => entry.slug === slug)
-  usePageMeta(item ? `${item.title} — VOID/LOG` : 'Conteúdo não encontrado — VOID/LOG', item?.summary || 'Conteúdo não encontrado.')
+  usePageMeta(item ? `${item.title} - VoidCube` : 'Conteúdo não encontrado - VoidCube', item?.summary || 'Conteúdo não encontrado.')
   if (!item) return <Navigate to="/blog" replace />
   const related = journalItems.find(entry => entry.slug !== item.slug && entry.category === item.category) || journalItems.find(entry => entry.slug !== item.slug)
 

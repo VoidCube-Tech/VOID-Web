@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import SiteLayout from './components/layout/SiteLayout'
 import AboutPage from './pages/AboutPage'
 import ArticlePage from './pages/ArticlePage'
@@ -10,14 +10,14 @@ import HomePage from './pages/HomePage'
 import './styles.css'
 
 function App() {
-  return <BrowserRouter><Routes><Route element={<SiteLayout/>}>
+  return <HashRouter><Routes><Route element={<SiteLayout/>}>
     <Route path="/" element={<HomePage/>}/>
     <Route path="/blog" element={<BlogPage/>}/>
     <Route path="/blog/:slug" element={<ArticlePage/>}/>
     <Route path="/sobre" element={<AboutPage/>}/>
     <Route path="/contato" element={<ContactPage/>}/>
     <Route path="*" element={<Navigate to="/" replace/>}/>
-  </Route></Routes></BrowserRouter>
+  </Route></Routes></HashRouter>
 }
 
 const rootElement = document.getElementById('root')
