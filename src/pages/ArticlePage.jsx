@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { journalItems } from '../content/siteContent'
-import { SkiperLink } from '../components/skiper/AnimatedLink'
+import { ArrowIcon } from '../components/Icons'
 import { usePageMeta } from '../hooks/usePageMeta'
 
 export default function ArticlePage() {
@@ -12,8 +12,22 @@ export default function ArticlePage() {
   const related = journalItems.find(entry => entry.slug !== item.slug && entry.category === item.category) || journalItems.find(entry => entry.slug !== item.slug)
 
   return <article className="article-page">
-    <header className="article-hero" data-header-theme="dark"><div className="article-meta"><span>{item.category}</span><span>{item.date}</span><span>{item.read}</span></div><h1>{item.title}</h1><p>{item.summary}</p>{item.type === 'project' && <div className="article-metric"><strong>{item.result}</strong><span>{item.metricLabel}</span></div>}</header>
-    <div className="article-body" data-header-theme="light"><aside><span>VOID/LOG</span><Link to="/blog">Voltar ao caderno</Link></aside><div>{item.sections.map(([title, text]) => <section key={title}><h2>{title}</h2><p>{text}</p></section>)}{item.tags && <div className="article-tags">{item.tags.map(tag => <span key={tag}>{tag}</span>)}</div>}</div></div>
-    {related && <section className="related-entry" data-header-theme="dark"><span className="kicker">Continuar lendo</span><h2>{related.title}</h2><SkiperLink href={`/blog/${related.slug}`} variant="line">Abrir conteúdo relacionado</SkiperLink></section>}
+    <header className="article-hero page-hero">
+      <div className="page-hero__label" data-reveal><Link to="/blog">← Voltar ao VOID/LOG</Link><p>{item.category}<br/>{item.date}<br/>{item.read}</p></div>
+      <div className="article-hero__copy" data-reveal><h1>{item.title}</h1><p>{item.summary}</p></div>
+      {item.type === 'project' && <div className="article-metric" data-reveal><strong>{item.result}</strong><span>{item.metricLabel}</span></div>}
+    </header>
+
+    <div className="article-content section-light">
+      <aside data-reveal><span>Leitura / {item.read}</span><p>Uma nota direta sobre decisões, limites e resultados observados no trabalho.</p></aside>
+      <div className="article-body">
+        {item.sections.map(([title, text], index) => <section key={title} data-reveal><span>{String(index + 1).padStart(2, '0')}</span><h2>{title}</h2><p>{text}</p></section>)}
+        {item.tags && <div className="article-tags" data-reveal>{item.tags.map(tag => <span key={tag}>{tag}</span>)}</div>}
+      </div>
+    </div>
+
+    {related && <section className="related-entry section-dark">
+      <span className="section-index">Continuar lendo</span><h2>{related.title}</h2><Link className="button button--solid" to={`/blog/${related.slug}`}>Abrir conteúdo <ArrowIcon /></Link>
+    </section>}
   </article>
 }

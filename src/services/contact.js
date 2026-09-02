@@ -2,28 +2,35 @@ export const contactConfig = {
   destinationNumber: (import.meta.env.VITE_CONTACT_DESTINATION_NUMBER || '').replace(/\D/g, ''),
 }
 
+export const contactServiceLabels = {
+  systems: 'Sistema sob medida',
+  automation: 'Automação de processos',
+  integrations: 'Integrações confiáveis',
+  discovery: 'Mapeamento inicial',
+}
+
 export function validateContact(lead) {
   const values = {
-    name: lead.name.trim().slice(0, 80),
-    phone: lead.phone.trim().slice(0, 30),
-    company: lead.company.trim().slice(0, 100),
+    service: contactServiceLabels[lead.service] ? lead.service : '',
+    name: lead.name?.trim().slice(0, 80) || '',
+    company: lead.company?.trim().slice(0, 100) || '',
     message: lead.message?.trim().slice(0, 800) || '',
   }
   const errors = {}
+  if (!values.service) errors.service = 'Escolha uma frente ou marque “Quero mapear primeiro”.'
   if (values.name.length < 2) errors.name = 'Informe seu nome.'
-  if (values.phone.replace(/\D/g, '').length < 8) errors.phone = 'Informe um número válido.'
   if (values.company.length < 2) errors.company = 'Informe sua empresa.'
   return { values, errors, valid: Object.keys(errors).length === 0 }
 }
 
 export function buildContactMessage(lead) {
   return [
-    'NOVO CONTATO — VOID/SYSTEMS', '',
+    'NOVO CONTATO — VOIDCUBE', '',
     `Nome: ${lead.name}`,
-    `Telefone: ${lead.phone}`,
     `Empresa: ${lead.company}`,
+    `Frente: ${contactServiceLabels[lead.service] || 'Mapeamento inicial'}`,
     lead.message ? `Necessidade: ${lead.message}` : null,
-    '', 'Origem: Site VOID/SYSTEMS',
+    '', 'Origem: Site VOIDCUBE',
   ].filter(line => line !== null).join('\n')
 }
 

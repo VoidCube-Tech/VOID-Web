@@ -79,14 +79,18 @@ export const posts = [
 export const journalItems = [...posts, ...projects]
 
 export const aboutContent = {
-  eyebrow: 'Sobre / Void',
+  eyebrow: 'Sobre / VoidCube · Pará',
   headline: ['Engenharia não começa', 'no código.', 'Começa entendendo', 'o que precisa funcionar.'],
-  manifesto: '[TEXTO INSTITUCIONAL A DEFINIR]',
-  introduction: 'A forma de trabalhar já está definida: entrar perto da operação, tornar decisões explícitas e continuar responsável pelo que chega à produção.',
+  manifesto: 'Tecnologia com sotaque local, rigor de produto e alcance nacional.',
+  introduction: 'Entre Belém e Ananindeua, transformamos processos reais em software confiável. Trabalhamos perto da operação, tornamos decisões explícitas e continuamos responsáveis pelo que chega à produção.',
   principles: [
     { verb: 'Ouvir', title: 'Começar pelo processo', text: 'Ferramentas vêm depois do diagnóstico.' },
     { verb: 'Testar', title: 'Projetar para o imprevisto', text: 'O sistema precisa funcionar fora do caminho feliz.' },
     { verb: 'Provar', title: 'Medir no trabalho real', text: 'A entrega termina quando o resultado aparece.' },
   ],
-  values: ['Perseverança', 'Confiança', 'Lealdade'],
+  values: [
+    { name: 'Clareza antes do código', text: 'Tornamos decisões, limites e responsabilidades visíveis antes de transformar o processo em software.' },
+    { name: 'Operação junto do produto', text: 'Quem executa o trabalho participa do diagnóstico, dos testes e da validação do que entra em produção.' },
+    { name: 'Responsabilidade contínua', text: 'Entrega não encerra o vínculo: observamos, medimos e corrigimos o que precisa continuar funcionando.' },
+  ],
 }

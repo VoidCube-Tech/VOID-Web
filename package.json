@@ -1,5 +1,5 @@
 {
-  "name": "void-systems",
+  "name": "voidcube",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -10,13 +10,11 @@
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",
-    "framer-motion": "^13.1.0",
-    "gsap": "^3.15.0",
-    "lucide-react": "^0.468.0",
+    "animejs": "^4.5.0",
     "react": "latest",
     "react-dom": "latest",
     "react-router-dom": "^7.18.2",
-    "typescript": "latest",
+    "three": "0.170.0",
     "vite": "latest"
   }
 }

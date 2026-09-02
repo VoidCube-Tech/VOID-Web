@@ -1,260 +1,411 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
-import { Braces, Network, Zap } from 'lucide-react'
-import BlackHole from './originkit/BlackHole'
-import RubikParticles from './originkit/RubikParticles'
-import { SkiperLink } from './skiper/AnimatedLink'
-import FoldText from './reactbits/FoldText'
+import React, { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { animate, createScope, onScroll } from 'animejs'
+import { Link } from 'react-router-dom'
+import { ArrowIcon, CapabilityIcon } from './Icons'
 
-const CORE_COLORS = ['#c8edff', '#5d9cff', '#24b7ff']
-const VOID_STATES = ['idle', 'attract', 'process', 'automate', 'connect']
+const BlackHole3D = lazy(() => import('./BlackHole3D'))
 
-function useMediaQuery(query) {
-  const [matches, setMatches] = useState(() => window.matchMedia(query).matches)
-  useEffect(() => {
-    const media = window.matchMedia(query)
-    const update = () => setMatches(media.matches)
-    media.addEventListener('change', update)
-    return () => media.removeEventListener('change', update)
-  }, [query])
-  return matches
-}
-
-const chapters = [
-  {
-    code: 'SYS / 01',
-    eyebrow: 'Sistemas sob medida',
-    title: ['A operação', 'define o', 'software.'],
-    text: 'ERPs, portais e plataformas que seguem o fluxo real da empresa — inclusive quando o processo sai do caminho feliz.',
-    detail: 'Arquitetura web · APIs · Aplicações internas',
-    metric: '01',
-    metricLabel: 'núcleo operacional',
-    icon: Braces,
-    side: 'right',
-  },
-  {
-    code: 'AUT / 02',
-    eyebrow: 'Automação de processos',
-    title: ['Menos tarefas.', 'Mais decisões', 'humanas.'],
-    text: 'Fluxos que conciliam dados, executam o trabalho repetitivo e encaminham cada exceção para a pessoa certa.',
-    detail: 'Financeiro · Operações · Atendimento',
-    metric: '24/7',
-    metricLabel: 'orquestração ativa',
-    icon: Zap,
-    side: 'left',
-  },
-  {
-    code: 'INT / 03',
-    eyebrow: 'Integrações confiáveis',
-    title: ['Cada sistema.', 'Um único', 'movimento.'],
-    text: 'ERP, CRM, pagamentos e logística conectados com rastreabilidade, filas e recuperação segura de falhas.',
-    detail: 'REST · Webhooks · Eventos · ETL',
-    metric: '42ms',
-    metricLabel: 'latência do núcleo',
-    icon: Network,
-    side: 'right',
-  },
-]
-
-function CoreScene({ voidState, particleCount, disassemble = false }) {
-  return <div className="story-core" role="img" aria-label="Cubo modular orbitando no centro de uma singularidade digital">
-    <div className="story-core__blackhole">
-      <BlackHole
-        showCenter={false}
-        disassemble={disassemble && voidState === 'attract'}
-        particleCount={particleCount}
-        particleSize={6.5}
-        colors={CORE_COLORS}
-        outerRadius={88}
-        tilt={19}
-        tiltSideway={158}
-        trail={42}
-        orbitSpeed={3.15}
-        pullSpeed={0.18}
-        centre={{ voidRadius: 70, voidX: 50, voidY: 50 }}
-        style={{ background: 'transparent' }}
-      >
-        <div className="story-core__cube">
-          <RubikParticles
-            color="#54c4ff"
-            cubeGrid={3}
-            dotsPerFace={3}
-            dotSize={2}
-            sizePercent={100}
-            layerMotion={false}
-            disassemble={disassemble && voidState === 'attract'}
-            rotation={{ x: 1.5, y: 1.8, z: 0.8 }}
-          />
-        </div>
-      </BlackHole>
-    </div>
-    <div className="story-core__assembly" aria-hidden="true"><i /><i /><i /></div>
-    <div className="story-core__flow" aria-hidden="true"><i /><i /><i /></div>
-    <div className="story-core__nodes" aria-hidden="true"><i /><i /><i /><i /></div>
+function HeroModelFallback() {
+  return <div
+    className="hero-model-fallback"
+    role="img"
+    aria-label="Cubo tridimensional VoidCube sobre um campo gravitacional azul"
+  >
+    <span className="hero-model-fallback__core" aria-hidden="true" />
   </div>
 }
 
-function Metric({ value, label, active }) {
-  const ref = useRef(null)
+class VisualErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { failed: false }
+  }
 
-  useEffect(() => {
-    if (!active || value !== '42ms' || !ref.current) return undefined
-    const node = ref.current
-    const startedAt = performance.now()
-    let frame
-    const update = now => {
-      const progress = Math.min(1, (now - startedAt) / 680)
-      node.textContent = `${Math.round(42 * (1 - Math.pow(1 - progress, 3)))}ms`
-      if (progress < 1) frame = requestAnimationFrame(update)
-    }
-    frame = requestAnimationFrame(update)
-    return () => cancelAnimationFrame(frame)
-  }, [active, value])
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
 
-  return <div><strong ref={ref}>{value}</strong><small>{label}</small></div>
+  componentDidCatch(error) {
+    console.warn('A cena 3D não carregou; usando o estado visual estático.', error)
+  }
+
+  render() {
+    return this.state.failed ? this.props.fallback : this.props.children
+  }
 }
 
-function MobileCoreStory({ particleCount }) {
-  return <section id="solucoes" className="core-story-mobile" data-header-theme="dark">
-    <div className="mobile-core-hero"><div className="mobile-core-copy"><div className="eyebrow"><span className="live-dot" /> Engenharia de software · Brasil</div><h1>Complexidade<br/>entra.<em>Fluxo sai.</em></h1><p>Projetamos sistemas, automações e integrações que transformam operações fragmentadas em estruturas claras, rastreáveis e prontas para crescer.</p><SkiperLink className="button primary" href="/contato" variant="fill">Mapear minha operação</SkiperLink></div><div className="mobile-core-scene"><CoreScene voidState="idle" particleCount={particleCount}/></div></div>
-    <div className="mobile-chapters">{chapters.map(chapter => { const Icon = chapter.icon; return <article key={chapter.code}><div><Icon size={14}/>{chapter.eyebrow}</div><h2>{chapter.title.map(line => <span key={line}>{line}</span>)}</h2><p>{chapter.text}</p><div className="mobile-chapter-foot"><span>{chapter.detail}</span><Metric value={chapter.metric} label={chapter.metricLabel} active={false}/></div></article> })}</div>
-  </section>
+function ThreeDimensionalCore({ className = '' }) {
+  return <VisualErrorBoundary fallback={<HeroModelFallback />}>
+    <Suspense fallback={<HeroModelFallback />}>
+      <BlackHole3D className={className} />
+    </Suspense>
+  </VisualErrorBoundary>
 }
 
-function Chapter({ chapter, index, active, replayKey }) {
-  const Icon = chapter.icon
+const capabilities = [
+  {
+    mode: 'system',
+    code: 'SYS / 01',
+    title: 'Sistemas sob medida',
+    text: 'ERPs, portais e plataformas que seguem o fluxo real da empresa — inclusive quando o processo sai do caminho feliz.',
+    detail: 'Arquitetura web · APIs · aplicações internas',
+    signal: 'um núcleo operacional',
+  },
+  {
+    mode: 'automate',
+    code: 'AUT / 02',
+    title: 'Automação de processos',
+    text: 'Fluxos que conciliam dados, executam o trabalho repetitivo e encaminham cada exceção para a pessoa certa.',
+    detail: 'Financeiro · operações · atendimento',
+    signal: 'orquestração contínua',
+  },
+  {
+    mode: 'connect',
+    code: 'INT / 03',
+    title: 'Integrações confiáveis',
+    text: 'ERP, CRM, pagamentos e logística conectados com rastreabilidade, filas e recuperação segura de falhas.',
+    detail: 'REST · webhooks · eventos · ETL',
+    signal: 'falhas observáveis',
+  },
+]
 
-  return <article className={`story-chapter story-chapter--${chapter.side}`} data-chapter={index + 2} data-active={active}>
-    <div className="story-chapter__meta"><span><Icon size={13} /> {chapter.eyebrow}</span></div>
-    <h2>{chapter.title.map((line, lineIndex) => <span key={line}>{active ? <FoldText key={`${replayKey}-${lineIndex}`} text={line} splitBy="line" hinge="top" duration={0.76} stagger={0} delay={0.12 + lineIndex * 0.08} foldAmount={0.38} lift={14} /> : line}</span>)}</h2>
-    <p>{chapter.text}</p>
-    <div className="story-chapter__foot"><span>{chapter.detail}</span><Metric value={chapter.metric} label={chapter.metricLabel} active={active} /></div>
-    <SkiperLink href="/contato" variant="line">Explorar solução</SkiperLink>
-  </article>
+const clamp = value => Math.max(0, Math.min(1, value))
+const lerp = (from, to, amount) => from + (to - from) * amount
+const smoothstep = (from, to, value) => {
+  const amount = clamp((value - from) / Math.max(.0001, to - from))
+  return amount * amount * (3 - 2 * amount)
 }
 
 export default function CoreStory() {
-  const ref = useRef(null)
-  const stickyRef = useRef(null)
-  const reduceMotion = useReducedMotion()
-  const isMobile = useMediaQuery('(max-width: 650px)')
-  const [phase, setPhase] = useState(0)
-  const [revealCycle, setRevealCycle] = useState(0)
-  const phaseRef = useRef(0)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] })
-  const smoothProgress = useSpring(scrollYProgress, { stiffness: 96, damping: 24, mass: 0.38, restDelta: 0.001 })
-  const stage = Math.min(4, Math.floor(phase / 2))
-  const isTransition = reduceMotion ? false : phase % 2 === 1
-  const isSettled = !isTransition
-  const voidState = VOID_STATES[stage]
-  const particleCount = reduceMotion ? 120 : window.innerWidth < 650 ? 300 : window.innerWidth < 1100 || navigator.hardwareConcurrency <= 4 ? 680 : 1350
+  const [heroBeat, setHeroBeat] = useState(0)
+  const [solutionBeat, setSolutionBeat] = useState(0)
+  const [reduceMotion, setReduceMotion] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const storyRef = useRef(null)
+  const heroRef = useRef(null)
+  const heroSceneRef = useRef(null)
+  const solutionsRef = useRef(null)
+  const solutionsSceneRef = useRef(null)
 
   useEffect(() => {
-    const element = stickyRef.current
-    if (!element || reduceMotion) return undefined
-    let frame
-    const updateGravity = event => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const rect = element.getBoundingClientRect()
-        element.style.setProperty('--gravity-x', `${((event.clientX - rect.left) / rect.width) * 100}%`)
-        element.style.setProperty('--gravity-y', `${((event.clientY - rect.top) / rect.height) * 100}%`)
+    const media = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setReduceMotion(media.matches)
+    update()
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  useEffect(() => {
+    const story = storyRef.current
+    const hero = heroRef.current
+    const heroScene = heroSceneRef.current
+    const solutionsTrack = solutionsRef.current
+    const solutionsScene = solutionsSceneRef.current
+    if (!story || !hero || !heroScene || !solutionsTrack || !solutionsScene) return undefined
+
+    const storyState = { progress: 0 }
+    const pointer = { x: 0, y: 0 }
+    const metrics = { storyTravel: 1, heroTravel: 1, solutionsStart: 1, solutionsTravel: 1 }
+    let currentHeroBeat = -2
+    let currentSolutionBeat = -2
+    let pointerAnimation
+    let pointerFrame = 0
+    let pointerEnabled = false
+    let layoutObserver
+    let disposed = false
+
+    const measure = () => {
+      const storyBounds = story.getBoundingClientRect()
+      const trackBounds = solutionsTrack.getBoundingClientRect()
+      metrics.storyTravel = Math.max(1, story.offsetHeight - window.innerHeight)
+      metrics.heroTravel = Math.max(1, hero.offsetHeight - heroScene.offsetHeight)
+      metrics.solutionsStart = trackBounds.top - storyBounds.top
+      metrics.solutionsTravel = Math.max(1, solutionsTrack.offsetHeight - solutionsScene.offsetHeight)
+    }
+
+    const paintHeroPanel = (panel, opacity, x) => {
+      panel.style.setProperty('--beat-opacity', opacity.toFixed(4))
+      panel.style.setProperty('--beat-x', `${x.toFixed(2)}px`)
+      panel.style.setProperty('--beat-scale', (.985 + opacity * .015).toFixed(4))
+    }
+
+    const paintSolutionPanel = (panel, opacity, y) => {
+      panel.style.setProperty('--solution-opacity', opacity.toFixed(4))
+      panel.style.setProperty('--solution-y', `${y.toFixed(2)}px`)
+      panel.style.setProperty('--solution-scale', (.985 + opacity * .015).toFixed(4))
+    }
+
+    const paint = () => {
+      const scrollDistance = storyState.progress * metrics.storyTravel
+      const heroProgress = clamp(scrollDistance / metrics.heroTravel)
+      const solutionsProgress = clamp((scrollDistance - metrics.solutionsStart) / metrics.solutionsTravel)
+      const introTravel = Math.max(1, metrics.solutionsStart - metrics.heroTravel)
+      const introProgress = clamp((scrollDistance - metrics.heroTravel) / introTravel)
+      const heroActive = scrollDistance <= metrics.heroTravel + 1
+      const solutionsActive = scrollDistance >= metrics.solutionsStart - 1
+      const heroMoments = [
+        { id: 0, enter: null, exit: [.3, .42] },
+      ]
+      let visibleHeroBeat = -1
+      let visibleHeroOpacity = -1
+      heroMoments.forEach(({ id, enter, exit }) => {
+        const panel = heroScene.querySelector(`[data-hero-beat="${id}"]`)
+        if (!panel) return
+        const entrance = enter ? smoothstep(enter[0], enter[1], heroProgress) : 1
+        const departure = exit ? smoothstep(exit[0], exit[1], heroProgress) : 0
+        const opacity = heroActive ? entrance * (1 - departure) : 0
+        paintHeroPanel(panel, opacity, 0)
+        if (opacity > visibleHeroOpacity) {
+          visibleHeroOpacity = opacity
+          visibleHeroBeat = id
+        }
       })
+      if (visibleHeroOpacity < .01) visibleHeroBeat = -1
+
+      const solutionMoments = [
+        { enter: [.03, .14], exit: [.22, .28] },
+        { enter: [.34, .42], exit: [.48, .54] },
+        { enter: [.6, .68], exit: [.86, .92] },
+      ]
+      let visibleSolutionBeat = -1
+      solutionMoments.forEach(({ enter, exit }, index) => {
+        const panel = solutionsScene.querySelector(`[data-solution-beat="${index}"]`)
+        if (!panel) return
+        const entrance = enter ? smoothstep(enter[0], enter[1], solutionsProgress) : 1
+        const departure = exit ? smoothstep(exit[0], exit[1], solutionsProgress) : 0
+        const opacity = solutionsActive ? entrance * (1 - departure) : 0
+        const y = (1 - entrance) * 58 - departure * 40
+        paintSolutionPanel(panel, opacity, y)
+        if (opacity > .52) visibleSolutionBeat = index
+      })
+
+      if (visibleHeroBeat !== currentHeroBeat) {
+        currentHeroBeat = visibleHeroBeat
+        setHeroBeat(visibleHeroBeat)
+      }
+      if (visibleSolutionBeat !== currentSolutionBeat) {
+        currentSolutionBeat = visibleSolutionBeat
+        setSolutionBeat(visibleSolutionBeat)
+      }
+
+      const passageSettle = smoothstep(.06, .5, introProgress)
+      const parallaxArrival = smoothstep(.02, .16, solutionsProgress)
+      const parallaxTravel = smoothstep(.16, 1, solutionsProgress)
+
+      const compactLayout = window.innerWidth <= 760
+      const sideOffset = Math.min(20, (320 / Math.max(1, window.innerWidth)) * 100)
+      const passageX = compactLayout ? 0 : Math.min(27, (410 / Math.max(1, window.innerWidth)) * 100)
+      const passageY = compactLayout ? 12 : 6
+      const passageScale = compactLayout ? .6 : .66
+      const passageOpacity = compactLayout ? .82 : .86
+      const solutionY = compactLayout ? 24 : 0
+      const solutionScale = compactLayout ? .62 : .9
+      const settledScale = compactLayout ? .62 : .82
+      const heroFocus = smoothstep(.26, .46, heroProgress)
+      const heroFocusScale = compactLayout ? 1.06 : 1.18
+      let visualX = 0
+      let visualY = 0
+      let visualScale = .94
+      let visualOpacity = 1
+      if (heroActive) {
+        visualX = lerp(sideOffset, 0, heroFocus)
+        visualScale = lerp(.94, heroFocusScale, heroFocus)
+      } else if (!solutionsActive) {
+        visualX = lerp(0, passageX, passageSettle)
+        visualY = lerp(0, passageY, passageSettle)
+        visualScale = lerp(heroFocusScale, passageScale, passageSettle)
+        visualOpacity = lerp(1, passageOpacity, passageSettle)
+      } else if (solutionsActive) {
+        // Cross the viewport only while both adjacent panels are fully hidden.
+        const travelLeft = smoothstep(.28, .34, solutionsProgress)
+        const travelRight = smoothstep(.54, .6, solutionsProgress)
+        const settleCenter = smoothstep(.92, 1, solutionsProgress)
+        const arrivalX = passageX
+        visualX = lerp(lerp(lerp(arrivalX, -sideOffset, travelLeft), sideOffset, travelRight), 0, settleCenter)
+        visualY = lerp(passageY, solutionY, parallaxArrival) + lerp(0, 2, parallaxTravel)
+        const arrivalScale = lerp(passageScale, solutionScale, parallaxArrival)
+        visualScale = lerp(arrivalScale, settledScale, smoothstep(.68, 1, solutionsProgress))
+        visualOpacity = lerp(passageOpacity, 1, parallaxArrival)
+      }
+
+      if (compactLayout) visualX = 0
+
+      const pointerAvailable = solutionsActive && solutionsProgress >= .16
+      if (pointerEnabled !== pointerAvailable) {
+        pointerEnabled = pointerAvailable
+        if (!pointerEnabled) {
+          pointerAnimation?.pause()
+          pointer.x = 0
+          pointer.y = 0
+        }
+      }
+      const pointerWeight = solutionsActive ? smoothstep(.16, .24, solutionsProgress) : 0
+      const pointerX = (pointerEnabled ? pointer.x : 0) * pointerWeight
+      const pointerY = (pointerEnabled ? pointer.y : 0) * pointerWeight
+      story.style.setProperty('--story-visual-x', `${(visualX + pointerX * .35).toFixed(3)}vw`)
+      story.style.setProperty('--story-visual-y', `${(visualY + pointerY * .7).toFixed(3)}vh`)
+      story.style.setProperty('--story-visual-scale', visualScale.toFixed(4))
+      story.style.setProperty('--story-visual-opacity', visualOpacity.toFixed(4))
+      story.style.setProperty('--hero-progress', heroProgress.toFixed(4))
+      story.style.setProperty('--solutions-progress', solutionsProgress.toFixed(4))
+
+      const explodeOut = smoothstep(.38, .64, heroProgress)
+      const assembleBack = smoothstep(.72, .92, heroProgress)
+      const cubeFocus = heroActive ? heroFocus : !solutionsActive ? 1 - passageSettle : 0
+      const focusedCubeScale = compactLayout ? 1.05 : 1.1
+      story.dataset.cubeExplode = (explodeOut * (1 - assembleBack)).toFixed(4)
+      story.dataset.cubeDepth = '0'
+      story.dataset.cubeDescent = '0'
+      story.dataset.cubeScale = lerp(1, focusedCubeScale, cubeFocus).toFixed(4)
+      story.dataset.cubeField = '1'
+      story.dataset.parallaxPhase = heroActive ? 'hero' : solutionsActive && solutionsProgress >= .16 ? 'solutions' : 'passage'
+
+      const activeBeat = solutionsActive ? visibleSolutionBeat : visibleHeroBeat
+      const gravity = activeBeat === 1 ? 'left' : 'right'
+      story.dataset.gravity = gravity
+      heroScene.dataset.gravity = gravity
+      solutionsScene.dataset.gravity = gravity
     }
-    element.addEventListener('pointermove', updateGravity, { passive: true })
+
+    measure()
+    paint()
+    layoutObserver = new ResizeObserver(() => {
+      measure()
+      paint()
+    })
+    ;[hero, heroScene, solutionsTrack, solutionsScene].forEach(element => layoutObserver.observe(element))
+    document.fonts?.ready.then(() => {
+      if (disposed) return
+      measure()
+      paint()
+    })
+
+    const scope = createScope({
+      root: story,
+      mediaQueries: {
+        reduceMotion: '(prefers-reduced-motion: reduce)',
+        compact: '(max-width: 760px)',
+      },
+    }).add(self => {
+      if (self.matches.reduceMotion) {
+        storyState.progress = 0
+        story.dataset.cubeExplode = '0'
+        story.dataset.cubeDepth = '0'
+        story.dataset.cubeDescent = '0'
+        story.dataset.cubeScale = '1'
+        paint()
+        return undefined
+      }
+
+      animate(storyState, {
+        progress: 1,
+        duration: 1000,
+        ease: 'linear',
+        autoplay: onScroll({
+          target: story,
+          enter: 'start start',
+          leave: 'end end',
+          sync: .18,
+          onResize: () => {
+            measure()
+            paint()
+          },
+        }),
+        onUpdate: paint,
+      })
+
+      const queuePointer = (x, y) => {
+        cancelAnimationFrame(pointerFrame)
+        pointerFrame = requestAnimationFrame(() => {
+          pointerAnimation?.pause()
+          pointerAnimation = animate(pointer, {
+            x,
+            y,
+            duration: self.matches.compact ? 240 : 420,
+            ease: 'out(4)',
+            onUpdate: paint,
+          })
+        })
+      }
+      const move = event => {
+        if (!pointerEnabled || story.dataset.cubeDragging === 'true') return
+        queuePointer(
+          clamp(event.clientX / window.innerWidth) * 2 - 1,
+          clamp(event.clientY / window.innerHeight) * 2 - 1,
+        )
+      }
+      const reset = () => queuePointer(0, 0)
+      const resize = () => {
+        measure()
+        paint()
+      }
+
+      story.addEventListener('pointermove', move, { passive: true })
+      story.addEventListener('pointerleave', reset)
+      window.addEventListener('resize', resize)
+      return () => {
+        cancelAnimationFrame(pointerFrame)
+        story.removeEventListener('pointermove', move)
+        story.removeEventListener('pointerleave', reset)
+        window.removeEventListener('resize', resize)
+      }
+    })
+
     return () => {
-      cancelAnimationFrame(frame)
-      element.removeEventListener('pointermove', updateGravity)
+      disposed = true
+      layoutObserver?.disconnect()
+      scope.revert()
     }
-  }, [reduceMotion])
+  }, [])
 
-  const introY = useTransform(smoothProgress, [0, 0.24], [0, reduceMotion ? 0 : -72])
-  const sceneX = useTransform(
-    smoothProgress,
-    [0, 0.12, 0.2, 0.36, 0.44, 0.56, 0.64, 0.76, 0.84, 0.95, 1],
-    reduceMotion
-      ? ['0vw', '0vw', '0vw', '0vw', '0vw', '0vw', '0vw', '0vw', '0vw', '0vw', '0vw']
-      : ['18vw', '18vw', '0vw', '0vw', '-20vw', '-20vw', '20vw', '20vw', '-20vw', '-20vw', '0vw'],
-  )
-  const sceneScale = useTransform(
-    smoothProgress,
-    [0, 0.15, 0.2, 0.36, 0.44, 0.94, 1],
-    reduceMotion ? [0.82, 0.82, 0.82, 0.82, 0.82, 0.82, 0.82] : [1, 1, 0.82, 0.82, 0.78, 0.78, 0.7],
-  )
-  const sceneOpacity = useTransform(
-    smoothProgress,
-    [0, 0.94, 0.985, 1],
-    reduceMotion ? [1, 1, 1, 1] : [1, 1, 0.38, 0],
-  )
-  const sceneY = useTransform(
-    smoothProgress,
-    [0, 0.2, 0.44, 0.64, 0.84, 1],
-    reduceMotion ? ['0vh', '0vh', '0vh', '0vh', '0vh', '0vh'] : ['0vh', '-1.8vh', '1.5vh', '-1.5vh', '1.2vh', '0vh'],
-  )
-  const sceneRotate = useTransform(
-    smoothProgress,
-    [0, 0.2, 0.44, 0.64, 0.84, 1],
-    reduceMotion ? [0, 0, 0, 0, 0, 0] : [-2, 0, -3.5, 3.5, -3, 0],
-  )
-  const ambientY = useTransform(smoothProgress, [0, 1], reduceMotion ? ['0%', '0%'] : ['2%', '-8%'])
-  const handoffOpacity = useTransform(smoothProgress, [0.88, 0.955, 1], reduceMotion ? [0, 0, 0] : [0, 0.62, 1])
-  const handoffY = useTransform(smoothProgress, [0.88, 1], reduceMotion ? ['18vh', '18vh'] : ['24vh', '-3vh'])
-  const apertureScale = useTransform(smoothProgress, [0.03, 0.16, 0.31], reduceMotion ? [1, 1, 1] : [0.78, 1.04, 1])
-  const apertureOpacity = useTransform(smoothProgress, [0.02, 0.13, 0.3], reduceMotion ? [1, 1, 1] : [0, 0.88, 1])
-  // Odd phases are travel windows: copy leaves first, then the core crosses
-  // the frame, and only after it settles does the next chapter enter.
-  useMotionValueEvent(smoothProgress, 'change', value => {
-    const next = value < 0.16
-      ? 0
-      : value < 0.2
-        ? 1
-        : value < 0.36
-          ? 2
-          : value < 0.44
-            ? 3
-            : value < 0.56
-              ? 4
-              : value < 0.64
-                ? 5
-                : value < 0.76
-                  ? 6
-                  : value < 0.84
-                    ? 7
-                    : value < 0.94
-                      ? 8
-                      : 9
-    if (phaseRef.current === next) return
-    phaseRef.current = next
-    setPhase(next)
-    if (next % 2 === 0) setRevealCycle(cycle => cycle + 1)
-  })
-
-  if (isMobile) return <MobileCoreStory particleCount={particleCount}/>
-
-  return <section ref={ref} id="solucoes" className="core-story" data-stage={stage} data-transition={isTransition} data-void-state={voidState} data-header-theme="dark">
-    <div ref={stickyRef} className="core-story__sticky">
-      <motion.div className="core-story__grid" style={{ y: ambientY }} aria-hidden="true" />
-      <svg className="core-story__contours" viewBox="0 0 1440 900" fill="none" aria-hidden="true">
-        <path d="M-80 178C190 4 302 256 554 91c237-155 358 78 573-24 176-83 279-57 420 44" />
-        <path d="M-45 733c237-167 393 50 601-76 260-158 340 118 592-35 144-88 253-75 375 12" />
-        <path d="M194-60c142 134 20 242 156 351 153 122 36 241 170 352 94 78 100 167 69 263" />
-        <path d="M1120-63c-84 157 42 237-61 387-111 163 56 243-45 393-52 77-40 145 2 220" />
-      </svg>
-
-      <motion.div className="core-story__aperture" style={{ scale: apertureScale, opacity: apertureOpacity }} />
-      <motion.div className="core-story__scene" style={{ x: sceneX, y: sceneY, scale: sceneScale, rotate: sceneRotate, opacity: sceneOpacity }}><CoreScene voidState={voidState} particleCount={particleCount} disassemble={!reduceMotion} /></motion.div>
-      <motion.div className="core-story__handoff" style={{ opacity: handoffOpacity, y: handoffY }} aria-hidden="true"><i/><i/><i/></motion.div>
-
-      <motion.div className="core-story__intro" style={{ y: introY }}>
-        <div className="eyebrow"><span className="live-dot" /> Engenharia de software · São Paulo</div>
-        <h1><span>{stage === 0 && isSettled ? <FoldText key={`intro-a-${revealCycle}`} text="Complexidade" splitBy="char" duration={0.7} stagger={0.026} delay={0.08} foldAmount={0.55} lift={8} /> : 'Complexidade'}</span><span>{stage === 0 && isSettled ? <FoldText key={`intro-b-${revealCycle}`} text="entra." splitBy="char" hinge="top" duration={0.66} stagger={0.035} delay={0.16} foldAmount={0.48} lift={9} /> : 'entra.'}</span><em>{stage === 0 && isSettled ? <FoldText key={`intro-c-${revealCycle}`} text="Fluxo sai." splitBy="word" hinge="bottom" duration={0.7} stagger={0.055} delay={0.24} foldAmount={0.42} lift={10} /> : 'Fluxo sai.'}</em></h1>
-        <p>Projetamos sistemas, automações e integrações que transformam operações fragmentadas em uma estrutura clara, rastreável e pronta para crescer.</p>
-        <div className="hero-actions"><SkiperLink className="button primary" href="/contato" variant="fill">Mapear minha operação</SkiperLink><SkiperLink className="text-link" href="/#projetos" variant="line">Ver projetos</SkiperLink></div>
-      </motion.div>
-
-      {chapters.map((chapter, index) => <Chapter key={chapter.code} chapter={chapter} index={index} active={stage === index + 2 && isSettled} replayKey={revealCycle} />)}
-
-      <div className="core-story__hud" aria-hidden="true"><div><i style={{ transform: `scaleX(${(stage + 1) / 5})` }} /></div></div>
+  return <div ref={storyRef} className="core-story" data-cube-motion data-gravity="right" data-parallax-phase="hero">
+    <div className="core-story__visual">
+      <div className="core-story__visual-stage">
+        <div className="core-story__model">
+          <ThreeDimensionalCore className="black-hole-3d--story" />
+        </div>
+      </div>
     </div>
-  </section>
+
+    <section id="inicio" ref={heroRef} className="home-hero" data-header-theme="dark" aria-label="Abertura interativa VoidCube">
+      <div ref={heroSceneRef} className="home-hero__scene" data-gravity="right">
+        <div className="hero-copy hero-beat hero-beat--left" data-hero-beat="0" aria-hidden={heroBeat !== 0}>
+          <p className="eyebrow"><span className="status-dot" /> Engenharia de software · Pará</p>
+          <h1>Complexidade<br />entra. <em>Fluxo sai.</em></h1>
+          <p className="hero-lede">Sistemas, automações e integrações para operações que precisam funcionar com clareza — inclusive nas exceções.</p>
+          <div className="hero-actions">
+            <Link tabIndex={heroBeat === 0 ? 0 : -1} className="button button--solid" to="/contato">Mapear minha operação <ArrowIcon /></Link>
+            <Link tabIndex={heroBeat === 0 ? 0 : -1} className="text-link" to="/#projetos">Ver trabalho em produção <ArrowIcon size={15} /></Link>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="solucoes" className="solutions-section section-light">
+      <header className="section-intro" data-reveal>
+        <div><span className="section-index">Capacidades</span><h2>Uma base técnica.<br />Três frentes de trabalho.</h2></div>
+        <p>Não empilhamos ferramentas. Desenhamos a menor estrutura capaz de tornar uma operação legível, conectada e sustentável.</p>
+      </header>
+      <div ref={solutionsRef} className="solutions-parallax">
+        <div ref={solutionsSceneRef} className="solutions-parallax__scene" data-gravity="right">
+          <div className="solutions-parallax__content">
+            {capabilities.map((item, index) => {
+              const modelOnRight = index !== 1
+              return <article
+                key={item.mode}
+                className={`solution-beat solution-beat--${modelOnRight ? 'left' : 'right'}`}
+                data-solution-beat={index}
+                aria-hidden={reduceMotion ? false : solutionBeat !== index}
+              >
+                <div className="solution-beat__meta"><span>{item.code}</span><CapabilityIcon type={item.mode} /></div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
+                <footer><span>{item.detail}</span><b>{item.signal}</b></footer>
+              </article>
+            })}
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 }

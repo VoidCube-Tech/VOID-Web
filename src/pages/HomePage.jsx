@@ -1,40 +1,64 @@
 import React from 'react'
-import { ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import CoreStory from '../components/CoreStory'
-import { SkiperLink } from '../components/skiper/AnimatedLink'
+import { ArrowIcon } from '../components/Icons'
 import { posts, projects } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
 
 function Projects() {
-  return <section id="projetos" className="section cases" data-header-theme="light">
-    <div className="section-head compact"><div><span className="kicker">Projetos em produção</span><h2>Trabalho que mudou<br/>de ritmo.</h2></div><p>Não são números de demonstração. São mudanças medidas junto de quem usa o sistema todos os dias.</p></div>
-    <div className="case-list">{projects.map((project, index) => <Link className="case" to={`/blog/${project.slug}`} key={project.slug}>
-      <div className="case-index">0{index + 1}</div><div className="case-main"><span>{project.sector}</span><h3>{project.title}</h3><div className="tags">{project.tags.map(tag => <i key={tag}>{tag}</i>)}</div></div><div className="case-result"><strong>{project.result}</strong><span>{project.metricLabel}</span></div><ArrowRight className="case-arrow"/>
-    </Link>)}</div>
+  return <section id="projetos" className="projects-section section-dark">
+    <header className="section-intro section-intro--dark" data-reveal>
+      <div><span className="section-index">02 / Em produção</span><h2>O trabalho muda.<br />O resultado aparece.</h2></div>
+      <p>Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração.</p>
+    </header>
+    <div className="project-list">
+      {projects.map((project, index) => <Link className="project-row" to={`/blog/${project.slug}`} key={project.slug} data-reveal>
+        <span className="project-number">{String(index + 1).padStart(2, '0')}</span>
+        <div className="project-copy"><span>{project.sector}</span><h3>{project.title}</h3><p>{project.tags.join(' · ')}</p></div>
+        <div className="project-outcome"><strong>{project.result}</strong><span>{project.metricLabel}</span></div>
+        <ArrowIcon className="project-arrow" />
+      </Link>)}
+    </div>
   </section>
 }
 
 function Method() {
-  return <section id="metodo" className="about section" data-header-theme="dark">
-    <div className="about-aside"><span className="kicker">Como trabalhamos</span><div className="manifesto-mark" aria-hidden="true"><i/><i/><i/></div></div>
-    <div className="about-copy"><h2>Tecnologia boa desaparece no trabalho. <span>O resultado fica.</span></h2><p>Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir. Depois, continuamos responsáveis pelo que colocamos em produção.</p>
-      <div className="principles"><div><b>OUVIR</b><span><strong>Começar pelo processo</strong>Ferramentas vêm depois do diagnóstico.</span></div><div><b>TESTAR</b><span><strong>Projetar para o imprevisto</strong>O sistema precisa funcionar fora do caminho feliz.</span></div><div><b>PROVAR</b><span><strong>Medir no trabalho real</strong>A entrega termina quando o resultado aparece.</span></div></div>
+  const principles = [
+    ['Ouvir', 'Começar pelo processo', 'Ferramentas vêm depois do diagnóstico.'],
+    ['Testar', 'Projetar para o imprevisto', 'O sistema precisa funcionar fora do caminho feliz.'],
+    ['Provar', 'Medir no trabalho real', 'A entrega termina quando o resultado aparece.'],
+  ]
+  return <section className="method-section section-light">
+    <div className="method-statement" data-reveal><span className="section-index">03 / Método</span><h2>Tecnologia boa desaparece no trabalho. <em>O resultado fica.</em></h2></div>
+    <div className="method-body" data-reveal>
+      <p>Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.</p>
+      <Link className="text-link text-link--dark" to="/sobre">Como trabalhamos <ArrowIcon size={15} /></Link>
+    </div>
+    <div className="principle-list">
+      {principles.map(([verb, title, text], index) => <article key={verb} data-reveal><span>{String(index + 1).padStart(2, '0')}</span><div><b>{verb}</b><h3>{title}</h3><p>{text}</p></div></article>)}
     </div>
   </section>
 }
 
 function JournalPreview() {
-  return <section id="blog" className="section journal" data-header-theme="light"><div className="journal-title"><span className="kicker">Caderno aberto</span><h2>O sistema encontra a vida real.</h2><p>Decisões, tropeços e padrões que só aparecem depois que o software sai da apresentação.</p><SkiperLink className="journal-cta" href="/blog" variant="line">Abrir caderno</SkiperLink></div>
-    <div className="post-list">{posts.map(post => <article className="post-entry" key={post.slug}><Link className="post-row" to={`/blog/${post.slug}`}><div><span>{post.date}</span><i>{post.category}</i></div><h3>{post.title}</h3><div>{post.read}<ArrowRight size={16}/></div></Link></article>)}</div>
+  return <section className="journal-section">
+    <div className="journal-heading" data-reveal><span className="section-index">04 / VOID·LOG</span><h2>Decisões de engenharia, sem a parte polida.</h2><p>O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.</p><Link className="button button--ink" to="/blog">Abrir caderno <ArrowIcon /></Link></div>
+    <div className="journal-list">
+      {posts.map((post, index) => <Link className="journal-row" to={`/blog/${post.slug}`} key={post.slug} data-reveal>
+        <span>{String(index + 1).padStart(2, '0')}</span><div><small>{post.category} · {post.date}</small><h3>{post.title}</h3></div><b>{post.read}</b><ArrowIcon size={16}/>
+      </Link>)}
+    </div>
   </section>
 }
 
 function FinalCTA() {
-  return <section className="contact" data-header-theme="dark"><div className="contact-orbit"/><div className="contact-glyph" aria-hidden="true"><i/><i/><i/></div><div className="contact-inner"><span className="kicker">Vamos olhar juntos</span><h2>O que sua equipe já<br/><em>cansou de contornar?</em></h2><p>Traga o processo como ele é — planilhas, atalhos e exceções incluídos. Organizamos o problema antes de falar em solução.</p><SkiperLink className="button light" href="/contato" variant="fill">Iniciar projeto</SkiperLink><div className="availability"><span className="live-dot"/> Sem pitch pronto · conversa com quem projeta</div></div></section>
+  return <section className="final-cta">
+    <div data-reveal><span className="section-index">05 / Começar</span><h2>Qual processo sua equipe já cansou de contornar?</h2></div>
+    <div data-reveal><p>Traga o fluxo como ele é — atalhos, planilhas e exceções incluídos. Organizamos o problema antes de falar em solução.</p><Link className="button button--solid" to="/contato">Iniciar conversa <ArrowIcon /></Link><small><span className="status-dot"/> Sem pitch pronto · conversa com quem projeta</small></div>
+  </section>
 }
 
 export default function HomePage() {
-  usePageMeta('VoidCube', 'Engenharia de software, automações e integrações para operações que não podem parar.')
-  return <div id="inicio" className="home-page"><CoreStory/><Projects/><Method/><JournalPreview/><FinalCTA/></div>
+  usePageMeta('VoidCube — Engenharia de software no Pará', 'Sistemas, automações e integrações criados em Belém e Ananindeua para operações que não podem parar.')
+  return <div className="home-page"><CoreStory/><Projects/><Method/><JournalPreview/><FinalCTA/></div>
 }
