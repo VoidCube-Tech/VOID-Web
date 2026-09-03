@@ -1,0 +1,38 @@
+.not-found {
+  display: grid;
+  grid-template-columns: 1fr minmax(360px, .8fr);
+  align-items: center;
+  gap: 4%;
+}
+
+.not-found > div:first-child {
+  max-width: 760px;
+}
+
+.not-found h1 {
+  margin: 24px 0;
+  font: 520 clamp(54px, 7vw, 100px)/.94 var(--display);
+  letter-spacing: -.065em;
+}
+
+.not-found p {
+  margin: 0 0 32px;
+  color: var(--muted);
+}
+
+.not-found .core-vector {
+  max-width: 600px;
+}
+
+@media (max-width: 760px) {
+  .not-found {
+    grid-template-columns: 1fr;
+  }
+  .not-found .core-vector {
+    position: absolute;
+    width: 115vw;
+    right: -50vw;
+    bottom: -25vw;
+    opacity: .34;
+  }
+}
