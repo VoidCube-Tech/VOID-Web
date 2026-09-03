@@ -3,7 +3,11 @@ import { createRoot } from 'react-dom/client'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import SiteLayout from './components/layout/SiteLayout'
 import HomePage from './pages/HomePage'
-import './styles.css'
+import './style/variables.css'
+import './style/reset.css'
+import './style/sections.css'
+import './style/buttons.css'
+import './i18n/copy'
 
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const ArticlePage = lazy(() => import('./pages/ArticlePage'))

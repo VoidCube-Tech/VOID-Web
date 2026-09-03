@@ -3,6 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { journalItems } from '../content/siteContent'
 import { ArrowIcon } from '../components/Icons'
 import { usePageMeta } from '../hooks/usePageMeta'
+import "../style/blog.css"
 
 export default function ArticlePage() {
   const { slug } = useParams()

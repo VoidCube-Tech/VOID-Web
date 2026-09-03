@@ -4,6 +4,7 @@ import CoreStory from '../components/CoreStory'
 import { ArrowIcon } from '../components/Icons'
 import { posts, projects } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
+import "../style/home.css"
 
 function Projects() {
   return <section id="projetos" className="projects-section section-dark">

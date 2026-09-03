@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import "../style/visual3d.css"
 
 const VOIDCUBE_PALETTE = {
   navyDeep: 0x040a16,

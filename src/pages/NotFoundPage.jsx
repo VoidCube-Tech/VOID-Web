@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import CoreVisual from '../components/CoreVisual'
 import { ArrowIcon } from '../components/Icons'
 import { usePageMeta } from '../hooks/usePageMeta'
+import "../style/notfound.css"
 
 export default function NotFoundPage() {
   usePageMeta('Página não encontrada — VoidCube', 'O endereço informado não existe.')

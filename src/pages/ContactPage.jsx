@@ -1,16 +1,13 @@
 import React, { useRef, useState } from 'react'
-import { ArrowIcon, CapabilityIcon } from '../components/Icons'
+import { ArrowIcon, CapabilityIcon, Icons } from '../components/Icons'
 import DecodeText from '../components/DecodeText'
 import { sendContactLead, validateContact } from '../services/contact'
 import { usePageMeta } from '../hooks/usePageMeta'
+import "../style/contact.css"
+import { Copywriting } from '@/data/copywriting'
 
 const initialLead = { service: '', name: '', company: '', message: '' }
-const serviceOptions = [
-  { value: 'systems', code: 'SYS / 01', title: 'Sistema sob medida', detail: 'ERP, portal ou aplicação interna.', icon: 'system' },
-  { value: 'automation', code: 'AUT / 02', title: 'Automação de processos', detail: 'Menos tarefas manuais e retrabalho.', icon: 'automate' },
-  { value: 'integrations', code: 'INT / 03', title: 'Integrações confiáveis', detail: 'Sistemas e dados trabalhando juntos.', icon: 'connect' },
-  { value: 'discovery', code: 'MAP / 04', title: 'Quero mapear primeiro', detail: 'O problema existe; a solução ainda não.', icon: null },
-]
+
 
 export default function ContactPage() {
   const formRef = useRef(null)
@@ -89,7 +86,7 @@ export default function ContactPage() {
           <legend><span>01</span><strong>Qual frente se aproxima do seu desafio?</strong><i>Obrigatório</i></legend>
           <p id="service-hint">Não precisa acertar a solução agora.</p>
           <div className="contact-service__options">
-            {serviceOptions.map(option => <label className="contact-service-option" key={option.value}>
+            {Copywriting.contact.services.map(option => <label className="contact-service-option" key={option.value}>
               <input type="radio" name="service" value={option.value} checked={lead.service === option.value} onChange={update} required aria-invalid={Boolean(errors.service)} aria-describedby={serviceDescription} />
               <span className="contact-service-option__body">
                 <span className="contact-service-option__top"><b>{option.code}</b>{option.icon ? <CapabilityIcon type={option.icon} /> : <i aria-hidden="true">?</i>}</span>

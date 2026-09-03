@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { aboutContent } from '../content/siteContent'
 import { ArrowIcon } from '../components/Icons'
 import { usePageMeta } from '../hooks/usePageMeta'
+import "../style/about.css"
 
 function TerritoryGraphic() {
   return <svg className="territory-graphic" viewBox="0 0 520 400" fill="none" role="img" aria-label="Mapa esquemático conectando Belém e Ananindeua">
