@@ -1,11 +1,11 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import CoreStory from '../components/CoreStory'
 import { ArrowIcon } from '../components/Icons'
 import { posts, projects } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useTranslation } from 'react-i18next'
 import '../style/home.css'
+import CoreStory from '@/components/core_story/CoreStory'
 
 export default function HomePage() {
     const { t } = useTranslation('home')

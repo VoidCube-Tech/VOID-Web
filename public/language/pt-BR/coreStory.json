@@ -1,0 +1,50 @@
+{
+  "hero": {
+    "ariaLabel": "Abertura interativa VoidCube",
+    "eyebrow": "Engenharia de software · Pará",
+    "title": {
+      "line1": "Complexidade",
+      "line2": "entra.",
+      "emphasis": "Fluxo sai."
+    },
+    "lede": "Sistemas, automações e integrações para operações que precisam funcionar com clareza — inclusive nas exceções.",
+    "actions": {
+      "map": "Mapear minha operação",
+      "projects": "Ver trabalho em produção"
+    }
+  },
+  "solutions": {
+    "index": "Capacidades",
+    "title": {
+      "line1": "Uma base técnica.",
+      "line2": "Três frentes de trabalho."
+    },
+    "description": "Não empilhamos ferramentas. Desenhamos a menor estrutura capaz de tornar uma operação legível, conectada e sustentável."
+  },
+  "capabilities": [
+    {
+      "mode": "system",
+      "code": "SYS / 01",
+      "title": "Sistemas sob medida",
+      "text": "ERPs, portais e plataformas que seguem o fluxo real da empresa — inclusive quando o processo sai do caminho feliz.",
+      "detail": "Arquitetura web · APIs · aplicações internas",
+      "signal": "um núcleo operacional"
+    },
+    {
+      "mode": "automate",
+      "code": "AUT / 02",
+      "title": "Automação de processos",
+      "text": "Fluxos que conciliam dados, executam o trabalho repetitivo e encaminham cada exceção para a pessoa certa.",
+      "detail": "Financeiro · operações · atendimento",
+      "signal": "orquestração contínua"
+    },
+    {
+      "mode": "connect",
+      "code": "INT / 03",
+      "title": "Integrações confiáveis",
+      "text": "ERP, CRM, pagamentos e logística conectados com rastreabilidade, filas e recuperação segura de falhas.",
+      "detail": "REST · webhooks · eventos · ETL",
+      "signal": "falhas observáveis"
+    }
+  ]
+}
