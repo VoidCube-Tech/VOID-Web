@@ -1,27 +1,27 @@
 {
-  "navigationLabel": "Navegação do rodapé",
-  "navigation": [
-    {
-      "label": "Inicio",
-      "path": "/"
+    "navigationLabel": "Navegação do rodapé",
+    "navigation": [
+        {
+            "label": "Início",
+            "path": "/"
+        },
+        {
+            "label": "Sobre",
+            "path": "/sobre"
+        }
+    ],
+    "solutions": "Soluções",
+    "about": "Sobre",
+    "blog": "VOID·LOG",
+    "brand": {
+        "line1": "Engenharia de software",
+        "line2": "no Pará"
     },
-    {
-      "label": "Sobre",
-      "path": "/sobre"
-    }
-  ],
-  "solutions": "Soluções",
-  "about": "Sobre",
-  "blog": "BLOG",
-  "brand": {
-    "line1": "Engenharia de software",
-    "line2": "no Pará"
-  },
-  "message": {
-    "line1": "Software criado",
-    "line2": "perto de quem usa."
-  },
-  "cta": "Conversar com engenharia",
-  "copyright": "© 2026 VoidCube",
-  "location": "Feito no Pará"
+    "message": {
+        "line1": "Complexidade entra.",
+        "line2": "Fluxo sai."
+    },
+    "cta": "Mapear minha operação",
+    "copyright": "© 2026 VoidCube",
+    "location": "Feito no Pará · Para o Brasil"
 }

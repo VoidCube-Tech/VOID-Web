@@ -1,15 +1,16 @@
 {
-    "meta": {
-        "title": "Contato — VoidCube",
-        "description": "Conte o processo que sua equipe precisa organizar. Inicie um projeto com a VoidCube."
-    },
-    "intro": {
-        "index": "Contato / 01",
-        "location": "Belém—Ananindeua",
-        "scope": "Projetos no Brasil",
-        "title": "Antes da solução, vamos organizar o problema.",
-        "titleLine1": "Antes da solução, vamos organizar",
-        "titleLine2": "o problema.",
-        "description": "Conte o contexto. A conversa abre no WhatsApp com a mensagem pronta; o site não armazena seus dados."
-    }
+  "meta": {
+    "title": "VoidCube - Contato",
+    "description": "Sua operação tem um processo que precisa funcionar melhor? Conte o problema e descubra como a VoidCube pode ajudar."
+  },
+
+  "intro": {
+    "index": "Contato / 01",
+    "location": "Belém—Ananindeua",
+    "scope": "Projetos no Brasil",
+    "title": "O próximo passo começa pelo problema.",
+    "titleLine1": "O próximo passo começa pelo",
+    "titleLine2": "problema.",
+    "description": "Conte o que está travando, consumindo tempo ou exigindo trabalho manual demais. A conversa começa pelo contexto, não por uma solução pronta. Ao continuar, abrimos o WhatsApp com a mensagem preparada; o site não armazena seus dados."
+  }
 }

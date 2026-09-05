@@ -1,14 +1,14 @@
 {
   "meta": {
-    "title": "VoidCube — Engenharia de software no Pará",
-    "description": "Sistemas, automações e integrações criados em Belém e Ananindeua para operações que não podem parar."
+    "title": "VoidCube",
+    "description": "Software, automações e integrações para transformar processos complexos em operações mais rápidas, confiáveis e previsíveis."
   },
 
   "projects": {
     "index": "02 / Em produção",
     "titleLine1": "O trabalho muda.",
     "titleLine2": "O resultado aparece.",
-    "description": "Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração.",
+    "description": "Construímos ao lado de quem vive a operação. Cada projeto nasce de um problema real e é medido pelo que melhora depois da entrega.",
 
     "items": [
       {
@@ -22,23 +22,23 @@
         "tags": ["ERP", "WMS", "BI"],
         "date": "18 JUN 2026",
         "read": "7 min",
-        "summary": "Uma operação conectada para que pedidos, estoque e expedição compartilhem o mesmo estado do trabalho.",
+        "summary": "Eliminamos os pontos cegos entre venda, estoque e expedição para que toda a operação trabalhe sobre o mesmo estado do pedido.",
         "sections": [
           {
             "title": "Contexto",
-            "text": "O fluxo atravessava comercial, estoque e expedição com atualizações manuais entre etapas."
+            "text": "Pedidos atravessavam comercial, estoque e expedição por meio de atualizações manuais, criando atrasos e retrabalho entre as equipes."
           },
           {
             "title": "Problema",
-            "text": "A equipe precisava reconhecer o estado real de cada pedido sem depender de planilhas paralelas."
+            "text": "A equipe precisava descobrir o estado real de cada pedido em diferentes fontes, planilhas e conversas."
           },
           {
             "title": "Arquitetura",
-            "text": "Uma camada de integração organiza eventos do ERP e do WMS e entrega uma visão operacional única."
+            "text": "Conectamos ERP e WMS em uma camada de integração que centraliza eventos e entrega uma visão operacional única."
           },
           {
             "title": "Resultado",
-            "text": "O resultado atual registrado no projeto é uma redução de 68% no retrabalho operacional."
+            "text": "O retrabalho operacional caiu 68%, reduzindo intervenções manuais e tornando o fluxo mais previsível."
           }
         ]
       },
@@ -53,23 +53,23 @@
         "tags": ["CRM", "Financeiro", "NFe"],
         "date": "03 JUN 2026",
         "read": "6 min",
-        "summary": "Contratos, faturamento e documentos fiscais coordenados num fluxo verificável e preparado para exceções.",
+        "summary": "Transformamos um fechamento dependente de conferências manuais em um fluxo automatizado, rastreável e preparado para exceções.",
         "sections": [
           {
             "title": "Contexto",
-            "text": "O fechamento recorrente exigia conferências repetidas entre CRM, financeiro e emissão fiscal."
+            "text": "Cada ciclo de faturamento exigia conferências repetidas entre CRM, financeiro e emissão fiscal."
           },
           {
             "title": "Problema",
-            "text": "Planilhas intermediárias escondiam exceções e tornavam o fechamento dependente de poucas pessoas."
+            "text": "Planilhas intermediárias escondiam divergências e faziam o processo depender do conhecimento de poucas pessoas."
           },
           {
             "title": "Implementação",
-            "text": "O processo passou a validar contratos, preparar cobranças e encaminhar divergências para decisão humana."
+            "text": "O novo fluxo valida contratos, prepara cobranças e encaminha apenas as divergências que realmente precisam de decisão humana."
           },
           {
             "title": "Resultado",
-            "text": "O resultado atual registrado é uma economia de 11 horas de operação manual por semana."
+            "text": "A automação eliminou 11 horas de operação manual por semana e devolveu tempo para atividades que exigem análise."
           }
         ]
       },
@@ -84,23 +84,23 @@
         "tags": ["MES", "IoT", "ERP"],
         "date": "21 MAI 2026",
         "read": "8 min",
-        "summary": "Sinais de produção, manutenção e gestão reunidos sem apagar os sistemas que já sustentavam a fábrica.",
+        "summary": "Unificamos produção, manutenção e gestão sem substituir os sistemas que já sustentavam a operação.",
         "sections": [
           {
             "title": "Contexto",
-            "text": "A produção e a gestão observavam o mesmo processo por sistemas e recortes diferentes."
+            "text": "Produção e gestão enxergavam o mesmo processo por sistemas diferentes, cada um com seus próprios dados e recortes."
           },
           {
             "title": "Problema",
-            "text": "A divergência entre fontes atrasava decisões e dificultava reconhecer falhas de integração."
+            "text": "Informações divergentes atrasavam decisões e tornavam difícil identificar onde uma falha realmente começava."
           },
           {
             "title": "Arquitetura",
-            "text": "Uma camada observável conecta MES, sinais IoT e ERP, preservando a responsabilidade de cada sistema."
+            "text": "Criamos uma camada observável entre MES, IoT e ERP, conectando os sistemas sem retirar deles suas responsabilidades."
           },
           {
             "title": "Resultado",
-            "text": "A disponibilidade registrada nos últimos 12 meses é de 99,7%."
+            "text": "A solução manteve 99,7% de disponibilidade nos últimos 12 meses, com maior visibilidade sobre a operação."
           }
         ]
       }
@@ -111,23 +111,23 @@
     "index": "03 / Método",
     "titleLine1": "Tecnologia boa desaparece no trabalho.",
     "titleLine2": "O resultado fica.",
-    "description": "Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.",
+    "description": "Somos uma empresa paraense de desenvolvimento. Antes de escrever código, entendemos como o trabalho realmente acontece. Depois, construímos apenas o que torna essa operação melhor.",
     "link": "Como trabalhamos",
     "principles": [
       {
         "verb": "OUVIR",
-        "title": "Começar pelo processo",
-        "text": "Ferramentas vêm depois do diagnóstico."
+        "title": "Entender antes de construir",
+        "text": "O problema real vem antes da tecnologia."
       },
       {
         "verb": "TESTAR",
-        "title": "Projetar para o imprevisto",
-        "text": "O sistema precisa funcionar fora do caminho feliz."
+        "title": "Construir para o mundo real",
+        "text": "Um sistema confiável precisa sobreviver às exceções, não apenas ao caminho feliz."
       },
       {
         "verb": "PROVAR",
-        "title": "Medir no trabalho real",
-        "text": "A entrega termina quando o resultado aparece."
+        "title": "Medir o que mudou",
+        "text": "A entrega só importa quando melhora o trabalho."
       }
     ]
   },
@@ -135,7 +135,7 @@
   "journal": {
     "index": "04 / VOID·LOG",
     "title": "Decisões de engenharia, sem a parte polida.",
-    "description": "O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.",
+    "description": "Experiências, decisões e aprendizados de quando software encontra planilhas, exceções e operações que não podem parar.",
     "link": "Abrir caderno",
 
     "items": [
@@ -146,19 +146,19 @@
         "date": "12 AGO 2026",
         "read": "6 min",
         "title": "Quando integrar é melhor do que substituir seu ERP",
-        "summary": "Se o ERP ainda sustenta financeiro e fiscal, substituí-lo pode ampliar o risco sem resolver o gargalo.",
+        "summary": "Nem todo gargalo exige trocar o sistema central. Muitas vezes, integrar o que já funciona é a forma mais segura de evoluir.",
         "sections": [
           {
             "title": "O ponto de partida",
-            "text": "Trocar o sistema central parece uma resposta completa, mas o problema costuma estar nos fluxos que acontecem ao redor dele."
+            "text": "Substituir o sistema central parece resolver tudo, mas o gargalo frequentemente está nos processos que acontecem ao redor dele."
           },
           {
             "title": "Preservar o que funciona",
-            "text": "Uma camada de integração bem delimitada mantém o núcleo confiável e libera novos processos por etapas."
+            "text": "Uma camada de integração bem projetada preserva o núcleo confiável e permite evoluir novos processos sem uma migração desnecessária."
           },
           {
             "title": "Decidir com evidência",
-            "text": "Mapeie exceções, dependências e custo de transição antes de escolher entre integrar e substituir."
+            "text": "Antes de substituir, mapeie dependências, exceções e custo de transição. A melhor arquitetura é a que resolve o problema com o menor risco."
           }
         ]
       },
@@ -169,19 +169,19 @@
         "date": "29 JUL 2026",
         "read": "8 min",
         "title": "Automação saudável começa pelas exceções, não pelo caminho feliz",
-        "summary": "O projeto ganha robustez quando define quem decide, quais dados precisa e como retoma o fluxo após uma falha.",
+        "summary": "Automatizar não é apenas acelerar o caminho normal. É saber o que acontece quando os dados estão errados, o sistema falha ou alguém precisa decidir.",
         "sections": [
           {
             "title": "O caminho feliz é a parte fácil",
-            "text": "A sequência normal raramente representa todo o trabalho. É nas exceções que a operação revela suas regras reais."
+            "text": "A rotina normal representa apenas uma parte do trabalho. São as exceções que revelam as regras que realmente sustentam a operação."
           },
           {
             "title": "Automação com responsabilidade",
-            "text": "Cada desvio precisa ter dados suficientes, uma pessoa responsável e um caminho seguro de retomada."
+            "text": "Cada desvio precisa de contexto, responsabilidade definida e uma forma segura de retomar o processo."
           },
           {
             "title": "Medir depois da entrega",
-            "text": "Uma automação só está pronta quando reduz trabalho sem esconder risco operacional."
+            "text": "Automação só gera valor quando reduz trabalho sem transformar velocidade em risco."
           }
         ]
       },
@@ -192,19 +192,19 @@
         "date": "08 JUL 2026",
         "read": "5 min",
         "title": "O custo invisível de uma integração sem observabilidade",
-        "summary": "Correlação, métricas e reprocessamento seguro transformam falhas silenciosas em ocorrências tratáveis.",
+        "summary": "Uma integração que falha em silêncio pode custar mais do que uma que falha claramente. Observabilidade transforma problemas invisíveis em problemas resolvíveis.",
         "sections": [
           {
             "title": "Transportar não é integrar",
-            "text": "Mover dados entre sistemas resolve apenas a primeira metade do problema."
+            "text": "Mover dados entre sistemas é apenas o começo. Uma integração precisa preservar contexto, consistência e capacidade de recuperação."
           },
           {
             "title": "Falhas precisam de contexto",
-            "text": "Identificadores de correlação e eventos legíveis permitem descobrir onde o processo parou."
+            "text": "Correlação e eventos legíveis mostram onde o processo parou e reduzem o tempo necessário para encontrar a causa."
           },
           {
             "title": "Retomar com segurança",
-            "text": "Reprocessamento idempotente reduz intervenção manual e protege a consistência dos dados."
+            "text": "Reprocessamento idempotente permite recuperar falhas sem duplicar operações ou comprometer a consistência dos dados."
           }
         ]
       }
@@ -214,7 +214,7 @@
   "cta": {
     "index": "05 / Começar",
     "title": "Qual processo sua equipe já cansou de contornar?",
-    "description": "Traga o fluxo como ele é — atalhos, planilhas e exceções incluídos. Organizamos o problema antes de falar em solução.",
+    "description": "Traga o processo como ele realmente funciona — planilhas, atalhos, sistemas antigos e exceções incluídos. Primeiro entendemos o problema. Depois decidimos o que vale construir.",
     "button": "Iniciar conversa",
     "note": "Sem pitch pronto · conversa com quem projeta"
   },
@@ -228,36 +228,36 @@
       "o que precisa funcionar."
     ],
     "manifesto": "Tecnologia com sotaque local, rigor de produto e alcance nacional.",
-    "introduction": "Entre Belém e Ananindeua, transformamos processos reais em software confiável. Trabalhamos perto da operação, tornamos decisões explícitas e continuamos responsáveis pelo que chega à produção.",
+    "introduction": "Entre Belém e Ananindeua, transformamos processos reais em software confiável. Trabalhamos próximos de quem executa a operação, tornamos decisões explícitas e permanecemos responsáveis pelo que colocamos em produção.",
     "principles": [
       {
         "verb": "Ouvir",
-        "title": "Começar pelo processo",
-        "text": "Ferramentas vêm depois do diagnóstico."
+        "title": "Entender antes de construir",
+        "text": "O problema real vem antes da tecnologia."
       },
       {
         "verb": "Testar",
-        "title": "Projetar para o imprevisto",
-        "text": "O sistema precisa funcionar fora do caminho feliz."
+        "title": "Construir para o mundo real",
+        "text": "Um sistema confiável precisa sobreviver às exceções, não apenas ao caminho feliz."
       },
       {
         "verb": "Provar",
-        "title": "Medir no trabalho real",
-        "text": "A entrega termina quando o resultado aparece."
+        "title": "Medir o que mudou",
+        "text": "A entrega só importa quando melhora o trabalho."
       }
     ],
     "values": [
       {
         "name": "Clareza antes do código",
-        "text": "Tornamos decisões, limites e responsabilidades visíveis antes de transformar o processo em software."
+        "text": "Decisões, limites e responsabilidades ficam claros antes de qualquer solução virar software."
       },
       {
         "name": "Operação junto do produto",
-        "text": "Quem executa o trabalho participa do diagnóstico, dos testes e da validação do que entra em produção."
+        "text": "Quem conhece o trabalho participa do diagnóstico, dos testes e da validação do que chega à produção."
       },
       {
         "name": "Responsabilidade contínua",
-        "text": "Entrega não encerra o vínculo: observamos, medimos e corrigimos o que precisa continuar funcionando."
+        "text": "Colocar em produção não encerra o trabalho. Observamos, medimos e corrigimos para que o sistema continue entregando resultado."
       }
     ]
   }

@@ -3,9 +3,9 @@
     "optional": "Opcional",
     "section": {
         "index": "02 / Mapa inicial",
-        "titleLine1": "Um mapa curto.",
-        "titleLine2": "Sem briefing de gaveta.",
-        "description": "Escolha a frente mais próxima e conte onde o fluxo perde tempo. A conversa técnica começa a partir daí.",
+        "titleLine1": "Primeiro, entendemos.",
+        "titleLine2": "Depois, construímos.",
+        "description": "Conte onde sua operação perde tempo, informação ou previsibilidade. Não precisamos da solução pronta — precisamos entender o problema.",
         "expectationsLabel": "Como funciona"
     },
     "expectations": {
@@ -24,12 +24,12 @@
     },
     "header": {
         "label": "Diagnóstico inicial",
-        "title": "Comece pelo que você já sabe.",
+        "title": "Comece pelo problema.",
         "meta": "04 sinais · 03 obrigatórios"
     },
     "service": {
-        "question": "Qual frente se aproxima do seu desafio?",
-        "hint": "Não precisa acertar a solução agora."
+        "question": "O que mais se aproxima do seu desafio?",
+        "hint": "Não precisa saber qual tecnologia usar. O problema vem primeiro."
     },
     "fields": {
         "name": {
@@ -41,24 +41,24 @@
             "placeholder": "Nome da organização"
         },
         "message": {
-            "label": "Onde o trabalho trava hoje?",
-            "placeholder": "Ex.: conciliamos pedidos em planilhas e as exceções dependem de mensagens soltas no WhatsApp.",
-            "hint": "Atalhos, exceções e retrabalho ajudam a localizar o problema."
+            "label": "Onde sua operação perde tempo hoje?",
+            "placeholder": "Ex.: pedidos passam por três planilhas antes de chegar à expedição e qualquer exceção precisa ser resolvida manualmente.",
+            "hint": "Conte sobre retrabalho, processos manuais, sistemas desconectados ou qualquer etapa que deveria ser mais simples."
         }
     },
     "actions": {
         "nextStep": {
             "title": "Próximo passo",
-            "description": "Você revisa a mensagem antes de enviá-la."
+            "description": "Você revisa tudo antes de abrir a conversa."
         },
         "submit": {
-            "label": "Preparar conversa",
+            "label": "Mapear meu problema",
             "loading": "Abrindo WhatsApp…"
         }
     },
     "feedback": {
         "notConfigured": "O WhatsApp não está disponível agora. Tente novamente em alguns minutos.",
-        "ready": "Conversa aberta com a mensagem pronta.",
+        "ready": "Conversa aberta com o contexto pronto.",
         "validation": "Revise os campos marcados antes de continuar.",
         "error": "Não foi possível abrir a conversa. Tente novamente."
     },
@@ -66,43 +66,43 @@
         {
             "value": "landing",
             "code": "PAGE / 01",
-            "title": "Landing page que converte",
-            "detail": "Um site que já nasce pronto pra vender, não só pra existir.",
+            "title": "Transformar presença em resultado",
+            "detail": "Um site pensado para transformar atenção em oportunidade não apenas ocupar um endereço na internet.",
             "icon": "language"
         },
         {
             "value": "ecommerce",
             "code": "SHOP / 02",
-            "title": "Vitrine com pedido no WhatsApp",
-            "detail": "Seu catálogo sempre aberto, vendendo até quando você não tá.",
+            "title": "Tornar a venda mais simples",
+            "detail": "Produtos organizados, pedidos fluindo e menos dependência de atendimento manual para fechar uma venda.",
             "icon": "storefront"
         },
         {
             "value": "bot",
             "code": "CHAT / 03",
-            "title": "Atendimento automático no WhatsApp",
-            "detail": "Nenhum cliente esperando resposta — nem de madrugada.",
+            "title": "Automatizar o atendimento",
+            "detail": "Respostas, triagem e encaminhamentos automáticos para que sua equipe entre quando realmente precisa.",
             "icon": "smart_toy"
         },
         {
             "value": "systems",
             "code": "CORE / 04",
-            "title": "Sistema sob medida",
-            "detail": "Chega de planilha quebrando e processo remendado.",
+            "title": "Criar o sistema que falta",
+            "detail": "Software sob medida para substituir controles improvisados e acompanhar o processo real da empresa.",
             "icon": "grid_view"
         },
         {
             "value": "automation",
             "code": "FLOW / 05",
-            "title": "Automação de processos",
-            "detail": "Sua equipe focando no cliente, não em tarefa repetitiva.",
+            "title": "Fazer o processo trabalhar",
+            "detail": "Automação para eliminar tarefas repetitivas, conectar etapas e deixar sua equipe focada no que exige decisão.",
             "icon": "sync_alt"
         },
         {
             "value": "discovery",
             "code": "VOID / 06",
-            "title": "Quero mapear primeiro",
-            "detail": "Sem compromisso: a gente te ajuda a enxergar o problema.",
+            "title": "Ainda não sei o que preciso",
+            "detail": "Melhor ainda. Mapeamos o problema com você antes de decidir se precisa de software, automação ou outra solução.",
             "icon": "explore"
         }
     ]

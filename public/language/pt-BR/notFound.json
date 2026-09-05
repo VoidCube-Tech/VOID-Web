@@ -1,17 +1,17 @@
 {
     "meta": {
-        "title": "Página não encontrada — VoidCube",
-        "description": "O endereço informado não existe."
+        "title": "VoidCube - 404",
+        "description": "Essa rota não existe, mas ainda há muito para explorar."
     },
 
     "intro": {
         "index": "Erro / 404",
-        "title": "Este fluxo não leva a lugar nenhum.",
-        "description": "O endereço pode ter mudado ou nunca ter existido.",
+        "title": "Você saiu da rota.",
+        "description": "O endereço que você procura não está mais aqui. Volte ao início e continue explorando o universo da VoidCube.",
         "backHome": "Voltar ao início"
     },
 
     "visual": {
-        "label": "Cubo tridimensional VoidCube sobre um campo gravitacional azul"
+        "label": "Cubo tridimensional VoidCube flutuando sobre um campo gravitacional azul"
     }
 }
