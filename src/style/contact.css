@@ -559,13 +559,15 @@
 
 @media (max-width: 760px) {
   .contact-intro {
+    grid-template-columns: 1fr; /* Transforma em uma única coluna no mobile */
     min-height: max(620px, 92svh);
     gap: 42px;
   }
+  
   .contact-intro h1 {
-    font-size: clamp(42px, 12.3vw, 60px);
+    font-size: clamp(38px, 10vw, 56px);
     line-height: .94;
-    text-wrap: normal;
+    text-wrap: balance; /* Melhora a quebra de linha do título */
   }
   .contact-intro__copy > p {
     margin: 28px 0 0;
