@@ -1,0 +1,17 @@
+{
+    "meta": {
+        "title": "Página não encontrada — VoidCube",
+        "description": "O endereço informado não existe."
+    },
+
+    "intro": {
+        "index": "Erro / 404",
+        "title": "Este fluxo não leva a lugar nenhum.",
+        "description": "O endereço pode ter mudado ou nunca ter existido.",
+        "backHome": "Voltar ao início"
+    },
+
+    "visual": {
+        "label": "Cubo tridimensional VoidCube sobre um campo gravitacional azul"
+    }
+}

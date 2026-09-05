@@ -1,38 +1,119 @@
 .not-found {
-  display: grid;
-  grid-template-columns: 1fr minmax(360px, .8fr);
-  align-items: center;
-  gap: 4%;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-.not-found > div:first-child {
-  max-width: 760px;
+.not-found__visual {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
 }
 
-.not-found h1 {
-  margin: 24px 0;
-  font: 520 clamp(54px, 7vw, 100px)/.94 var(--display);
-  letter-spacing: -.065em;
+.not-found__visual-stage {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
 }
 
-.not-found p {
-  margin: 0 0 32px;
-  color: var(--muted);
+/* Mantém exatamente a proporção original do cubo que estava no seu código */
+.not-found__model {
+    position: absolute;
+    left: 78%;
+    top: -16vh;
+    width: 136vw;
+    height: 132vh;
+    transform: translate3d(-50%, 0, 0);
+    transform-origin: center;
+    will-change: transform;
 }
 
-.not-found .core-vector {
-  max-width: 600px;
+.black-hole-3d--not-found {
+    width: 100%;
+    height: 100%;
+}
+
+.not-found__content {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    max-width: var(--content);
+    margin: 0 auto;
+    padding-top: 40px;
+}
+
+.not-found__model-fallback {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.not-found__model-fallback-core {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 28%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(
+        circle,
+        var(--blue-light) 0%,
+        var(--blue-deep) 28%,
+        transparent 68%
+    );
+    filter: blur(10px);
 }
 
 @media (max-width: 760px) {
-  .not-found {
-    grid-template-columns: 1fr;
-  }
-  .not-found .core-vector {
-    position: absolute;
-    width: 115vw;
-    right: -50vw;
-    bottom: -25vw;
-    opacity: .34;
-  }
+    .not-found__model {
+        left: 50%;
+        top: 20vh;
+        width: 180vw;
+        height: 112vh;
+    }
+}
+
+@media (max-width: 420px) {
+    .not-found__model {
+        width: 188vw;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .not-found__visual {
+        inset: 0 0 auto;
+        height: max(760px, 100svh);
+        overflow: hidden;
+    }
+
+    .not-found__visual-stage {
+        position: relative;
+        height: max(760px, 100svh);
+    }
+
+    .not-found__model {
+        top: 0;
+        transform: translate3d(-50%, 0, 0) scale(.94);
+    }
+}
+
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+    .not-found__visual,
+    .not-found__visual-stage {
+        height: max(820px, 100svh);
+    }
+
+    .not-found__model {
+        left: 50%;
+        top: 8vh;
+        width: 180vw;
+        height: 112vh;
+        transform: translate3d(-50%, 0, 0);
+    }
 }

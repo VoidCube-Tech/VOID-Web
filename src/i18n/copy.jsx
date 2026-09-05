@@ -9,8 +9,8 @@ i18n
     lng: 'pt-BR',
     fallbackLng: 'pt-BR',
 
-    ns: ['common', 'home', 'form', 'contact', 'blog', 'about'],
-    defaultNS: 'common',
+    ns: ['notFound', 'home', 'form', 'contact', 'blog', 'about', 'navigation', 'footer'],
+    defaultNS: 'home',
 
     backend: {
       loadPath: '/language/{{lng}}/{{ns}}.json',

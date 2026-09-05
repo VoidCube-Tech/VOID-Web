@@ -1,0 +1,19 @@
+{
+  "ariaLabel": "Navegação principal",
+  "items": [
+    {
+      "label": "home",
+      "path": "/"
+    },
+    {
+      "label": "about",
+      "path": "/sobre"
+    }
+  ],
+  "home": "Início",
+  "about": "Sobre",
+  "blog": "Blog",
+  "cta": "Iniciar projeto",
+  "openMenu": "Abrir menu",
+  "closeMenu": "Fechar menu"
+}

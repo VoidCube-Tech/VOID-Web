@@ -1,23 +1,22 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowIcon } from '../components/Icons'
-import { posts, projects } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
 import { useTranslation } from 'react-i18next'
 import '../style/home.css'
-import CoreStory from '@/components/core_story/CoreStory'
+import CoreStory from '../components/core_story/CoreStory'
 
 export default function HomePage() {
     const { t } = useTranslation('home')
+
+    const projects = t('projects.items', { returnObjects: true })
+    const principles = t('method.principles', { returnObjects: true })
+    const journalItems = t('journal.items', { returnObjects: true })
 
     usePageMeta(
         t('meta.title'),
         t('meta.description')
     )
-
-    const principles = t('method.principles', {
-        returnObjects: true
-    })
 
     return (
         <div className="home-page">
@@ -86,7 +85,7 @@ export default function HomePage() {
 
                     <h2>
                         {t('method.titleLine1')}
-                        <br/>
+                        <br />
                         <em>{t('method.titleLine2')}</em>
                     </h2>
                 </div>
@@ -99,7 +98,7 @@ export default function HomePage() {
 
                     <Link
                         className="text-link text-link--dark"
-                        to="/sobre"
+                        to="/about"
                     >
                         {t('method.link')}
                         <ArrowIcon size={15} />
@@ -149,30 +148,32 @@ export default function HomePage() {
                 </div>
 
                 <div className="journal-list">
-                    {posts.map((post, index) => (
-                        <Link
-                            className="journal-row"
-                            to={`/blog/${post.slug}`}
-                            key={post.slug}
-                            data-reveal
-                        >
-                            <span>
-                                {String(index + 1).padStart(2, '0')}
-                            </span>
+                    {journalItems
+                        .filter(item => item.type === 'article')
+                        .map((post, index) => (
+                            <Link
+                                className="journal-row"
+                                to={`/blog/${post.slug}`}
+                                key={post.slug}
+                                data-reveal
+                            >
+                                <span>
+                                    {String(index + 1).padStart(2, '0')}
+                                </span>
 
-                            <div>
-                                <small>
-                                    {post.category} · {post.date}
-                                </small>
+                                <div>
+                                    <small>
+                                        {post.category} · {post.date}
+                                    </small>
 
-                                <h3>{post.title}</h3>
-                            </div>
+                                    <h3>{post.title}</h3>
+                                </div>
 
-                            <b>{post.read}</b>
+                                <b>{post.read}</b>
 
-                            <ArrowIcon size={16} />
-                        </Link>
-                    ))}
+                                <ArrowIcon size={16} />
+                            </Link>
+                        ))}
                 </div>
             </section>
 

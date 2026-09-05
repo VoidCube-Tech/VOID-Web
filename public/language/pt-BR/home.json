@@ -1,49 +1,264 @@
 {
-    "meta": {
-        "title": "VoidCube — Engenharia de software no Pará",
-        "description": "Sistemas, automações e integrações criados em Belém e Ananindeua para operações que não podem parar."
-    },
-    "projects": {
-        "index": "02 / Em produção",
-        "titleLine1": "O trabalho muda.",
-        "titleLine2": "O resultado aparece.",
-        "description": "Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração."
-    },
-    "method": {
-        "index": "03 / Método",
-        "titleLine1": "Tecnologia boa desaparece no trabalho.",
-        "titleLine2": "O resultado fica.",
-        "description": "Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.",
-        "link": "Como trabalhamos",
-        "principles": [
-            {
-                "verb": "OUVIR",
-                "title": "Começar pelo processo",
-                "text": "Ferramentas vêm depois do diagnóstico."
-            },
-            {
-                "verb": "TESTAR",
-                "title": "Projetar para o imprevisto",
-                "text": "O sistema precisa funcionar fora do caminho feliz."
-            },
-            {
-                "verb": "PROVAR",
-                "title": "Medir no trabalho real",
-                "text": "A entrega termina quando o resultado aparece."
-            }
+  "meta": {
+    "title": "VoidCube — Engenharia de software no Pará",
+    "description": "Sistemas, automações e integrações criados em Belém e Ananindeua para operações que não podem parar."
+  },
+
+  "projects": {
+    "index": "02 / Em produção",
+    "titleLine1": "O trabalho muda.",
+    "titleLine2": "O resultado aparece.",
+    "description": "Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração.",
+
+    "items": [
+      {
+        "type": "project",
+        "slug": "pedidos-do-comercial-a-expedicao",
+        "sector": "Distribuição",
+        "category": "Projetos",
+        "title": "Pedidos fluindo do comercial à expedição",
+        "result": "68%",
+        "metricLabel": "menos retrabalho operacional",
+        "tags": ["ERP", "WMS", "BI"],
+        "date": "18 JUN 2026",
+        "read": "7 min",
+        "summary": "Uma operação conectada para que pedidos, estoque e expedição compartilhem o mesmo estado do trabalho.",
+        "sections": [
+          {
+            "title": "Contexto",
+            "text": "O fluxo atravessava comercial, estoque e expedição com atualizações manuais entre etapas."
+          },
+          {
+            "title": "Problema",
+            "text": "A equipe precisava reconhecer o estado real de cada pedido sem depender de planilhas paralelas."
+          },
+          {
+            "title": "Arquitetura",
+            "text": "Uma camada de integração organiza eventos do ERP e do WMS e entrega uma visão operacional única."
+          },
+          {
+            "title": "Resultado",
+            "text": "O resultado atual registrado no projeto é uma redução de 68% no retrabalho operacional."
+          }
         ]
-    },
-    "journal": {
-        "index": "04 / VOID·LOG",
-        "title": "Decisões de engenharia, sem a parte polida.",
-        "description": "O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.",
-        "link": "Abrir caderno"
-    },
-    "cta": {
-        "index": "05 / Começar",
-        "title": "Qual processo sua equipe já cansou de contornar?",
-        "description": "Traga o fluxo como ele é — atalhos, planilhas e exceções incluídos. Organizamos o problema antes de falar em solução.",
-        "button": "Iniciar conversa",
-        "note": "Sem pitch pronto · conversa com quem projeta"
-    }
+      },
+      {
+        "type": "project",
+        "slug": "faturamento-recorrente-sem-planilhas",
+        "sector": "Serviços B2B",
+        "category": "Projetos",
+        "title": "Faturamento recorrente sem planilhas paralelas",
+        "result": "11h",
+        "metricLabel": "de operação manual poupadas por semana",
+        "tags": ["CRM", "Financeiro", "NFe"],
+        "date": "03 JUN 2026",
+        "read": "6 min",
+        "summary": "Contratos, faturamento e documentos fiscais coordenados num fluxo verificável e preparado para exceções.",
+        "sections": [
+          {
+            "title": "Contexto",
+            "text": "O fechamento recorrente exigia conferências repetidas entre CRM, financeiro e emissão fiscal."
+          },
+          {
+            "title": "Problema",
+            "text": "Planilhas intermediárias escondiam exceções e tornavam o fechamento dependente de poucas pessoas."
+          },
+          {
+            "title": "Implementação",
+            "text": "O processo passou a validar contratos, preparar cobranças e encaminhar divergências para decisão humana."
+          },
+          {
+            "title": "Resultado",
+            "text": "O resultado atual registrado é uma economia de 11 horas de operação manual por semana."
+          }
+        ]
+      },
+      {
+        "type": "project",
+        "slug": "painel-unico-industria",
+        "sector": "Indústria",
+        "category": "Projetos",
+        "title": "Um painel único para chão de fábrica e gestão",
+        "result": "99,7%",
+        "metricLabel": "de disponibilidade nos últimos 12 meses",
+        "tags": ["MES", "IoT", "ERP"],
+        "date": "21 MAI 2026",
+        "read": "8 min",
+        "summary": "Sinais de produção, manutenção e gestão reunidos sem apagar os sistemas que já sustentavam a fábrica.",
+        "sections": [
+          {
+            "title": "Contexto",
+            "text": "A produção e a gestão observavam o mesmo processo por sistemas e recortes diferentes."
+          },
+          {
+            "title": "Problema",
+            "text": "A divergência entre fontes atrasava decisões e dificultava reconhecer falhas de integração."
+          },
+          {
+            "title": "Arquitetura",
+            "text": "Uma camada observável conecta MES, sinais IoT e ERP, preservando a responsabilidade de cada sistema."
+          },
+          {
+            "title": "Resultado",
+            "text": "A disponibilidade registrada nos últimos 12 meses é de 99,7%."
+          }
+        ]
+      }
+    ]
+  },
+
+  "method": {
+    "index": "03 / Método",
+    "titleLine1": "Tecnologia boa desaparece no trabalho.",
+    "titleLine2": "O resultado fica.",
+    "description": "Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.",
+    "link": "Como trabalhamos",
+    "principles": [
+      {
+        "verb": "OUVIR",
+        "title": "Começar pelo processo",
+        "text": "Ferramentas vêm depois do diagnóstico."
+      },
+      {
+        "verb": "TESTAR",
+        "title": "Projetar para o imprevisto",
+        "text": "O sistema precisa funcionar fora do caminho feliz."
+      },
+      {
+        "verb": "PROVAR",
+        "title": "Medir no trabalho real",
+        "text": "A entrega termina quando o resultado aparece."
+      }
+    ]
+  },
+
+  "journal": {
+    "index": "04 / VOID·LOG",
+    "title": "Decisões de engenharia, sem a parte polida.",
+    "description": "O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.",
+    "link": "Abrir caderno",
+
+    "items": [
+      {
+        "type": "article",
+        "slug": "integrar-ou-substituir-erp",
+        "category": "Arquitetura",
+        "date": "12 AGO 2026",
+        "read": "6 min",
+        "title": "Quando integrar é melhor do que substituir seu ERP",
+        "summary": "Se o ERP ainda sustenta financeiro e fiscal, substituí-lo pode ampliar o risco sem resolver o gargalo.",
+        "sections": [
+          {
+            "title": "O ponto de partida",
+            "text": "Trocar o sistema central parece uma resposta completa, mas o problema costuma estar nos fluxos que acontecem ao redor dele."
+          },
+          {
+            "title": "Preservar o que funciona",
+            "text": "Uma camada de integração bem delimitada mantém o núcleo confiável e libera novos processos por etapas."
+          },
+          {
+            "title": "Decidir com evidência",
+            "text": "Mapeie exceções, dependências e custo de transição antes de escolher entre integrar e substituir."
+          }
+        ]
+      },
+      {
+        "type": "article",
+        "slug": "automacao-comeca-pelas-excecoes",
+        "category": "Automação",
+        "date": "29 JUL 2026",
+        "read": "8 min",
+        "title": "Automação saudável começa pelas exceções, não pelo caminho feliz",
+        "summary": "O projeto ganha robustez quando define quem decide, quais dados precisa e como retoma o fluxo após uma falha.",
+        "sections": [
+          {
+            "title": "O caminho feliz é a parte fácil",
+            "text": "A sequência normal raramente representa todo o trabalho. É nas exceções que a operação revela suas regras reais."
+          },
+          {
+            "title": "Automação com responsabilidade",
+            "text": "Cada desvio precisa ter dados suficientes, uma pessoa responsável e um caminho seguro de retomada."
+          },
+          {
+            "title": "Medir depois da entrega",
+            "text": "Uma automação só está pronta quando reduz trabalho sem esconder risco operacional."
+          }
+        ]
+      },
+      {
+        "type": "article",
+        "slug": "integracao-sem-observabilidade",
+        "category": "Integrações",
+        "date": "08 JUL 2026",
+        "read": "5 min",
+        "title": "O custo invisível de uma integração sem observabilidade",
+        "summary": "Correlação, métricas e reprocessamento seguro transformam falhas silenciosas em ocorrências tratáveis.",
+        "sections": [
+          {
+            "title": "Transportar não é integrar",
+            "text": "Mover dados entre sistemas resolve apenas a primeira metade do problema."
+          },
+          {
+            "title": "Falhas precisam de contexto",
+            "text": "Identificadores de correlação e eventos legíveis permitem descobrir onde o processo parou."
+          },
+          {
+            "title": "Retomar com segurança",
+            "text": "Reprocessamento idempotente reduz intervenção manual e protege a consistência dos dados."
+          }
+        ]
+      }
+    ]
+  },
+
+  "cta": {
+    "index": "05 / Começar",
+    "title": "Qual processo sua equipe já cansou de contornar?",
+    "description": "Traga o fluxo como ele é — atalhos, planilhas e exceções incluídos. Organizamos o problema antes de falar em solução.",
+    "button": "Iniciar conversa",
+    "note": "Sem pitch pronto · conversa com quem projeta"
+  },
+
+  "about": {
+    "eyebrow": "Sobre / VoidCube · Pará",
+    "headline": [
+      "Engenharia não começa",
+      "no código.",
+      "Começa entendendo",
+      "o que precisa funcionar."
+    ],
+    "manifesto": "Tecnologia com sotaque local, rigor de produto e alcance nacional.",
+    "introduction": "Entre Belém e Ananindeua, transformamos processos reais em software confiável. Trabalhamos perto da operação, tornamos decisões explícitas e continuamos responsáveis pelo que chega à produção.",
+    "principles": [
+      {
+        "verb": "Ouvir",
+        "title": "Começar pelo processo",
+        "text": "Ferramentas vêm depois do diagnóstico."
+      },
+      {
+        "verb": "Testar",
+        "title": "Projetar para o imprevisto",
+        "text": "O sistema precisa funcionar fora do caminho feliz."
+      },
+      {
+        "verb": "Provar",
+        "title": "Medir no trabalho real",
+        "text": "A entrega termina quando o resultado aparece."
+      }
+    ],
+    "values": [
+      {
+        "name": "Clareza antes do código",
+        "text": "Tornamos decisões, limites e responsabilidades visíveis antes de transformar o processo em software."
+      },
+      {
+        "name": "Operação junto do produto",
+        "text": "Quem executa o trabalho participa do diagnóstico, dos testes e da validação do que entra em produção."
+      },
+      {
+        "name": "Responsabilidade contínua",
+        "text": "Entrega não encerra o vínculo: observamos, medimos e corrigimos o que precisa continuar funcionando."
+      }
+    ]
+  }
 }

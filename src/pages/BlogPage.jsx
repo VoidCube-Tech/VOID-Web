@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowIcon } from '../components/Icons'
-import { journalItems } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
 import "../style/blog.css"
 
