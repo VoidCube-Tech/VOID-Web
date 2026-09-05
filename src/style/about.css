@@ -30,24 +30,8 @@
   line-height: 1.76;
 }
 
-.territory-graphic {
-  position: absolute;
-  z-index: 1;
-  right: -2vw;
-  bottom: -60px;
-  width: min(38vw, 520px);
-  color: var(--paper);
-  opacity: .45;
-  border-radius: 0;
-}
-
-.territory-graphic text {
-  fill: currentColor;
-  font: 500 9px var(--mono);
-  letter-spacing: .12em;
-}
-
 .culture-section > header,
+.outcomes-section > header,
 .commitments-section > header {
   max-width: var(--content);
   margin: 0 auto clamp(58px, 7vw, 100px);
@@ -57,11 +41,13 @@
 }
 
 .culture-section header h2,
+.outcomes-section header h2,
 .commitments-section header h2 {
   max-width: 960px;
   margin: 0;
   font: 520 clamp(43px, 5.6vw, 80px)/.98 var(--display);
   letter-spacing: -.055em;
+  text-wrap: balance;
 }
 
 .culture-principles {
@@ -77,10 +63,6 @@
   padding: 30px clamp(20px, 3vw, 45px) 34px;
   border-radius: var(--radius-ui);
   background: rgba(128, 213, 212, .055);
-}
-
-.culture-principles article + article {
-  padding-left: clamp(20px, 3vw, 45px);
 }
 
 .culture-principles article > span {
@@ -110,12 +92,34 @@
   line-height: 1.65;
 }
 
-.commitments-section {
+.outcomes-section {
   background: var(--void-soft);
+  color: var(--paper);
+}
+
+.outcomes-section .section-index {
+  color: var(--blue-light);
+}
+
+.outcomes-section .commitment-list {
+  margin-bottom: 0;
+}
+
+.outcomes-section .commitment-list article {
+  background: rgba(221, 228, 227, .035);
+}
+
+.outcomes-section .commitment-list h3 {
+  color: var(--paper);
+}
+
+.commitments-section {
+  background: var(--paper);
+  color: var(--ink);
 }
 
 .commitments-section .section-index {
-  color: var(--blue-light);
+  color: var(--blue-deep);
 }
 
 .commitment-list {
@@ -133,11 +137,11 @@
   padding: 18px 24px;
   align-items: center;
   border-radius: var(--radius-ui);
-  background: rgba(221, 228, 227, .035);
+  background: rgba(14, 21, 20, .055);
 }
 
 .commitment-list article > span {
-  color: var(--muted);
+  color: var(--muted-dark);
   font: 500 11px var(--mono);
 }
 
@@ -150,9 +154,22 @@
 .commitment-list p {
   max-width: 560px;
   margin: 0;
-  color: var(--muted);
+  color: var(--muted-dark);
   font-size: 14px;
   line-height: 1.7;
+}
+
+.outcomes-section .commitment-list article > span,
+.outcomes-section .commitment-list p {
+  color: var(--muted);
+}
+
+.outcomes-section .commitment-list h3 {
+  color: var(--paper);
+}
+
+.commitments-section .button {
+  margin-top: 0;
 }
 
 @media (max-width: 760px) {
@@ -161,44 +178,54 @@
     align-content: center;
     gap: 34px;
   }
+
   .about-hero h1 {
     font-size: clamp(47px, 13.5vw, 66px);
   }
+
   .about-hero__copy > p {
     margin: 28px 0 0;
     font-size: 14px;
   }
-  .territory-graphic {
-    width: 90vw;
-    right: -25vw;
-    opacity: .36;
-  }
+
   .culture-section > header,
+  .outcomes-section > header,
   .commitments-section > header {
     grid-template-columns: 1fr;
     gap: 25px;
   }
+
   .culture-section header h2,
+  .outcomes-section header h2,
   .commitments-section header h2 {
     font-size: clamp(39px, 11vw, 56px);
   }
+
   .culture-principles {
     grid-template-columns: 1fr;
   }
-  .culture-principles article,
-  .culture-principles article + article {
+
+  .culture-principles article {
     min-height: 0;
     padding: 28px 20px;
   }
+
   .culture-principles b {
     margin-top: 42px;
   }
+
   .commitment-list article {
     grid-template-columns: 34px 1fr;
     gap: 10px;
     padding: 27px 0;
   }
+
   .commitment-list p {
     grid-column: 2;
+  }
+
+  .commitments-section .button {
+    width: 100%;
+    justify-content: space-between;
   }
 }
