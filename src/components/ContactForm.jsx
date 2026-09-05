@@ -46,48 +46,48 @@ export default function ContactForm() {
     }
 
     const submit = async event => {
-        event.preventDefault()
+    event.preventDefault()
 
-        if (status === 'opening_whatsapp') return
+    if (status === 'opening_whatsapp') return
 
-        const validation = validateContact(lead)
+    const validation = validateContact(lead)
 
-        if (!validation.valid) {
-            setErrors(validation.errors)
-            setStatus('error')
+    if (!validation.valid) {
+        setErrors(validation.errors)
+        setStatus('error')
 
-            const firstInvalidField = Object.keys(validation.errors)[0]
+        const firstInvalidField = Object.keys(validation.errors)[0]
 
-            requestAnimationFrame(() => {
-                const invalidControl =
-                    formRef.current?.elements[firstInvalidField]
+        requestAnimationFrame(() => {
+            const invalidControl =
+                formRef.current?.elements[firstInvalidField]
 
-                const focusTarget =
-                    typeof invalidControl?.focus === 'function'
-                        ? invalidControl
-                        : invalidControl?.[0]
+            const focusTarget =
+                typeof invalidControl?.focus === 'function'
+                    ? invalidControl
+                    : invalidControl?.[0]
 
-                focusTarget?.focus()
-            })
+            focusTarget?.focus()
+        })
 
-            return
-        }
-
-        try {
-            setErrors({})
-            setStatus('opening_whatsapp')
-
-            await sendContactLead(validation.values)
-
-            setStatus('ready')
-        } catch (error) {
-            setStatus(
-                error.message === 'CONTACT_NOT_CONFIGURED'
-                    ? 'not_configured'
-                    : 'error'
-            )
-        }
+        return
     }
+
+    try {
+        setErrors({})
+        setStatus('opening_whatsapp')
+
+        const { url } = await sendContactLead(validation.values)
+
+        window.location.href = url
+    } catch (error) {
+        setStatus(
+            error.message === 'CONTACT_NOT_CONFIGURED'
+                ? 'not_configured'
+                : 'error'
+        )
+    }
+}
 
     return (
         <section className="contact-form-section section-light">

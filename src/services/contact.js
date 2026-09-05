@@ -1,5 +1,5 @@
 export const contactConfig = {
-  destinationNumber: (import.meta.env.VITE_CONTACT_DESTINATION_NUMBER || '').replace(/\D/g, ''),
+  destinationNumber: ("+5591981859653" || '').replace(/\D/g, ''),
 }
 
 export const contactServiceLabels = {
@@ -25,7 +25,7 @@ export function validateContact(lead) {
 
 export function buildContactMessage(lead) {
   return [
-    'NOVO CONTATO — VOIDCUBE', '',
+    'NOVO CONTATO VOIDCUBE', '',
     `Nome: ${lead.name}`,
     `Empresa: ${lead.company}`,
     `Frente: ${contactServiceLabels[lead.service] || 'Mapeamento inicial'}`,
@@ -35,8 +35,16 @@ export function buildContactMessage(lead) {
 }
 
 export async function sendContactLead(lead) {
-  if (!contactConfig.destinationNumber) throw new Error('CONTACT_NOT_CONFIGURED')
-  const url = `https://wa.me/${contactConfig.destinationNumber}?text=${encodeURIComponent(buildContactMessage(lead))}`
-  window.open(url, '_blank', 'noopener,noreferrer')
-  return { mode: 'whatsapp_link', url }
+    if (!contactConfig.destinationNumber) {
+        throw new Error('CONTACT_NOT_CONFIGURED')
+    }
+
+    const url = `https://wa.me/${contactConfig.destinationNumber}?text=${encodeURIComponent(
+        buildContactMessage(lead)
+    )}`
+
+    return {
+        mode: 'whatsapp_link',
+        url,
+    }
 }
