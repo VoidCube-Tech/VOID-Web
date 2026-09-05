@@ -1,0 +1,49 @@
+{
+    "meta": {
+        "title": "VoidCube — Engenharia de software no Pará",
+        "description": "Sistemas, automações e integrações criados em Belém e Ananindeua para operações que não podem parar."
+    },
+    "projects": {
+        "index": "02 / Em produção",
+        "titleLine1": "O trabalho muda.",
+        "titleLine2": "O resultado aparece.",
+        "description": "Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração."
+    },
+    "method": {
+        "index": "03 / Método",
+        "titleLine1": "Tecnologia boa desaparece no trabalho.",
+        "titleLine2": "O resultado fica.",
+        "description": "Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.",
+        "link": "Como trabalhamos",
+        "principles": [
+            {
+                "verb": "OUVIR",
+                "title": "Começar pelo processo",
+                "text": "Ferramentas vêm depois do diagnóstico."
+            },
+            {
+                "verb": "TESTAR",
+                "title": "Projetar para o imprevisto",
+                "text": "O sistema precisa funcionar fora do caminho feliz."
+            },
+            {
+                "verb": "PROVAR",
+                "title": "Medir no trabalho real",
+                "text": "A entrega termina quando o resultado aparece."
+            }
+        ]
+    },
+    "journal": {
+        "index": "04 / VOID·LOG",
+        "title": "Decisões de engenharia, sem a parte polida.",
+        "description": "O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.",
+        "link": "Abrir caderno"
+    },
+    "cta": {
+        "index": "05 / Começar",
+        "title": "Qual processo sua equipe já cansou de contornar?",
+        "description": "Traga o fluxo como ele é — atalhos, planilhas e exceções incluídos. Organizamos o problema antes de falar em solução.",
+        "button": "Iniciar conversa",
+        "note": "Sem pitch pronto · conversa com quem projeta"
+    }
+}

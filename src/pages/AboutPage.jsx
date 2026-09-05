@@ -129,7 +129,7 @@ export default function AboutPage() {
                 </div>
 
                 <Link
-                    className="button button--solid"
+                    className="button button--ink"
                     to="/contato"
                 >
                     {t('commitments.cta')}
