@@ -172,7 +172,7 @@ h1, h2, h3 { font-variation-settings: 'wdth' 92; }
   --solutions-progress: 0;
   --story-scene-x: 78%;
   --story-scene-y: 48%;
-  --story-cube-size: min(39vw, 65svh);
+  --story-cube-size: min(34vw, 57svh);
   --story-scene-opacity: 1;
   --story-clear-top: 0px;
   --story-clear-left: 0px;

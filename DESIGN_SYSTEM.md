@@ -277,7 +277,7 @@ No fim da leitura das três capacidades, um trecho próprio de saída acompanha 
 
 ### Proporções
 
-- Hero desktop: cubo com referência de 39% da largura, limitado a 65% da altura da tela; centro horizontal em 78%.
+- Hero desktop: cubo com referência de 34% da largura, limitado a 57% da altura da tela; centro horizontal em 78%. A redução é de aproximadamente 13% em relação ao enquadramento anterior.
 - Hero mobile: centro em 80% da largura, alinhado ao centro do título; tamanho de até 40% da largura, limitado à altura do título mais 40 px para deixar descrição e ações livres.
 - Parallax: cubo até 94% da largura, limitado pelo espaço livre abaixo dos textos; campo com 180% da largura, recortado pelo viewport.
 - Na abertura, o diâmetro do vórtice acompanha 2,6 vezes o tamanho de referência do cubo, incluindo a aproximação e a desmontagem.
@@ -291,9 +291,12 @@ No fim da leitura das três capacidades, um trecho próprio de saída acompanha 
 - Dois ciclos de fluxo se sobrepõem: o gás interno avança mais rápido, mas cada ciclo é reiniciado com contribuição zero, sem acumular voltas ou criar saltos.
 - O ruído é filtrado pelo tamanho do pixel e normalizado entre os níveis de detalhe do desktop e do celular; detalhes muito finos desaparecem progressivamente.
 - Duas superfícies levemente onduladas formam as camadas de matéria e brilho. A camada principal usa transparência normal, enquanto a atmosfera externa usa mistura aditiva.
-- A camada frontal é atenuada. As 220 partículas dos dispositivos compactos e 640 do desktop giram em velocidades diferentes e migram para dentro, desaparecendo antes de reiniciar na borda externa.
+- A camada frontal do gás recebe atenuação de até 84%, mantendo as faces do cubo legíveis. As 220 partículas dos dispositivos compactos e 640 do desktop giram em velocidades diferentes e migram para dentro, desaparecendo antes de reiniciar na borda externa.
 - A geometria do disco é renderizada em passagem única por camada; o canvas e os limites de resolução e FPS permanecem os mesmos.
 - A dissolução do cubo usa erosão procedural com descarte de fragmentos, preservando o teste de profundidade dos materiais opacos. Peças e faces diminuem juntas e se dispersam em trajetórias determinísticas; não há pós-processamento ou novos sistemas de partículas.
+- Luz principal branca, preenchimento hemisférico e materiais menos metálicos destacam o volume e as bordas. O desktop com ponteiro preciso mantém antialiasing mesmo no perfil de hardware limitado; os limites de pixels e FPS continuam ativos.
+- Na abertura do desktop, o mouse inclina a cena em até aproximadamente 8° na horizontal e 5° na vertical. Eventos são recebidos pela superfície de conteúdo, pois o canvas é decorativo. O movimento usa amortecimento dependente do tempo e retorna ao repouso ao sair da cena.
+- A coreografia de scroll assume a orientação durante a passagem. Links, arraste de peças e movimento reduzido conservam seus próprios controles.
 
 ---
 

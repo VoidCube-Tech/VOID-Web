@@ -255,7 +255,7 @@ export default function CoreStory() {
       const { viewportWidth: width, viewportHeight: height } = metrics
       const heroSize = compactLayout
         ? Math.min(width * .4, metrics.heroTitleHeight + 40)
-        : Math.min(width * .39, height * .65)
+        : Math.min(width * .34, height * .57)
       // Frame the whole opening cube between the navigation and the incoming section.
       const focusBottom = Math.min(height - 32, metrics.introStart - scrollDistance - 32)
       const focusHeight = Math.max(96, focusBottom - metrics.headerClear)

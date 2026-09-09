@@ -65,6 +65,15 @@ Rodada de 9 de setembro de 2026. Validação automatizada em Chrome headless com
 - Introdução com cena oculta ao fim da passagem, painéis ativos legíveis, movimento reduzido, ausência de overflow horizontal e um único canvas aprovados.
 - Build e `git diff --check` aprovados.
 
+## Tamanho e profundidade no desktop
+
+- Referência do cubo reduzida de 561,6 para 489,6 px em 1440 × 900 e de 342,55 para 299,2 px em 880 × 527, aproximadamente 13%. Capturas da abertura conferidas também em 390 × 844.
+- Gás frontal menos opaco, luz principal branca e ajuste de rugosidade/metalness deixam faces e bordas mais definidas.
+- Inclinação real ao mover o mouse confirmada nos dois eixos; retorno ao repouso, controle de orientação durante a passagem e ausência de inclinação com movimento reduzido aprovados.
+- Arrastar e soltar peças e descarte do canvas ao navegar aprovados nos perfis normal e limitado a quatro núcleos/4 GB. Antialiasing confirmado nos dois perfis de desktop.
+- Passagem revalidada em seis dimensões, com 144 amostras sincronizadas aos frames: ida e volta consistentes, enquadramento preservado e nenhum erro JavaScript/WebGL.
+- Build e `git diff --check` aprovados.
+
 ## Limites da validação
 
 Capturas e interações foram verificadas em emulação local do Chrome. Não houve medição de FPS, bateria ou temperatura em celulares físicos. O build mantém o aviso de chunk 3D acima de 500 kB; ele continua carregado sob demanda.

@@ -212,9 +212,9 @@ function createMagicCube(compactDevice, compactLayout) {
   const SurfaceMaterial = compactDevice ? THREE.MeshStandardMaterial : THREE.MeshPhysicalMaterial
   const cubieMaterial = new SurfaceMaterial({
     color: VOIDCUBE_PALETTE.navy,
-    roughness: .28,
-    metalness: .32,
-    ...(!compactDevice && { clearcoat: 1, clearcoatRoughness: .14 }),
+    roughness: .34,
+    metalness: .12,
+    ...(!compactDevice && { clearcoat: .7, clearcoatRoughness: .2 }),
   })
   const cubies = new THREE.InstancedMesh(cubieGeometry, cubieMaterial, 27)
   addCubeDissolve(cubieMaterial, dissolveUniform)
@@ -279,9 +279,9 @@ function createMagicCube(compactDevice, compactLayout) {
       color: VOIDCUBE_PALETTE.white,
       emissive: baseColor.clone().multiplyScalar(.045),
       emissiveIntensity: .55,
-      roughness: .2,
+      roughness: .26,
       metalness: .035,
-      ...(!compactDevice && { clearcoat: 1, clearcoatRoughness: .09 }),
+      ...(!compactDevice && { clearcoat: .85, clearcoatRoughness: .16 }),
     })
     const stickers = new THREE.InstancedMesh(stickerGeometry, stickerMaterial, 9)
     addCubeDissolve(stickerMaterial, dissolveUniform)
@@ -617,6 +617,8 @@ export default function BlackHole3D({ className = '' }) {
     const limitedCpu = (navigator.hardwareConcurrency || 8) <= 4
     const limitedMemory = Number.isFinite(navigator.deviceMemory) && navigator.deviceMemory <= 4
     const compactDevice = compactLayout || coarsePointer || limitedCpu || limitedMemory
+    const pointerSurface = cubeMotionRoot || root
+    const pointerTrackingEnabled = !compactLayout && !coarsePointer
     const pixelRatioCap = compactLayout ? 1.25 : compactDevice ? 1.1 : 1.8
     const frameInterval = compactDevice ? 1000 / 30 : 0
     let renderer
@@ -640,7 +642,7 @@ export default function BlackHole3D({ className = '' }) {
       const viewport = { width: 1, height: 1, worldPerPixel: 16 }
 
       renderer = new THREE.WebGLRenderer({
-        antialias: !compactDevice,
+        antialias: !compactLayout && !coarsePointer,
         alpha: true,
         premultipliedAlpha: true,
         powerPreference: 'high-performance',
@@ -672,7 +674,7 @@ export default function BlackHole3D({ className = '' }) {
           flowDirection: { value: 1 },
           explode: { value: 0 },
           dissolve: { value: 0 },
-          frontAttenuation: { value: .38 },
+          frontAttenuation: { value: .84 },
         },
         vertexShader,
         fragmentShader,
@@ -735,9 +737,9 @@ export default function BlackHole3D({ className = '' }) {
       const centerLight = new THREE.PointLight(VOIDCUBE_PALETTE.blueLight, 5.2, 7)
       centerLight.position.copy(cubeGroup.position)
       system.add(centerLight)
-      scene.add(new THREE.HemisphereLight(VOIDCUBE_PALETTE.white, compactLayout ? VOIDCUBE_PALETTE.navyRaised : VOIDCUBE_PALETTE.navyDeep, compactLayout ? 1.5 : 1.15))
-      const blueKey = new THREE.DirectionalLight(VOIDCUBE_PALETTE.blueLight, 2.1)
-      blueKey.position.set(4, 5, 7)
+      scene.add(new THREE.HemisphereLight(VOIDCUBE_PALETTE.white, VOIDCUBE_PALETTE.navyRaised, 1.65))
+      const blueKey = new THREE.DirectionalLight(VOIDCUBE_PALETTE.white, 2.6)
+      blueKey.position.set(-3, 6, 8)
       scene.add(blueKey)
       const blueRim = new THREE.DirectionalLight(compactLayout ? VOIDCUBE_PALETTE.blueLight : VOIDCUBE_PALETTE.blueDeep, compactLayout ? 1.2 : 1.55)
       blueRim.position.set(-5, -2, 4)
@@ -817,18 +819,24 @@ export default function BlackHole3D({ className = '' }) {
       }
 
       const updatePointer = event => {
-        if (drag.pointerId !== null) return
+        if (drag.pointerId !== null || reducedMotion) return
+        if (event.target instanceof Element && event.target.closest(interactiveSelector)) {
+          resetPointer()
+          return
+        }
         const bounds = root.getBoundingClientRect()
-        pointer.targetX = ((event.clientX - bounds.left) / bounds.width) - .5
-        pointer.targetY = ((event.clientY - bounds.top) / bounds.height) - .5
+        pointer.targetX = THREE.MathUtils.clamp((event.clientX - bounds.left) / bounds.width - .5, -.5, .5)
+        pointer.targetY = THREE.MathUtils.clamp((event.clientY - bounds.top) / bounds.height - .5, -.5, .5)
       }
       const resetPointer = () => {
         pointer.targetX = 0
         pointer.targetY = 0
       }
-      if (!coarsePointer) {
-        root.addEventListener('pointermove', updatePointer, { passive: true })
-        root.addEventListener('pointerleave', resetPointer)
+      if (pointerTrackingEnabled) {
+        // The canvas is decorative; pointer events reach the story's content surface.
+        pointerSurface.addEventListener('pointermove', updatePointer, { passive: true })
+        pointerSurface.addEventListener('pointerleave', resetPointer)
+        window.addEventListener('blur', resetPointer)
       }
 
       const resize = () => {
@@ -889,7 +897,7 @@ export default function BlackHole3D({ className = '' }) {
         const horizon = readMotionValue('sceneHorizon', 0, 0, 1)
         const sceneX = readMotionValue('sceneX', .78, 0, 1)
         const sceneY = readMotionValue('sceneY', .48, 0, 1.5)
-        const sceneSize = readMotionValue('sceneSize', viewport.width * .39, 32, viewport.width * 1.2)
+        const sceneSize = readMotionValue('sceneSize', viewport.width * .34, 32, viewport.width * 1.2)
         const fieldWidth = readMotionValue('sceneFieldWidth', viewport.width * .76, 1, viewport.width * 2)
         cubeGroup.userData.setExplode?.(cubeExplode, cubeDissolve)
         const sceneScale = sceneSize * viewport.worldPerPixel / (2.7 * (cubeGroup.userData.framingScale || 1))
@@ -904,18 +912,20 @@ export default function BlackHole3D({ className = '' }) {
 
         if (!reducedMotion) {
           const parallaxEnabled = cubeMotionRoot?.dataset.parallaxPhase === 'solutions'
-          if (!parallaxEnabled) {
+          const heroInteractive = cubeMotionRoot?.dataset.motionPhase === 'hero'
+          const pointerActive = pointerTrackingEnabled && (heroInteractive || parallaxEnabled)
+          if (!pointerActive && drag.pointerId === null) {
             pointer.targetX = 0
             pointer.targetY = 0
           }
-          pointer.x += (pointer.targetX - pointer.x) * .045
-          pointer.y += (pointer.targetY - pointer.y) * .045
+          pointer.x = THREE.MathUtils.damp(pointer.x, pointer.targetX, 8, delta)
+          pointer.y = THREE.MathUtils.damp(pointer.y, pointer.targetY, 8, delta)
           const storyDirection = gravityRoot?.dataset.gravity === 'left' ? -1 : 1
           const storyTurn = parallaxEnabled ? storyDirection * .075 : 0
-          const pointerTurnX = parallaxEnabled ? pointer.x * .2 : 0
-          const pointerTurnY = parallaxEnabled ? -pointer.y * .1 : 0
-          system.rotation.y += (pointerTurnX + storyTurn - system.rotation.y) * .025
-          system.rotation.x += (pointerTurnY - system.rotation.x) * .025
+          const pointerTurnX = pointerActive ? pointer.x * (heroInteractive ? .28 : .2) : 0
+          const pointerTurnY = pointerActive ? -pointer.y * (heroInteractive ? .18 : .1) : 0
+          system.rotation.y = THREE.MathUtils.damp(system.rotation.y, pointerTurnX + storyTurn, 8, delta)
+          system.rotation.x = THREE.MathUtils.damp(system.rotation.x, pointerTurnY, 8, delta)
 
           vortexTime += delta * (1 + vortexExplode * .5 + vortexDissolve * .7)
           discMaterial.uniforms.time.value = vortexTime
@@ -988,6 +998,9 @@ export default function BlackHole3D({ className = '' }) {
 
       const onReducedMotionChange = event => {
         reducedMotion = event.matches
+        resetPointer()
+        pointer.x = 0
+        pointer.y = 0
         tapCandidate = null
         tapTurn.startedAt = null
         delete cubeMotionRoot?.dataset.cubeTurning
@@ -1172,9 +1185,10 @@ export default function BlackHole3D({ className = '' }) {
           window.removeEventListener('blur', cancelTap)
           delete cubeMotionRoot.dataset.cubeTurning
         }
-        if (!coarsePointer) {
-          root.removeEventListener('pointermove', updatePointer)
-          root.removeEventListener('pointerleave', resetPointer)
+        if (pointerTrackingEnabled) {
+          pointerSurface.removeEventListener('pointermove', updatePointer)
+          pointerSurface.removeEventListener('pointerleave', resetPointer)
+          window.removeEventListener('blur', resetPointer)
         }
         if (cubeMotionRoot && dragEnabled) {
           cubeMotionRoot.removeEventListener('pointerdown', onPiecePointerDown, true)
