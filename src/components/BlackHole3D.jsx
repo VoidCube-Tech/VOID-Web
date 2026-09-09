@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import "../style/visual3d.css"
 
 const VOIDCUBE_PALETTE = {
@@ -107,13 +108,19 @@ const fragmentShader = `
     float detailVisibility = 1.0 - smoothstep(0.007, 0.018, pixelWidth);
     float filaments = smoothstep(0.4, 0.84, grain) * detailVisibility;
     float clouds = smoothstep(0.22, 0.8, gas);
+    // Uneven spiral filaments carry energy around the equator, rather than
+    // outlining a perfect ring. Their angular coordinates join without a seam.
+    float spiral = angle * 3.0 - time * flowDirection * 0.65 + log(radius + 0.18) * 18.0;
+    float current = 0.5 + 0.5 * sin(spiral + (gas - 0.5) * 5.0);
+    float energy = smoothstep(0.76, 0.98, current) * (0.35 + clouds * 0.65);
+    energy *= exp(-pow((radius - 0.6) * 6.5, 2.0)) * detailVisibility;
     float turbulentRadius = radius + (gas - 0.5) * 0.075;
     float innerRadius = mix(0.29, 0.33, explode);
     float innerEdge = smoothstep(innerRadius - pixelWidth, innerRadius + 0.14 + pixelWidth, turbulentRadius);
     float outerEdge = 1.0 - smoothstep(0.65 - pixelWidth, 0.99 + pixelWidth, turbulentRadius);
     float diskMask = innerEdge * outerEdge;
     float radialDensity = exp(-pow((turbulentRadius - 0.54) * 3.8, 2.0));
-    float density = radialDensity * (0.13 + clouds * 0.78 + filaments * clouds * 0.7);
+    float density = radialDensity * (0.1 + clouds * 0.72 + filaments * clouds * 0.6) + energy * 0.42;
     float hotGas = exp(-pow((turbulentRadius - 0.45) * 9.0, 2.0));
     float illuminatedSide = smoothstep(-0.65, 0.7, p.x * 2.0 + clouds * 0.15);
     vec3 navy = vec3(0.027, 0.086, 0.169);
@@ -126,12 +133,14 @@ const fragmentShader = `
     // Dark pockets and local scattering give the disk depth without a post-process bloom.
     color *= 0.6 + clouds * 0.65;
     color += blueLight * hotGas * filaments * (0.18 + explode * 0.1);
+    color = mix(color, mix(blueLight, white, 0.35), energy * 0.58);
+    color += blueLight * energy * 0.32;
     float alpha = (1.0 - exp(-density * 2.3)) * diskMask * strength;
     // The least dense gas breaks up first; the bright filaments linger and disperse.
     float gasRemains = smoothstep(dissolve * 1.1 - 0.2, dissolve * 1.1 + 0.12, gas);
     alpha *= gasRemains * (1.0 - smoothstep(0.72, 1.0, dissolve));
     alpha *= 1.0 - frontAttenuation * smoothstep(-0.2, 1.0, vFrontDepth);
-    alpha = min(alpha, 0.82);
+    alpha = min(alpha, 0.7);
     gl_FragColor = vec4(color, alpha);
   }
 `
@@ -213,9 +222,9 @@ function createMagicCube(compactDevice, compactLayout) {
   const SurfaceMaterial = compactDevice ? THREE.MeshStandardMaterial : THREE.MeshPhysicalMaterial
   const cubieMaterial = new SurfaceMaterial({
     color: VOIDCUBE_PALETTE.navy,
-    roughness: .34,
-    metalness: .12,
-    ...(!compactDevice && { clearcoat: .7, clearcoatRoughness: .2 }),
+    roughness: .43,
+    metalness: .08,
+    ...(!compactDevice && { clearcoat: .32, clearcoatRoughness: .3 }),
   })
   const cubies = new THREE.InstancedMesh(cubieGeometry, cubieMaterial, 27)
   addCubeDissolve(cubieMaterial, dissolveUniform)
@@ -270,7 +279,7 @@ function createMagicCube(compactDevice, compactLayout) {
     { color: VOIDCUBE_PALETTE.blue, rotation: [0, Math.PI, 0], position: (u, v) => [-u, v, -faceOffset], parent: (u, v) => [-u, v, -spacing] },
     { color: VOIDCUBE_PALETTE.blueDeep, rotation: [0, Math.PI / 2, 0], position: (u, v) => [faceOffset, v, -u], parent: (u, v) => [spacing, v, -u] },
     { color: VOIDCUBE_PALETTE.navyRaised, rotation: [0, -Math.PI / 2, 0], position: (u, v) => [-faceOffset, v, u], parent: (u, v) => [-spacing, v, u] },
-    { color: VOIDCUBE_PALETTE.white, rotation: [-Math.PI / 2, 0, 0], position: (u, v) => [u, faceOffset, -v], parent: (u, v) => [u, spacing, -v] },
+    { color: VOIDCUBE_PALETTE.blueLight, rotation: [-Math.PI / 2, 0, 0], position: (u, v) => [u, faceOffset, -v], parent: (u, v) => [u, spacing, -v] },
     { color: VOIDCUBE_PALETTE.navyDeep, rotation: [Math.PI / 2, 0, 0], position: (u, v) => [u, -faceOffset, v], parent: (u, v) => [u, -spacing, v] },
   ]
 
@@ -280,9 +289,9 @@ function createMagicCube(compactDevice, compactLayout) {
       color: VOIDCUBE_PALETTE.white,
       emissive: baseColor.clone().multiplyScalar(.045),
       emissiveIntensity: .55,
-      roughness: .26,
+      roughness: .36,
       metalness: .035,
-      ...(!compactDevice && { clearcoat: .85, clearcoatRoughness: .16 }),
+      ...(!compactDevice && { clearcoat: .45, clearcoatRoughness: .28 }),
     })
     const stickers = new THREE.InstancedMesh(stickerGeometry, stickerMaterial, 9)
     addCubeDissolve(stickerMaterial, dissolveUniform)
@@ -304,7 +313,7 @@ function createMagicCube(compactDevice, compactLayout) {
         localPosition: stickerPosition.clone().sub(parentPosition),
         baseQuaternion: dummy.quaternion.clone(),
       })
-      const finish = stickerIndex === 4 ? .09 : ((stickerIndex % 3) - 1) * .018
+      const finish = stickerIndex === 4 ? .025 : ((stickerIndex % 3) - 1) * .012
       stickers.setColorAt(stickerIndex, baseColor.clone().offsetHSL(0, 0, finish))
       stickerIndex += 1
     }))
@@ -385,6 +394,7 @@ function createMagicCube(compactDevice, compactLayout) {
     })
     // Compensate for the actual spread, rather than shrinking before pieces separate.
     group.userData.framingScale = radius / assembledRadius
+    group.userData.framingRadius = radius
     applyPieceMatrices()
   }
 
@@ -623,6 +633,7 @@ export default function BlackHole3D({ className = '' }) {
     const pixelRatioCap = compactLayout ? 1.25 : compactDevice ? 1.1 : 1.8
     const frameInterval = compactDevice ? 1000 / 30 : 0
     let renderer
+    let environmentTarget
     let resizeObserver
     let visibilityObserver
     let motionObserver
@@ -635,12 +646,13 @@ export default function BlackHole3D({ className = '' }) {
     try {
       const scene = new THREE.Scene()
       scene.background = null
-      // An orthographic composition keeps the same proportions at every viewport ratio.
-      // The canvas stays viewport-sized; only the objects grow into the lower horizon.
+      // Perspective reveals the depth between faces. An off-axis lens keeps the
+      // optical center on the cube while its position follows the scroll layout.
       const viewHeight = 16
-      const camera = new THREE.OrthographicCamera(-8, 8, 8, -8, .1, 100)
-      camera.position.set(0, 0, 30)
-      const viewport = { width: 1, height: 1, worldPerPixel: 16 }
+      const heroCameraDistance = viewHeight / (2 * Math.tan(THREE.MathUtils.degToRad(36) / 2))
+      const camera = new THREE.PerspectiveCamera(36, 1, .1, 400)
+      camera.position.set(0, 0, heroCameraDistance)
+      const viewport = { width: 1, height: 1, worldPerPixel: 16, sceneX: NaN, sceneY: NaN, horizon: NaN }
 
       renderer = new THREE.WebGLRenderer({
         antialias: !compactLayout && !coarsePointer,
@@ -657,12 +669,26 @@ export default function BlackHole3D({ className = '' }) {
       renderer.domElement.className = 'black-hole-3d__canvas'
       root.appendChild(renderer.domElement)
 
+      // Generate soft reflections once; the render loop still uses one scene pass.
+      const studio = new RoomEnvironment()
+      const environmentGenerator = new THREE.PMREMGenerator(renderer)
+      try {
+        environmentTarget = environmentGenerator.fromScene(studio, .06)
+        scene.environment = environmentTarget.texture
+        scene.environmentIntensity = .18
+      } finally {
+        studio.dispose()
+        environmentGenerator.dispose()
+      }
+
       const system = new THREE.Group()
       system.rotation.z = THREE.MathUtils.degToRad(-8)
       scene.add(system)
+      const orbitalField = new THREE.Group()
+      system.add(orbitalField)
 
       const discMaterial = new THREE.ShaderMaterial({
-        defines: { FBM_OCTAVES: compactLayout ? 2 : compactDevice ? 3 : 4 },
+        defines: { FBM_OCTAVES: compactDevice ? 3 : 5 },
         transparent: true,
         depthWrite: false,
         side: THREE.DoubleSide,
@@ -675,7 +701,7 @@ export default function BlackHole3D({ className = '' }) {
           flowDirection: { value: 1 },
           explode: { value: 0 },
           dissolve: { value: 0 },
-          frontAttenuation: { value: .84 },
+          frontAttenuation: { value: .2 },
         },
         vertexShader,
         fragmentShader,
@@ -688,25 +714,26 @@ export default function BlackHole3D({ className = '' }) {
         compactDevice ? 5 : 10,
       )
       const disc = new THREE.Mesh(discGeometry, discMaterial)
-      const discBaseTilt = THREE.MathUtils.degToRad(56)
+      const discBaseTilt = THREE.MathUtils.degToRad(-76)
       disc.rotation.x = discBaseTilt
       disc.renderOrder = 2
-      system.add(disc)
+      orbitalField.add(disc)
 
       const disc2Material = discMaterial.clone()
       disc2Material.blending = THREE.AdditiveBlending
       disc2Material.uniforms.strength.value = .2
       disc2Material.uniforms.seed.value = .73
       disc2Material.uniforms.flowDirection.value = .62
+      disc2Material.uniforms.frontAttenuation.value = .34
       const disc2 = new THREE.Mesh(discGeometry, disc2Material)
       const disc2BaseScale = 1.11
-      const disc2BaseTilt = THREE.MathUtils.degToRad(60)
+      const disc2BaseTilt = THREE.MathUtils.degToRad(-73)
       disc2.scale.setScalar(disc2BaseScale)
       disc2.rotation.x = disc2BaseTilt
-      disc2.rotation.z = -.035
+      disc2.rotation.z = 0
       disc2.position.z = -.12
       disc2.renderOrder = 1
-      system.add(disc2)
+      orbitalField.add(disc2)
 
       let cubeGroup
       try {
@@ -730,7 +757,7 @@ export default function BlackHole3D({ className = '' }) {
       }
       const cubeBaseScale = 1.08
       const cubeBaseDepth = 0
-      cubeGroup.rotation.set(-.46, .64, .075)
+      cubeGroup.rotation.set(.28, .64, .075)
       cubeGroup.scale.setScalar(cubeBaseScale)
       cubeGroup.position.z = cubeBaseDepth
       system.add(cubeGroup)
@@ -739,19 +766,19 @@ export default function BlackHole3D({ className = '' }) {
       centerLight.position.copy(cubeGroup.position)
       system.add(centerLight)
       scene.add(new THREE.HemisphereLight(VOIDCUBE_PALETTE.white, VOIDCUBE_PALETTE.navyRaised, 1.65))
-      const blueKey = new THREE.DirectionalLight(VOIDCUBE_PALETTE.white, 2.6)
-      blueKey.position.set(-3, 6, 8)
+      const blueKey = new THREE.DirectionalLight(VOIDCUBE_PALETTE.white, 2.1)
+      blueKey.position.set(-4, 6, 8)
       scene.add(blueKey)
       const blueRim = new THREE.DirectionalLight(compactLayout ? VOIDCUBE_PALETTE.blueLight : VOIDCUBE_PALETTE.blueDeep, compactLayout ? 1.2 : 1.55)
       blueRim.position.set(-5, -2, 4)
       scene.add(blueRim)
       const blueCoreLight = new THREE.PointLight(VOIDCUBE_PALETTE.blue, 3.7, 10)
       blueCoreLight.position.set(3, 1, 3)
-      scene.add(blueCoreLight)
+      orbitalField.add(blueCoreLight)
 
-      const accretionDust = createAccretionDust(compactDevice ? 220 : 640)
+      const accretionDust = createAccretionDust(compactDevice ? 320 : 960)
       accretionDust.rotation.x = disc.rotation.x
-      system.add(accretionDust)
+      orbitalField.add(accretionDust)
 
       const stars = createParticleField(
         compactDevice ? 180 : 520,
@@ -847,10 +874,10 @@ export default function BlackHole3D({ className = '' }) {
         viewport.width = width
         viewport.height = height
         viewport.worldPerPixel = viewHeight / height
-        camera.left = -viewHeight * aspect / 2
-        camera.right = viewHeight * aspect / 2
-        camera.top = viewHeight / 2
-        camera.bottom = -viewHeight / 2
+        camera.aspect = aspect
+        viewport.sceneX = NaN
+        viewport.sceneY = NaN
+        viewport.horizon = NaN
         camera.updateProjectionMatrix()
         const pixelBudget = compactDevice ? 1300000 : 2600000
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap, Math.sqrt(pixelBudget / (width * height))))
@@ -863,6 +890,7 @@ export default function BlackHole3D({ className = '' }) {
 
       const clock = new THREE.Clock()
       let vortexTime = 0
+      let cubeTime = 0
       let vortexExplode = 0
       let tapCandidate = null
       const tapTurn = { startedAt: null, angle: 0, from: 0 }
@@ -896,20 +924,33 @@ export default function BlackHole3D({ className = '' }) {
         const fieldOpacity = readMotionValue('cubeField', 0, 0, 1)
         const fieldScale = readMotionValue('cubeFieldScale', 1, .4, 1)
         const horizon = readMotionValue('sceneHorizon', 0, 0, 1)
-        const sceneX = readMotionValue('sceneX', .78, 0, 1)
+        const sceneX = readMotionValue('sceneX', .76, 0, 1)
         const sceneY = readMotionValue('sceneY', .48, 0, 1.5)
-        const sceneSize = readMotionValue('sceneSize', viewport.width * .34, 32, viewport.width * 1.2)
+        const sceneSize = readMotionValue('sceneSize', viewport.width * .255, 32, viewport.width * 1.2)
         const fieldWidth = readMotionValue('sceneFieldWidth', viewport.width * .76, 1, viewport.width * 2)
         cubeGroup.userData.setExplode?.(cubeExplode, cubeDissolve)
-        const sceneScale = sceneSize * viewport.worldPerPixel / (2.7 * (cubeGroup.userData.framingScale || 1))
+        // The lower horizon uses a longer lens so the wide gas field stays behind
+        // the camera's near plane, including short landscape viewports.
+        const cameraDistance = THREE.MathUtils.lerp(heroCameraDistance, Math.max(80, viewHeight * viewport.width / viewport.height * 2.2), horizon)
+        if (viewport.sceneX !== sceneX || viewport.sceneY !== sceneY || viewport.horizon !== horizon) {
+          camera.position.z = cameraDistance
+          camera.fov = THREE.MathUtils.radToDeg(2 * Math.atan(viewHeight / (2 * cameraDistance)))
+          camera.setViewOffset(viewport.width, viewport.height, (.5 - sceneX) * viewport.width, (.5 - sceneY) * viewport.height, viewport.width, viewport.height)
+          camera.updateMatrixWorld()
+          viewport.sceneX = sceneX
+          viewport.sceneY = sceneY
+          viewport.horizon = horizon
+        }
+        const flatScale = sceneSize * viewport.worldPerPixel / (2.7 * (cubeGroup.userData.framingScale || 1))
+        const framingRadius = (cubeGroup.userData.framingRadius || 1.6) * cubeBaseScale * cubeScale * flatScale
+        // Preserve the screen-space sphere used by the passage's safe framing.
+        const sceneScale = flatScale * cameraDistance / Math.hypot(cameraDistance, framingRadius)
         system.scale.setScalar(sceneScale)
-        system.position.set(
-          (sceneX - .5) * viewport.width * viewport.worldPerPixel,
-          (.5 - sceneY) * viewHeight,
-          0,
-        )
         system.rotation.z = THREE.MathUtils.lerp(-8, -3, horizon) * Math.PI / 180
         vortexExplode = reducedMotion ? cubeExplode : THREE.MathUtils.damp(vortexExplode, cubeExplode, 8, delta)
+        const heroProgress = Number.parseFloat(cubeMotionRoot?.style.getPropertyValue('--hero-progress')) || 0
+        const ambientWeight = (1 - horizon) * (1 - THREE.MathUtils.smoothstep(heroProgress, .12, .28))
+        const restingPitch = THREE.MathUtils.lerp(.28, -.46, horizon)
 
         if (!reducedMotion) {
           const parallaxEnabled = cubeMotionRoot?.dataset.parallaxPhase === 'solutions'
@@ -942,16 +983,20 @@ export default function BlackHole3D({ className = '' }) {
               delete cubeMotionRoot?.dataset.cubeTurning
             }
           }
-          // Arrival spin lands exactly on the established orientation. The gas keeps
-          // flowing after the cube settles, without an unbounded ambient turn below.
-          cubeGroup.rotation.y = .64 + cubeTurn + (1 - horizon) * (time * .04 + Math.sin(time * .3) * .045) + tapTurn.angle
-          cubeGroup.rotation.x = -.46 + cubePitch + (1 - horizon) * Math.sin(time * .22) * .025 + Math.sin(cubeTurn) * .06
-          cubeGroup.rotation.z = .075 + (1 - horizon) * Math.cos(time * .18) * .016
+          if (drag.pointerId === null) cubeTime += delta
+          // A bounded rocking motion shows three faces even without mouse input.
+          // It settles before the passage; scroll alone owns the opening pieces.
+          cubeGroup.rotation.y = .64 + cubeTurn + Math.sin(cubeTime * .5) * .18 * ambientWeight + tapTurn.angle
+          cubeGroup.rotation.x = restingPitch + cubePitch + Math.sin(cubeTime * .67) * .065 * ambientWeight + Math.sin(cubeTurn) * .06
+          cubeGroup.rotation.z = .075 + Math.sin(cubeTime * .38) * .016 * ambientWeight
         } else {
-          cubeGroup.rotation.set(-.46, .64, .075)
+          cubeGroup.rotation.set(restingPitch, .64, .075)
           system.rotation.x = 0
           system.rotation.y = 0
         }
+        // Keep the energy's orbital plane horizontal while the cube responds to
+        // the pointer. Opaque depth testing hides the far arc behind the cube.
+        orbitalField.quaternion.copy(system.quaternion).invert()
 
         discMaterial.uniforms.explode.value = vortexExplode
         disc2Material.uniforms.explode.value = vortexExplode
@@ -964,11 +1009,11 @@ export default function BlackHole3D({ className = '' }) {
         const fieldExpansion = 1 + vortexDissolve * .22
         const discScale = (1 + vortexExplode * .07) * fieldScale * fieldSceneScale * fieldExpansion
         disc.scale.set(discScale, discScale * fieldFlatten, discScale)
-        disc.rotation.x = THREE.MathUtils.lerp(discBaseTilt, THREE.MathUtils.degToRad(68), horizon) - vortexExplode * .025
+        disc.rotation.x = THREE.MathUtils.lerp(discBaseTilt, THREE.MathUtils.degToRad(-78), horizon) - vortexExplode * .025
         const secondaryDiscScale = disc2BaseScale * (1 + vortexExplode * .09) * fieldScale * fieldSceneScale * fieldExpansion
         disc2.scale.set(secondaryDiscScale, secondaryDiscScale * fieldFlatten, secondaryDiscScale)
         accretionDust.scale.set(fieldSceneScale, fieldSceneScale * fieldFlatten, fieldSceneScale)
-        disc2.rotation.x = THREE.MathUtils.lerp(disc2BaseTilt, THREE.MathUtils.degToRad(72), horizon) + vortexExplode * .018
+        disc2.rotation.x = THREE.MathUtils.lerp(disc2BaseTilt, THREE.MathUtils.degToRad(-75), horizon) + vortexExplode * .018
         accretionDust.rotation.x = disc.rotation.x
         // Lift the disk independently: its gas remains visible around the lower
         // horizon while the existing reading mask protects all capability copy.
@@ -977,13 +1022,18 @@ export default function BlackHole3D({ className = '' }) {
         disc2.position.y = fieldLift
         accretionDust.position.y = fieldLift
         cubeGroup.visible = cubeDissolve < .999
-        cubeGroup.position.set(0, -cubeDescent, cubeBaseDepth + cubeDepth)
+        const floatY = reducedMotion ? 0 : Math.sin(cubeTime * .8) * .025 * ambientWeight
+        cubeGroup.position.set(0, -cubeDescent + floatY, cubeBaseDepth + cubeDepth)
         cubeGroup.scale.setScalar(cubeBaseScale * cubeScale)
         centerLight.position.copy(cubeGroup.position)
         centerLight.intensity = reducedMotion ? 5 : 5 + vortexExplode * 1.15 + Math.sin(time * 1.4) * .28
-        discMaterial.uniforms.strength.value = (1.04 + horizon * .12 + vortexExplode * .12) * fieldOpacity
-        disc2Material.uniforms.strength.value = (.25 + horizon * .07 + vortexExplode * .06) * fieldOpacity
-        accretionDust.material.uniforms.opacity.value = (.34 + vortexExplode * .1) * fieldOpacity
+        const lightPhase = reducedMotion ? .4 : vortexTime * .65
+        blueCoreLight.position.set(Math.sin(lightPhase) * 2.2, -.45, 2.4)
+        blueCoreLight.intensity = (4.5 + Math.cos(lightPhase) * .6) * sceneScale * sceneScale * fieldOpacity * (1 - vortexDissolve)
+        blueCoreLight.distance = 9 * sceneScale
+        discMaterial.uniforms.strength.value = (1.32 + horizon * .08 + vortexExplode * .12) * fieldOpacity
+        disc2Material.uniforms.strength.value = (.32 + horizon * .05 + vortexExplode * .06) * fieldOpacity
+        accretionDust.material.uniforms.opacity.value = (.42 + vortexExplode * .1) * fieldOpacity
         stars.material.opacity = .24 * fieldOpacity * (1 - horizon) * (1 - vortexDissolve)
 
         if (drag.pointerId !== null) {
@@ -1213,11 +1263,13 @@ export default function BlackHole3D({ className = '' }) {
         })
         geometries.forEach(geometry => geometry.dispose())
         materials.forEach(material => material.dispose())
+        environmentTarget?.dispose()
         renderer?.dispose()
         renderer?.domElement.remove()
       }
     } catch (error) {
       console.warn('WebGL indisponível; usando o estado visual estático.', error)
+      environmentTarget?.dispose()
       renderer?.dispose()
       renderer?.domElement?.remove()
       if (renderAttempt < 1) {

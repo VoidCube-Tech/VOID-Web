@@ -177,7 +177,7 @@ export default function useCoreStory() {
       const { viewportWidth: width, viewportHeight: height } = metrics
       const heroSize = compactLayout
         ? Math.min(width * .4, metrics.heroTitleHeight + 40)
-        : Math.min(width * .34, height * .57)
+        : Math.min(width * .255, height * .4275)
       // Frame the whole opening cube between the navigation and the incoming section.
       const focusBottom = Math.min(height - 32, metrics.introStart - scrollDistance - 32)
       const focusHeight = Math.max(96, focusBottom - metrics.headerClear)
@@ -186,7 +186,7 @@ export default function useCoreStory() {
       const horizon = heroActive ? 0 : solutionsActive ? 1 : passageSettle
       const heroY = compactLayout ? metrics.heroTitleCenter / height : .48
       const focusY = (metrics.headerClear + focusHeight / 2) / height
-      let visualX = lerp(compactLayout ? .8 : .78, .5, heroFocus)
+      let visualX = lerp(compactLayout ? .77 : .76, .5, heroFocus)
       let visualY = lerp(heroY, focusY, heroFocus)
       let cubeSize = lerp(heroSize, focusSize, heroFocus)
       if (heroActive) {
@@ -216,7 +216,10 @@ export default function useCoreStory() {
       story.dataset.sceneX = visualX.toFixed(5)
       story.dataset.sceneY = visualY.toFixed(5)
       story.dataset.sceneSize = cubeSize.toFixed(2)
-      story.dataset.sceneFieldWidth = lerp(cubeSize * 2.6, width * 1.8, horizon).toFixed(2)
+      const heroFieldWidth = compactLayout
+        ? cubeSize * 2.5
+        : Math.min(cubeSize * 2.45, (width * (1 - visualX) - 16) * 2)
+      story.dataset.sceneFieldWidth = lerp(heroFieldWidth, width * 1.8, horizon).toFixed(2)
       story.dataset.sceneHorizon = horizon.toFixed(4)
       story.dataset.sceneOpacity = sceneOpacity.toFixed(4)
       visualStage.setAttribute('aria-hidden', sceneOpacity < .01 ? 'true' : 'false')

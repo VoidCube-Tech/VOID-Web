@@ -83,6 +83,22 @@ Rodada de 9 de setembro de 2026. Validação automatizada em Chrome headless com
 - Sete rotas verificadas em desktop e celular (14 combinações): navegação, reveals nos dois sentidos, filtros, retenção dos campos do formulário, menu e movimento reduzido. Nenhum erro JavaScript/WebGL; formulário não enviado.
 - Capturas revisadas em 1440 × 900 e 390 × 844 após a integração.
 
+## Perspectiva e nova redução do cubo — 09/09/2026
+
+- Hero desktop reduzido em mais 25%: referência de 489,6 para 367,2 px em 1440 × 900 e de 299,2 para 224,4 px em 880 × 527. Tamanho de referência do celular preservado.
+- Câmera em perspectiva, inclinação com três faces visíveis, reflexos suavizados e balanço ambiente limitado. A orientação da desmontagem deixa de depender do tempo decorrido.
+- Projeção real das peças verificada em 320 × 568, 390 × 844, 704 × 422, 880 × 527, 768 × 1024 e 1440 × 900: 54 amostras de ida e volta, sem cortes nos limites de enquadramento da passagem.
+- Arraste, mouse, saída da rota e movimento reduzido aprovados nos perfis normal e limitado. Horizonte e redimensionamento também verificados, incluindo o renderer compartilhado da página 404.
+- Capturas de desktop e celular revisadas. Build aprovado; permanece somente o aviso conhecido do bundle 3D acima de 500 kB.
+
+## Vórtice horizontal e energia — 09/09/2026
+
+- Plano orbital independente da inclinação do cubo, com arco frontal visível, ocultação da parte posterior pela geometria, filamentos espirais e iluminação azul nas faces.
+- Detalhe do gás aumentado para três/cinco oitavas e partículas para 320/960 nos perfis compacto/completo. Reflexos PMREM pré-calculados uma vez; render target descartado na saída da rota.
+- Seis dimensões verificadas: elipse com altura projetada de aproximadamente 24–25% da largura, eixo horizontal estável durante interação, animação ativa, dissolução e movimento reduzido funcionando. Nenhum erro JavaScript/WebGL.
+- Horizonte, redimensionamento entre desktop e celular e cena compartilhada da página 404 aprovados. Build aprovado, com o aviso conhecido de tamanho do chunk 3D.
+- Tamanho menor do cubo preservado; vórtice do celular ampliado para manter a energia perceptível ao redor das faces.
+
 ## Limites da validação
 
 Capturas e interações foram verificadas em emulação local do Chrome. Não houve medição de FPS, bateria ou temperatura em celulares físicos. O build mantém o aviso de chunk 3D acima de 500 kB; ele continua carregado sob demanda.

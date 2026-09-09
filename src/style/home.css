@@ -4,9 +4,9 @@
   --solutions-progress: 0;
   position: relative;
   isolation: isolate;
-  --story-scene-x: 78%;
+  --story-scene-x: 76%;
   --story-scene-y: 48%;
-  --story-cube-size: min(34vw, 57svh);
+  --story-cube-size: min(25.5vw, 42.75svh);
   --story-scene-opacity: 1;
   --story-clear-top: 0px;
   --story-clear-left: 0px;
@@ -858,7 +858,7 @@
   }
 
   .core-story {
-    --story-scene-x: 80%;
+    --story-scene-x: 77%;
     --story-scene-y: 27%;
     --story-cube-size: 40vw;
   }

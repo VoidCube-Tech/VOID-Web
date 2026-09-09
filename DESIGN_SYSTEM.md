@@ -281,13 +281,13 @@ No fim da leitura das três capacidades, um trecho próprio de saída acompanha 
 
 ### Proporções
 
-- Hero desktop: cubo com referência de 34% da largura, limitado a 57% da altura da tela; centro horizontal em 78%. A redução é de aproximadamente 13% em relação ao enquadramento anterior.
-- Hero mobile: centro em 80% da largura, alinhado ao centro do título; tamanho de até 40% da largura, limitado à altura do título mais 40 px para deixar descrição e ações livres.
+- Hero desktop: cubo com referência de 25,5% da largura, limitado a 42,75% da altura da tela; centro horizontal em 76%. Redução adicional de 25% sobre o enquadramento de 34vw/57svh.
+- Hero mobile: centro em 77% da largura, alinhado ao centro do título; tamanho de até 40% da largura, limitado à altura do título mais 40 px para deixar descrição e ações livres.
 - Parallax: cubo até 94% da largura, limitado pelo espaço livre abaixo dos textos; campo com 180% da largura, recortado pelo viewport.
-- Na abertura, o diâmetro do vórtice acompanha 2,6 vezes o tamanho de referência do cubo, incluindo a aproximação e a desmontagem.
-- Inclinação do campo passa de `-8deg` para `-3deg`, ficando mais horizontal na base; a abertura da elipse usa 56° e 60° na abertura e fecha para 68° e 72° no parallax. O achatamento preserva 62% da altura local do disco.
+- Na abertura, o diâmetro do vórtice usa até 2,45 vezes o tamanho de referência do cubo no desktop, limitado pelo espaço até a borda direita. No celular usa 2,5 vezes, com as extremidades e a faixa de leitura protegidas pelas máscaras existentes.
+- O vórtice mantém um plano horizontal independente da inclinação do cubo. Suas camadas usam rotações X de −76° e −73° na abertura, passando para −78° e −75° no parallax; o achatamento preserva 62% da altura local do disco no horizonte. A frente do anel cruza a região central do cubo e a parte posterior é ocluída pela geometria.
 - No horizonte, o campo sobe independentemente do cubo em até 20% do tamanho do cubo, limitado a 17% da altura da tela; o gás fica visível sem atravessar a máscara dos textos.
-- Câmera ortográfica mantém proporções previsíveis. A ampliação acontece na geometria, sem ampliar ou deslocar o canvas.
+- Câmera em perspectiva com campo vertical de 36° na abertura. O deslocamento óptico acompanha o centro da cena, e a escala compensa o raio projetado das peças para preservar o enquadramento durante a desmontagem. A lente fica mais longa no horizonte inferior, mantendo o campo amplo à frente da câmera; o canvas continua com as dimensões do viewport.
 
 ### Estabilidade do vórtice
 
@@ -295,10 +295,13 @@ No fim da leitura das três capacidades, um trecho próprio de saída acompanha 
 - Dois ciclos de fluxo se sobrepõem: o gás interno avança mais rápido, mas cada ciclo é reiniciado com contribuição zero, sem acumular voltas ou criar saltos.
 - O ruído é filtrado pelo tamanho do pixel e normalizado entre os níveis de detalhe do desktop e do celular; detalhes muito finos desaparecem progressivamente.
 - Duas superfícies levemente onduladas formam as camadas de matéria e brilho. A camada principal usa transparência normal, enquanto a atmosfera externa usa mistura aditiva.
-- A camada frontal do gás recebe atenuação de até 84%, mantendo as faces do cubo legíveis. As 220 partículas dos dispositivos compactos e 640 do desktop giram em velocidades diferentes e migram para dentro, desaparecendo antes de reiniciar na borda externa.
+- A atenuação frontal é de 20% na matéria principal e 34% na atmosfera externa, com alfa limitado a 70%. Filamentos espirais irregulares reforçam a energia que passa à frente do cubo. As 320 partículas dos dispositivos compactos e 960 do desktop giram em velocidades diferentes e migram para dentro, desaparecendo antes de reiniciar na borda externa.
+- O ruído usa três oitavas nos dispositivos compactos e cinco no desktop completo, com filtragem pelo tamanho do pixel. Uma luz azul acompanha o fluxo e tem intensidade compensada pela escala da cena.
 - A geometria do disco é renderizada em passagem única por camada; o canvas e os limites de resolução e FPS permanecem os mesmos.
 - A dissolução do cubo usa erosão procedural com descarte de fragmentos, preservando o teste de profundidade dos materiais opacos. Peças e faces diminuem juntas e se dispersam em trajetórias determinísticas; não há pós-processamento ou novos sistemas de partículas.
-- Luz principal branca, preenchimento hemisférico e materiais menos metálicos destacam o volume e as bordas. O desktop com ponteiro preciso mantém antialiasing mesmo no perfil de hardware limitado; os limites de pixels e FPS continuam ativos.
+- Luz principal branca suavizada, preenchimento hemisférico e materiais com maior rugosidade e menos verniz destacam o volume sem contornos brancos intensos. As faces superiores usam azul claro. O desktop com ponteiro preciso mantém antialiasing mesmo no perfil de hardware limitado; os limites de pixels e FPS continuam ativos.
+- Reflexos suaves de ambiente são pré-calculados uma vez com `RoomEnvironment` e PMREM. O ambiente não aparece como fundo e não adiciona uma passagem de pós-processamento por frame. Seu render target é descartado na desmontagem do componente.
+- Na abertura, a inclinação revela o topo e as duas laterais do cubo. Um balanço limitado a aproximadamente ±10° no eixo vertical e ±4° no horizontal, acompanhado de flutuação discreta, mostra o volume mesmo sem o mouse. Esse movimento desaparece entre 12% e 28% do percurso, pausa durante o arraste e é desativado com movimento reduzido. O tempo ambiente não interfere na orientação da desmontagem.
 - Na abertura do desktop, o mouse inclina a cena em até aproximadamente 8° na horizontal e 5° na vertical. Eventos são recebidos pela superfície de conteúdo, pois o canvas é decorativo. O movimento usa amortecimento dependente do tempo e retorna ao repouso ao sair da cena.
 - A coreografia de scroll assume a orientação durante a passagem. Links, arraste de peças e movimento reduzido conservam seus próprios controles.
 
