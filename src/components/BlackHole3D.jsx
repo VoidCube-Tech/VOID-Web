@@ -14,6 +14,7 @@ const VOIDCUBE_PALETTE = {
 
 const vertexShader = `
   varying vec2 vUv;
+  varying float vFrontDepth;
   uniform float time;
   uniform float explode;
 
@@ -24,22 +25,31 @@ const vertexShader = `
     float radius = length(p) * 2.0;
     float angle = atan(p.y, p.x);
     float innerFunnel = 1.0 - smoothstep(0.24, 0.68, radius);
-    float organizedLift = sin(angle * 3.0 - time * 0.42 + radius * 11.0) * mix(0.018, 0.028, explode);
-    float fineLift = sin(angle * 6.0 + time * 0.14 - radius * 18.0) * 0.008;
+    float organizedLift = sin(angle * 3.0 - time * 0.18 + radius * 9.0) * mix(0.07, 0.1, explode);
+    float fineLift = sin(angle * 5.0 + time * 0.11 - radius * 14.0) * 0.025;
     float annulus = smoothstep(0.22, 0.4, radius) * (1.0 - smoothstep(0.8, 1.0, radius));
     displaced.z -= innerFunnel * mix(0.16, 0.24, explode);
     displaced.z += (organizedLift + fineLift * mix(1.0, 0.65, explode)) * annulus;
-    gl_Position = projectionMatrix * modelViewMatrix * vec4(displaced, 1.0);
+    vec4 viewPosition = modelViewMatrix * vec4(displaced, 1.0);
+    vFrontDepth = viewPosition.z - (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).z;
+    gl_Position = projectionMatrix * viewPosition;
   }
 `
 
 const fragmentShader = `
   varying vec2 vUv;
+  varying float vFrontDepth;
+  uniform float frontAttenuation;
   uniform float time;
   uniform float strength;
   uniform float seed;
   uniform float flowDirection;
   uniform float explode;
+  uniform float dissolve;
+
+  #ifndef FBM_OCTAVES
+    #define FBM_OCTAVES 4
+  #endif
 
   float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -56,12 +66,25 @@ const fragmentShader = `
   float fbm(vec2 p) {
     float value = 0.0;
     float amplitude = 0.55;
-    for (int octave = 0; octave < 4; octave++) {
-      value += noise(p) * amplitude;
+    float total = 0.0;
+    for (int octave = 0; octave < FBM_OCTAVES; octave++) {
+      float footprint = max(length(dFdx(p)), length(dFdy(p)));
+      float detail = 1.0 - smoothstep(0.35, 0.95, footprint);
+      value += mix(0.5, noise(p), detail) * amplitude;
+      total += amplitude;
       p = p * 2.03 + 7.17;
       amplitude *= 0.48;
     }
-    return value;
+    return value / total;
+  }
+
+  // Periodic angular coordinates keep the gas continuous at the polar seam.
+  vec2 flowCoordinates(float angle, float radius, float phase) {
+    float shear = (1.0 - radius) * phase * 1.8;
+    float spiralAngle = angle - time * flowDirection * 0.085 - shear + log(radius + 0.2) * 1.7
+      + dissolve * (1.0 - radius) * 1.4;
+    return vec2(cos(spiralAngle), sin(spiralAngle)) * 4.2
+      + radius * vec2(10.0, 17.0) + seed * 19.0;
   }
 
   void main() {
@@ -69,45 +92,89 @@ const fragmentShader = `
     float radius = max(length(p) * 2.0, 0.001);
     float angle = atan(p.y, p.x);
 
-    float innerRadius = mix(0.2, 0.24, explode);
-    float innerEdge = smoothstep(innerRadius, innerRadius + 0.11, radius);
-    float outerEdge = 1.0 - smoothstep(mix(0.84, 0.88, explode), 1.02, radius);
+    float pixelWidth = max(fwidth(radius) * 1.5, 0.001);
+    // Two overlapping advection cycles give the inner gas a faster flow without
+    // accumulating tighter windings. Each cycle resets only at zero contribution.
+    float phase = fract(time * 0.035);
+    float otherPhase = fract(phase + 0.5);
+    float blend = smoothstep(0.0, 1.0, abs(phase * 2.0 - 1.0));
+    vec2 flowA = flowCoordinates(angle, radius, phase);
+    vec2 flowB = flowCoordinates(angle, radius, otherPhase);
+    float gas = mix(fbm(flowA), fbm(flowB), blend);
+    vec2 eddies = vec2(gas - 0.5, gas * 0.7);
+    float grain = mix(noise(flowA * 2.7 + eddies), noise(flowB * 2.7 + eddies), blend);
+    float detailVisibility = 1.0 - smoothstep(0.007, 0.018, pixelWidth);
+    float filaments = smoothstep(0.4, 0.84, grain) * detailVisibility;
+    float clouds = smoothstep(0.22, 0.8, gas);
+    float turbulentRadius = radius + (gas - 0.5) * 0.075;
+    float innerRadius = mix(0.29, 0.33, explode);
+    float innerEdge = smoothstep(innerRadius - pixelWidth, innerRadius + 0.14 + pixelWidth, turbulentRadius);
+    float outerEdge = 1.0 - smoothstep(0.65 - pixelWidth, 0.99 + pixelWidth, turbulentRadius);
     float diskMask = innerEdge * outerEdge;
-
-    float orbitalSpeed = time * flowDirection * (0.2 + 0.3 / (radius + 0.2));
-    float coarseNoise = fbm(vec2(angle * 1.22 + orbitalSpeed + seed, radius * 7.2 - time * 0.06));
-    float fineNoise = fbm(vec2(angle * 3.2 - orbitalSpeed * 0.48 + seed * 2.7, radius * 20.0 + time * 0.09));
-    float warpedAngle = angle + (coarseNoise - 0.5) * mix(0.72, 0.46, explode);
-
-    float logarithmicSpiral = warpedAngle * 3.0 - log(radius + 0.06) * 10.8 - orbitalSpeed * 2.65;
-    float wave = 0.5 + 0.5 * sin(logarithmicSpiral + (fineNoise - 0.5) * mix(1.25, 0.72, explode));
-    float arm = smoothstep(0.3, 0.88, wave);
-    float filament = pow(arm, mix(3.2, 4.0, explode));
-    float brokenArm = arm * mix(0.72, 1.0, coarseNoise);
-    float vapor = smoothstep(0.48, 0.88, fineNoise) * mix(0.13, 0.08, explode);
-    float density = 0.12 + brokenArm * 0.57 + filament * 0.42 + vapor;
-
-    float innerHeat = 1.0 - smoothstep(mix(0.24, 0.27, explode), mix(0.58, 0.62, explode), radius);
-    float innerShear = exp(-pow((radius - mix(0.34, 0.39, explode)) * 8.8, 2.0));
-    float doppler = smoothstep(-0.62, 0.58, p.x + (coarseNoise - 0.5) * 0.12);
+    float radialDensity = exp(-pow((turbulentRadius - 0.54) * 3.8, 2.0));
+    float density = radialDensity * (0.13 + clouds * 0.78 + filaments * clouds * 0.7);
+    float hotGas = exp(-pow((turbulentRadius - 0.45) * 9.0, 2.0));
+    float illuminatedSide = smoothstep(-0.65, 0.7, p.x * 2.0 + clouds * 0.15);
     vec3 navy = vec3(0.027, 0.086, 0.169);
     vec3 blue = vec3(0.078, 0.471, 0.831);
     vec3 blueLight = vec3(0.475, 0.718, 0.910);
     vec3 white = vec3(0.957, 0.973, 1.0);
-    vec3 color = mix(blue, blueLight, doppler);
-    color = mix(navy, color, 0.62 + 0.32 * doppler);
-    color = mix(color, white, innerHeat * (0.26 + filament * 0.26));
-    color += white * innerShear * (0.17 + filament * 0.2);
-    float energyRing = exp(-pow((radius - mix(0.34, 0.4, explode)) * 9.4, 2.0)) * explode;
-    color += blueLight * energyRing * 0.18;
-    color *= 0.88 + coarseNoise * 0.32;
-
-    float clump = mix(0.8, 1.08, coarseNoise);
-    float alpha = diskMask * (density * clump + innerShear * (0.2 + filament * 0.32) + energyRing * 0.14) * strength;
-    alpha = min(alpha, 0.86);
+    vec3 color = mix(navy, blue, 0.35 + clouds * 0.4);
+    color = mix(color, blueLight, illuminatedSide * 0.5 + filaments * 0.2);
+    color = mix(color, white, hotGas * (0.2 + clouds * 0.42) * (0.45 + illuminatedSide * 0.55));
+    // Dark pockets and local scattering give the disk depth without a post-process bloom.
+    color *= 0.6 + clouds * 0.65;
+    color += blueLight * hotGas * filaments * (0.18 + explode * 0.1);
+    float alpha = (1.0 - exp(-density * 2.3)) * diskMask * strength;
+    // The least dense gas breaks up first; the bright filaments linger and disperse.
+    float gasRemains = smoothstep(dissolve * 1.1 - 0.2, dissolve * 1.1 + 0.12, gas);
+    alpha *= gasRemains * (1.0 - smoothstep(0.72, 1.0, dissolve));
+    alpha *= 1.0 - frontAttenuation * smoothstep(-0.2, 1.0, vFrontDepth);
+    alpha = min(alpha, 0.82);
     gl_FragColor = vec4(color, alpha);
   }
 `
+
+// Surface erosion preserves opaque depth testing: no transparent sorting of 81 parts.
+function addCubeDissolve(material, uniform) {
+  material.onBeforeCompile = shader => {
+    shader.uniforms.cubeDissolve = uniform
+    shader.vertexShader = shader.vertexShader
+      .replace('#include <common>', '#include <common>\nvarying vec3 vMatterPosition;')
+      .replace('#include <begin_vertex>', '#include <begin_vertex>\nvMatterPosition = (instanceMatrix * vec4(transformed, 1.0)).xyz;')
+    shader.fragmentShader = shader.fragmentShader
+      .replace('#include <common>', `#include <common>
+        uniform float cubeDissolve;
+        varying vec3 vMatterPosition;
+        float matterHash(vec3 p) {
+          p = fract(p * 0.1031);
+          p += dot(p, p.yzx + 33.33);
+          return fract((p.x + p.y) * p.z);
+        }
+        float matterNoise(vec3 p) {
+          vec3 i = floor(p);
+          vec3 f = fract(p);
+          f = f * f * (3.0 - 2.0 * f);
+          return mix(
+            mix(mix(matterHash(i), matterHash(i + vec3(1, 0, 0)), f.x),
+                mix(matterHash(i + vec3(0, 1, 0)), matterHash(i + vec3(1, 1, 0)), f.x), f.y),
+            mix(mix(matterHash(i + vec3(0, 0, 1)), matterHash(i + vec3(1, 0, 1)), f.x),
+                mix(matterHash(i + vec3(0, 1, 1)), matterHash(i + vec3(1, 1, 1)), f.x), f.y), f.z);
+        }
+      `)
+      .replace('#include <clipping_planes_fragment>', `#include <clipping_planes_fragment>
+        float matterRim = 0.0;
+        if (cubeDissolve > 0.001) {
+          float matter = mix(matterNoise(vMatterPosition * 5.0), matterNoise(vMatterPosition * 12.0), 0.25);
+          float remaining = matter - mix(-0.12, 1.05, cubeDissolve);
+          if (remaining < 0.0) discard;
+          matterRim = (1.0 - smoothstep(0.0, 0.075, remaining)) * smoothstep(0.0, 0.12, cubeDissolve);
+        }
+      `)
+      .replace('#include <emissivemap_fragment>', '#include <emissivemap_fragment>\ntotalEmissiveRadiance += vec3(0.06, 0.32, 0.58) * matterRim;')
+  }
+  material.customProgramCacheKey = () => 'voidcube-matter-dissolve-v1'
+}
 
 function createMagicCube(compactDevice, compactLayout) {
   const group = new THREE.Group()
@@ -117,6 +184,8 @@ function createMagicCube(compactDevice, compactLayout) {
   const explodedCentroid = new THREE.Vector3()
   const spacing = .61
   const cubieSize = .56
+  const pieceRadius = cubieSize * Math.sqrt(3) / 2 + .04
+  const assembledRadius = spacing * Math.sqrt(3) + pieceRadius
   const coordinates = [-spacing, 0, spacing]
   const coordinateKey = (x, y, z) => `${x.toFixed(3)}|${y.toFixed(3)}|${z.toFixed(3)}`
   const hash = value => {
@@ -138,15 +207,17 @@ function createMagicCube(compactDevice, compactLayout) {
   const pieceDragStates = []
   const pieceIndexByCoordinate = new Map()
   const stickerGroups = []
+  const dissolveUniform = { value: 0 }
   const cubieGeometry = new RoundedBoxGeometry(cubieSize, cubieSize, cubieSize, compactDevice ? 2 : 3, .055)
-  const cubieMaterial = new THREE.MeshPhysicalMaterial({
+  const SurfaceMaterial = compactDevice ? THREE.MeshStandardMaterial : THREE.MeshPhysicalMaterial
+  const cubieMaterial = new SurfaceMaterial({
     color: VOIDCUBE_PALETTE.navy,
     roughness: .28,
     metalness: .32,
-    clearcoat: 1,
-    clearcoatRoughness: .14,
+    ...(!compactDevice && { clearcoat: 1, clearcoatRoughness: .14 }),
   })
   const cubies = new THREE.InstancedMesh(cubieGeometry, cubieMaterial, 27)
+  addCubeDissolve(cubieMaterial, dissolveUniform)
   let cubieIndex = 0
   coordinates.forEach(x => coordinates.forEach(y => coordinates.forEach(z => {
     const basePosition = new THREE.Vector3(x, y, z)
@@ -165,14 +236,15 @@ function createMagicCube(compactDevice, compactLayout) {
       direction,
       tangent,
       axis,
-      distance: (1.12 + shellProgress * .5 + hash(cubieIndex + 83) * .34) * spreadScale,
-      angle: .58 + shellProgress * .42 + hash(cubieIndex + 127) * .24,
+      distance: (.82 + shellProgress * .42 + hash(cubieIndex + 83) * .2) * spreadScale,
+      angle: .3 + shellProgress * .28 + hash(cubieIndex + 127) * .16,
       delay: (1 - shellProgress) * .12 + orbitPhase * .045,
       duration: .78,
       arc: (.2 + shellProgress * .07 + hash(cubieIndex + 211) * .07) * spreadScale,
+      dissolveDelay: hash(cubieIndex + 317) * .22,
     }
     pieces.push(piece)
-    pieceStates.push({ position: basePosition.clone(), quaternion: new THREE.Quaternion() })
+    pieceStates.push({ position: basePosition.clone(), quaternion: new THREE.Quaternion(), scale: 1 })
     pieceDragStates.push({ offset: new THREE.Vector3(), active: false, returning: false })
     pieceIndexByCoordinate.set(coordinateKey(x, y, z), cubieIndex)
 
@@ -203,16 +275,16 @@ function createMagicCube(compactDevice, compactLayout) {
 
   faceDefinitions.forEach((definition, faceIndex) => {
     const baseColor = new THREE.Color(definition.color)
-    const stickerMaterial = new THREE.MeshPhysicalMaterial({
+    const stickerMaterial = new SurfaceMaterial({
       color: VOIDCUBE_PALETTE.white,
       emissive: baseColor.clone().multiplyScalar(.045),
       emissiveIntensity: .55,
       roughness: .2,
       metalness: .035,
-      clearcoat: 1,
-      clearcoatRoughness: .09,
+      ...(!compactDevice && { clearcoat: 1, clearcoatRoughness: .09 }),
     })
     const stickers = new THREE.InstancedMesh(stickerGeometry, stickerMaterial, 9)
+    addCubeDissolve(stickerMaterial, dissolveUniform)
     const stickerRecords = []
     let stickerIndex = 0
     coordinates.forEach(u => coordinates.forEach(v => {
@@ -249,7 +321,7 @@ function createMagicCube(compactDevice, compactLayout) {
       const state = pieceStates[index]
       dummy.position.copy(state.position).add(pieceDragStates[index].offset)
       dummy.quaternion.copy(state.quaternion)
-      dummy.scale.set(1, 1, 1)
+      dummy.scale.setScalar(state.scale)
       dummy.updateMatrix()
       cubies.setMatrixAt(index, dummy.matrix)
     })
@@ -261,13 +333,14 @@ function createMagicCube(compactDevice, compactLayout) {
         const parentState = pieceStates[record.parentIndex]
         tempPosition
           .copy(record.localPosition)
+          .multiplyScalar(parentState.scale)
           .applyQuaternion(parentState.quaternion)
           .add(parentState.position)
           .add(pieceDragStates[record.parentIndex].offset)
         tempQuaternion.copy(parentState.quaternion).multiply(record.baseQuaternion)
         dummy.position.copy(tempPosition)
         dummy.quaternion.copy(tempQuaternion)
-        dummy.scale.set(1, 1, 1)
+        dummy.scale.setScalar(parentState.scale)
         dummy.updateMatrix()
         mesh.setMatrixAt(index, dummy.matrix)
       })
@@ -277,25 +350,40 @@ function createMagicCube(compactDevice, compactLayout) {
   }
 
   let previousExplode = Number.NaN
-  group.userData.setExplode = value => {
+  let previousDissolve = Number.NaN
+  group.userData.setExplode = (value, dissolve = 0) => {
     const progress = clamp01(Number.isFinite(value) ? value : 0)
-    if (Math.abs(progress - previousExplode) < .0001) return
+    const dissolution = clamp01(Number.isFinite(dissolve) ? dissolve : 0)
+    if (Math.abs(progress - previousExplode) < .0001 && Math.abs(dissolution - previousDissolve) < .0001) return
     previousExplode = progress
+    previousDissolve = dissolution
+    dissolveUniform.value = dissolution
 
     explodedCentroid.set(0, 0, 0)
     pieces.forEach((piece, index) => {
       const localProgress = clamp01((progress - piece.delay) / piece.duration)
       const amount = smootherstep(localProgress)
+      const scatter = smootherstep(clamp01((dissolution - piece.dissolveDelay) / (1 - piece.dissolveDelay)))
       const state = pieceStates[index]
       state.position
         .copy(piece.basePosition)
         .addScaledVector(piece.direction, piece.distance * amount)
         .addScaledVector(piece.tangent, Math.sin(amount * Math.PI * .5) * piece.arc)
-      state.quaternion.setFromAxisAngle(piece.axis, piece.angle * amount)
+        .addScaledVector(piece.direction, scatter * .35)
+        .addScaledVector(piece.tangent, scatter * 1.1)
+        .applyAxisAngle(vortexAxis, scatter * .65)
+      state.quaternion.setFromAxisAngle(piece.axis, piece.angle * amount + scatter * .9)
+      state.scale = 1 - scatter * .92
       explodedCentroid.add(state.position)
     })
     explodedCentroid.multiplyScalar(1 / pieces.length)
-    pieceStates.forEach(state => state.position.sub(explodedCentroid))
+    let radius = assembledRadius
+    pieceStates.forEach(state => {
+      state.position.sub(explodedCentroid)
+      radius = Math.max(radius, state.position.length() + pieceRadius * state.scale)
+    })
+    // Compensate for the actual spread, rather than shrinking before pieces separate.
+    group.userData.framingScale = radius / assembledRadius
     applyPieceMatrices()
   }
 
@@ -407,26 +495,31 @@ function createParticleField(count, spread, color, size, opacity, flattened = fa
 const accretionDustVertexShader = `
   uniform float time;
   uniform float explode;
+  uniform float dissolve;
   varying vec3 vColor;
   varying float vAlpha;
 
   void main() {
     float radius = max(length(position.xy), 0.001);
     float baseAngle = atan(position.y, position.x);
-    float angle = baseAngle + time * (0.12 + 0.56 / (radius + 0.42));
-    float expandedRadius = radius * (1.0 + explode * 0.08);
+    float life = fract((radius - 1.42) / 3.78 - time * 0.009);
+    float orbitalRadius = 1.42 + life * 3.78;
+    float angle = baseAngle + time * (0.07 + 0.18 / (radius + 0.42)) + dissolve * (2.0 + life);
+    float expandedRadius = orbitalRadius * (1.0 + explode * 0.08 + dissolve * 0.35);
     vec3 orbital = position;
     orbital.xy = vec2(cos(angle), sin(angle)) * expandedRadius;
     orbital.z += sin(angle * 3.0 + radius * 4.0 - time * 0.72) * mix(0.008, 0.02, explode);
 
-    float innerDensity = 1.0 - smoothstep(1.42, 5.2, radius);
+    float innerDensity = 1.0 - smoothstep(1.42, 5.2, orbitalRadius);
     float doppler = cos(angle) * 0.5 + 0.5;
     vColor = mix(color, vec3(0.475, 0.718, 0.91), doppler * 0.2);
     vAlpha = mix(0.3, 0.86, innerDensity) * mix(0.72, 1.0, doppler);
+    vAlpha *= smoothstep(0.0, 0.1, life) * (1.0 - smoothstep(0.88, 1.0, life));
+    vAlpha *= 1.0 - smoothstep(0.25 + life * 0.25, 1.0, dissolve);
 
     vec4 viewPosition = modelViewMatrix * vec4(orbital, 1.0);
     gl_Position = projectionMatrix * viewPosition;
-    gl_PointSize = mix(1.35, 3.0, innerDensity) * (1.0 + explode * 0.18);
+    gl_PointSize = mix(1.2, 2.2, innerDensity) * (1.0 + explode * 0.12);
   }
 `
 
@@ -480,7 +573,8 @@ function createAccretionDust(count) {
     uniforms: {
       time: { value: 0 },
       explode: { value: 0 },
-      opacity: { value: .72 },
+      dissolve: { value: 0 },
+      opacity: { value: .3 },
     },
     vertexShader: accretionDustVertexShader,
     fragmentShader: accretionDustFragmentShader,
@@ -497,6 +591,14 @@ export default function BlackHole3D({ className = '' }) {
   const rootRef = useRef(null)
   const [failed, setFailed] = useState(false)
   const [renderAttempt, setRenderAttempt] = useState(0)
+  const [compactLayout, setCompactLayout] = useState(() => window.matchMedia('(max-width: 760px)').matches)
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 760px)')
+    const update = () => setCompactLayout(media.matches)
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
 
   useEffect(() => {
     const root = rootRef.current
@@ -511,76 +613,95 @@ export default function BlackHole3D({ className = '' }) {
 
     const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     let reducedMotion = reducedMotionQuery.matches
-    const compactLayout = window.matchMedia('(max-width: 760px)').matches
-    const compactDevice = compactLayout || (navigator.hardwareConcurrency || 8) <= 4
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches
+    const limitedCpu = (navigator.hardwareConcurrency || 8) <= 4
+    const limitedMemory = Number.isFinite(navigator.deviceMemory) && navigator.deviceMemory <= 4
+    const compactDevice = compactLayout || coarsePointer || limitedCpu || limitedMemory
+    const pixelRatioCap = compactLayout ? 1.25 : compactDevice ? 1.1 : 1.8
+    const frameInterval = compactDevice ? 1000 / 30 : 0
     let renderer
     let resizeObserver
     let visibilityObserver
+    let motionObserver
+    let requestSceneRender = () => {}
     let frame = 0
-    let isVisible = true
+    let isIntersecting = true
+    let lastFrameTime = 0
     let disposed = false
 
     try {
       const scene = new THREE.Scene()
       scene.background = null
-      scene.fog = new THREE.FogExp2(VOIDCUBE_PALETTE.navyDeep, .035)
-
-      const camera = new THREE.PerspectiveCamera(45, 1, .1, 100)
-      camera.position.set(0, .5, 17.4)
+      // An orthographic composition keeps the same proportions at every viewport ratio.
+      // The canvas stays viewport-sized; only the objects grow into the lower horizon.
+      const viewHeight = 16
+      const camera = new THREE.OrthographicCamera(-8, 8, 8, -8, .1, 100)
+      camera.position.set(0, 0, 30)
+      const viewport = { width: 1, height: 1, worldPerPixel: 16 }
 
       renderer = new THREE.WebGLRenderer({
         antialias: !compactDevice,
         alpha: true,
-        premultipliedAlpha: false,
+        premultipliedAlpha: true,
         powerPreference: 'high-performance',
       })
       renderer.setClearColor(VOIDCUBE_PALETTE.navyDeep, 0)
       renderer.setClearAlpha(0)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, compactDevice ? 1.35 : 1.8))
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap))
       renderer.outputColorSpace = THREE.SRGBColorSpace
       renderer.toneMapping = THREE.ACESFilmicToneMapping
-      renderer.toneMappingExposure = .88
+      renderer.toneMappingExposure = 1.1
       renderer.domElement.className = 'black-hole-3d__canvas'
       root.appendChild(renderer.domElement)
 
       const system = new THREE.Group()
-      system.position.y = -.12
-      system.rotation.z = THREE.MathUtils.degToRad(-12)
+      system.rotation.z = THREE.MathUtils.degToRad(-8)
       scene.add(system)
 
       const discMaterial = new THREE.ShaderMaterial({
+        defines: { FBM_OCTAVES: compactLayout ? 2 : compactDevice ? 3 : 4 },
         transparent: true,
         depthWrite: false,
         side: THREE.DoubleSide,
-        blending: THREE.AdditiveBlending,
+        forceSinglePass: true,
+        blending: THREE.NormalBlending,
         uniforms: {
           time: { value: 0 },
-          strength: { value: .94 },
+          strength: { value: .9 },
           seed: { value: .17 },
           flowDirection: { value: 1 },
           explode: { value: 0 },
+          dissolve: { value: 0 },
+          frontAttenuation: { value: .38 },
         },
         vertexShader,
         fragmentShader,
       })
       discMaterial.toneMapped = false
-      const discGeometry = new THREE.RingGeometry(1.34, 5.08, compactDevice ? 160 : 256, 12)
+      const discGeometry = new THREE.RingGeometry(
+        1.34,
+        5.08,
+        compactDevice ? 96 : 192,
+        compactDevice ? 5 : 10,
+      )
       const disc = new THREE.Mesh(discGeometry, discMaterial)
-      const discBaseTilt = THREE.MathUtils.degToRad(67)
+      const discBaseTilt = THREE.MathUtils.degToRad(56)
       disc.rotation.x = discBaseTilt
       disc.renderOrder = 2
       system.add(disc)
 
       const disc2Material = discMaterial.clone()
-      disc2Material.uniforms.strength.value = .27
+      disc2Material.blending = THREE.AdditiveBlending
+      disc2Material.uniforms.strength.value = .2
       disc2Material.uniforms.seed.value = .73
       disc2Material.uniforms.flowDirection.value = .62
-      const disc2 = new THREE.Mesh(discGeometry.clone(), disc2Material)
+      const disc2 = new THREE.Mesh(discGeometry, disc2Material)
       const disc2BaseScale = 1.11
-      const disc2BaseTilt = THREE.MathUtils.degToRad(70.5)
+      const disc2BaseTilt = THREE.MathUtils.degToRad(60)
       disc2.scale.setScalar(disc2BaseScale)
       disc2.rotation.x = disc2BaseTilt
       disc2.rotation.z = -.035
+      disc2.position.z = -.12
       disc2.renderOrder = 1
       system.add(disc2)
 
@@ -599,7 +720,9 @@ export default function BlackHole3D({ className = '' }) {
           VOIDCUBE_PALETTE.navyDeep,
           VOIDCUBE_PALETTE.white,
         ]
-          .map(color => new THREE.MeshPhysicalMaterial({ color, roughness: .22, clearcoat: 1 }))
+          .map(color => compactDevice
+            ? new THREE.MeshStandardMaterial({ color, roughness: .22, metalness: .08 })
+            : new THREE.MeshPhysicalMaterial({ color, roughness: .22, clearcoat: 1 }))
         cubeGroup.add(new THREE.Mesh(fallbackGeometry, fallbackMaterials))
       }
       const cubeBaseScale = 1.08
@@ -612,23 +735,23 @@ export default function BlackHole3D({ className = '' }) {
       const centerLight = new THREE.PointLight(VOIDCUBE_PALETTE.blueLight, 5.2, 7)
       centerLight.position.copy(cubeGroup.position)
       system.add(centerLight)
-      scene.add(new THREE.HemisphereLight(VOIDCUBE_PALETTE.white, VOIDCUBE_PALETTE.navyDeep, 1.15))
+      scene.add(new THREE.HemisphereLight(VOIDCUBE_PALETTE.white, compactLayout ? VOIDCUBE_PALETTE.navyRaised : VOIDCUBE_PALETTE.navyDeep, compactLayout ? 1.5 : 1.15))
       const blueKey = new THREE.DirectionalLight(VOIDCUBE_PALETTE.blueLight, 2.1)
       blueKey.position.set(4, 5, 7)
       scene.add(blueKey)
-      const blueRim = new THREE.DirectionalLight(VOIDCUBE_PALETTE.blueDeep, 1.55)
+      const blueRim = new THREE.DirectionalLight(compactLayout ? VOIDCUBE_PALETTE.blueLight : VOIDCUBE_PALETTE.blueDeep, compactLayout ? 1.2 : 1.55)
       blueRim.position.set(-5, -2, 4)
       scene.add(blueRim)
       const blueCoreLight = new THREE.PointLight(VOIDCUBE_PALETTE.blue, 3.7, 10)
       blueCoreLight.position.set(3, 1, 3)
       scene.add(blueCoreLight)
 
-      const accretionDust = createAccretionDust(compactDevice ? 760 : 1650)
+      const accretionDust = createAccretionDust(compactDevice ? 220 : 640)
       accretionDust.rotation.x = disc.rotation.x
       system.add(accretionDust)
 
       const stars = createParticleField(
-        compactDevice ? 280 : 600,
+        compactDevice ? 180 : 520,
         { x: 40, y: 25, z: 30 },
         VOIDCUBE_PALETTE.blueLight,
         .025,
@@ -648,6 +771,7 @@ export default function BlackHole3D({ className = '' }) {
       const dragDesiredLocal = new THREE.Vector3()
       const drag = { pointerId: null, pieceIndex: -1, clientX: 0, clientY: 0 }
       const dragPickables = cubeGroup.userData.dragPickables || []
+      const dragEnabled = !coarsePointer && dragPickables.length > 0
       const interactiveSelector = 'a, button, input, textarea, select, [role="button"]'
 
       const setDragRay = (clientX, clientY) => {
@@ -662,6 +786,8 @@ export default function BlackHole3D({ className = '' }) {
       }
 
       const pickPiece = (clientX, clientY) => {
+        if (readMotionValue('sceneOpacity', 1, 0, 1) < .01) return null
+        if (readMotionValue('cubeDissolve', 0, 0, 1) > .05) return null
         if (!dragPickables.length || !setDragRay(clientX, clientY)) return null
         scene.updateMatrixWorld(true)
         const intersections = dragRaycaster.intersectObjects(dragPickables, false)
@@ -700,19 +826,27 @@ export default function BlackHole3D({ className = '' }) {
         pointer.targetX = 0
         pointer.targetY = 0
       }
-      root.addEventListener('pointermove', updatePointer, { passive: true })
-      root.addEventListener('pointerleave', resetPointer)
+      if (!coarsePointer) {
+        root.addEventListener('pointermove', updatePointer, { passive: true })
+        root.addEventListener('pointerleave', resetPointer)
+      }
 
       const resize = () => {
         const width = Math.max(1, root.clientWidth)
         const height = Math.max(1, root.clientHeight)
         const aspect = width / height
-        camera.aspect = aspect
-        camera.position.z = aspect < .78 ? 19.6 : aspect > 1.35 ? 17.8 : 17.4
-        camera.position.y = aspect < .78 ? .22 : .5
+        viewport.width = width
+        viewport.height = height
+        viewport.worldPerPixel = viewHeight / height
+        camera.left = -viewHeight * aspect / 2
+        camera.right = viewHeight * aspect / 2
+        camera.top = viewHeight / 2
+        camera.bottom = -viewHeight / 2
         camera.updateProjectionMatrix()
+        const pixelBudget = compactDevice ? 1300000 : 2600000
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap, Math.sqrt(pixelBudget / (width * height))))
         renderer.setSize(width, height, false)
-        if (reducedMotion) renderer.render(scene, camera)
+        if (reducedMotion) requestSceneRender()
       }
       resizeObserver = new ResizeObserver(resize)
       resizeObserver.observe(root)
@@ -721,21 +855,51 @@ export default function BlackHole3D({ className = '' }) {
       const clock = new THREE.Clock()
       let vortexTime = 0
       let vortexExplode = 0
+      let tapCandidate = null
+      const tapTurn = { startedAt: null, angle: 0, from: 0 }
+      const canRender = () => isIntersecting && !document.hidden && readMotionValue('sceneOpacity', 1, 0, 1) > 0
       const requestRender = () => {
-        if (disposed || !isVisible || frame) return
+        if (disposed || !canRender() || frame) return
         clock.getDelta()
         frame = requestAnimationFrame(animate)
       }
-      const animate = () => {
+      const animate = timestamp => {
         frame = 0
-        if (disposed || !isVisible) return
+        if (disposed || !canRender()) return
+        if (!reducedMotion && frameInterval && lastFrameTime && timestamp - lastFrameTime < frameInterval) {
+          frame = requestAnimationFrame(animate)
+          return
+        }
+        if (frameInterval) {
+          const elapsed = lastFrameTime ? timestamp - lastFrameTime : frameInterval
+          lastFrameTime = timestamp - (elapsed % frameInterval)
+        }
         const delta = Math.min(clock.getDelta(), .04)
         const time = clock.elapsedTime
         const cubeExplode = readMotionValue('cubeExplode', 0, 0, 1)
+        const cubeDissolve = readMotionValue('cubeDissolve', 0, 0, 1)
+        const vortexDissolve = readMotionValue('vortexDissolve', 0, 0, 1)
+        const cubeTurn = readMotionValue('cubeTurn', 0, -Math.PI * 2, Math.PI * 2)
+        const cubePitch = readMotionValue('cubePitch', 0, 0, Math.PI / 2)
         const cubeDepth = readMotionValue('cubeDepth', 0, -2, 3)
         const cubeDescent = readMotionValue('cubeDescent', 0, -2, 2)
         const cubeScale = readMotionValue('cubeScale', 1, .9, 1.15)
         const fieldOpacity = readMotionValue('cubeField', 0, 0, 1)
+        const fieldScale = readMotionValue('cubeFieldScale', 1, .4, 1)
+        const horizon = readMotionValue('sceneHorizon', 0, 0, 1)
+        const sceneX = readMotionValue('sceneX', .78, 0, 1)
+        const sceneY = readMotionValue('sceneY', .48, 0, 1.5)
+        const sceneSize = readMotionValue('sceneSize', viewport.width * .39, 32, viewport.width * 1.2)
+        const fieldWidth = readMotionValue('sceneFieldWidth', viewport.width * .76, 1, viewport.width * 2)
+        cubeGroup.userData.setExplode?.(cubeExplode, cubeDissolve)
+        const sceneScale = sceneSize * viewport.worldPerPixel / (2.7 * (cubeGroup.userData.framingScale || 1))
+        system.scale.setScalar(sceneScale)
+        system.position.set(
+          (sceneX - .5) * viewport.width * viewport.worldPerPixel,
+          (.5 - sceneY) * viewHeight,
+          0,
+        )
+        system.rotation.z = THREE.MathUtils.lerp(-8, -3, horizon) * Math.PI / 180
         vortexExplode = reducedMotion ? cubeExplode : THREE.MathUtils.damp(vortexExplode, cubeExplode, 8, delta)
 
         if (!reducedMotion) {
@@ -752,40 +916,69 @@ export default function BlackHole3D({ className = '' }) {
           const pointerTurnY = parallaxEnabled ? -pointer.y * .1 : 0
           system.rotation.y += (pointerTurnX + storyTurn - system.rotation.y) * .025
           system.rotation.x += (pointerTurnY - system.rotation.x) * .025
-          system.rotation.z = THREE.MathUtils.degToRad(-12)
 
-          vortexTime += delta * (1 + vortexExplode * .5)
+          vortexTime += delta * (1 + vortexExplode * .5 + vortexDissolve * .7)
           discMaterial.uniforms.time.value = vortexTime
           disc2Material.uniforms.time.value = vortexTime * .74
           accretionDust.material.uniforms.time.value = vortexTime
-          disc.rotation.z += delta * (.045 + vortexExplode * .025)
-          disc2.rotation.z += delta * (.016 + vortexExplode * .012)
           stars.rotation.y -= delta * .004
 
-          cubeGroup.rotation.y = .64 + time * .04 + Math.sin(time * .3) * .045
-          cubeGroup.rotation.x = -.46 + Math.sin(time * .22) * .025
-          cubeGroup.rotation.z = .075 + Math.cos(time * .18) * .016
+          if (tapTurn.startedAt !== null) {
+            const progress = Math.min(1, (timestamp - tapTurn.startedAt) / 600)
+            tapTurn.angle = tapTurn.from + Math.PI / 2 * (1 - Math.pow(1 - progress, 3))
+            if (progress === 1) {
+              tapTurn.startedAt = null
+              delete cubeMotionRoot?.dataset.cubeTurning
+            }
+          }
+          // Arrival spin lands exactly on the established orientation. The gas keeps
+          // flowing after the cube settles, without an unbounded ambient turn below.
+          cubeGroup.rotation.y = .64 + cubeTurn + (1 - horizon) * (time * .04 + Math.sin(time * .3) * .045) + tapTurn.angle
+          cubeGroup.rotation.x = -.46 + cubePitch + (1 - horizon) * Math.sin(time * .22) * .025 + Math.sin(cubeTurn) * .06
+          cubeGroup.rotation.z = .075 + (1 - horizon) * Math.cos(time * .18) * .016
+        } else {
+          cubeGroup.rotation.set(-.46, .64, .075)
+          system.rotation.x = 0
+          system.rotation.y = 0
         }
 
         discMaterial.uniforms.explode.value = vortexExplode
         disc2Material.uniforms.explode.value = vortexExplode
         accretionDust.material.uniforms.explode.value = vortexExplode
-        disc.scale.setScalar(1 + vortexExplode * .07)
-        disc.rotation.x = discBaseTilt - vortexExplode * .025
-        disc2.scale.setScalar(disc2BaseScale * (1 + vortexExplode * .09))
-        disc2.rotation.x = disc2BaseTilt + vortexExplode * .018
-        cubeGroup.userData.setExplode?.(cubeExplode)
+        discMaterial.uniforms.dissolve.value = vortexDissolve
+        disc2Material.uniforms.dissolve.value = vortexDissolve
+        accretionDust.material.uniforms.dissolve.value = vortexDissolve
+        const fieldSceneScale = fieldWidth * viewport.worldPerPixel / (11.28 * sceneScale)
+        const fieldFlatten = THREE.MathUtils.lerp(1, .62, horizon)
+        const fieldExpansion = 1 + vortexDissolve * .22
+        const discScale = (1 + vortexExplode * .07) * fieldScale * fieldSceneScale * fieldExpansion
+        disc.scale.set(discScale, discScale * fieldFlatten, discScale)
+        disc.rotation.x = THREE.MathUtils.lerp(discBaseTilt, THREE.MathUtils.degToRad(68), horizon) - vortexExplode * .025
+        const secondaryDiscScale = disc2BaseScale * (1 + vortexExplode * .09) * fieldScale * fieldSceneScale * fieldExpansion
+        disc2.scale.set(secondaryDiscScale, secondaryDiscScale * fieldFlatten, secondaryDiscScale)
+        accretionDust.scale.set(fieldSceneScale, fieldSceneScale * fieldFlatten, fieldSceneScale)
+        disc2.rotation.x = THREE.MathUtils.lerp(disc2BaseTilt, THREE.MathUtils.degToRad(72), horizon) + vortexExplode * .018
+        accretionDust.rotation.x = disc.rotation.x
+        // Lift the disk independently: its gas remains visible around the lower
+        // horizon while the existing reading mask protects all capability copy.
+        const fieldLift = horizon * Math.min(sceneSize * .2, viewport.height * .17) * viewport.worldPerPixel / sceneScale
+        disc.position.y = fieldLift
+        disc2.position.y = fieldLift
+        accretionDust.position.y = fieldLift
+        cubeGroup.visible = cubeDissolve < .999
         cubeGroup.position.set(0, -cubeDescent, cubeBaseDepth + cubeDepth)
         cubeGroup.scale.setScalar(cubeBaseScale * cubeScale)
         centerLight.position.copy(cubeGroup.position)
         centerLight.intensity = reducedMotion ? 5 : 5 + vortexExplode * 1.15 + Math.sin(time * 1.4) * .28
-        discMaterial.uniforms.strength.value = (.94 + vortexExplode * .15) * fieldOpacity
-        disc2Material.uniforms.strength.value = (.27 + vortexExplode * .08) * fieldOpacity
-        accretionDust.material.uniforms.opacity.value = (.72 + vortexExplode * .12) * fieldOpacity
-        stars.material.opacity = .48 * fieldOpacity * (1 - vortexExplode * .18)
+        discMaterial.uniforms.strength.value = (1.04 + horizon * .12 + vortexExplode * .12) * fieldOpacity
+        disc2Material.uniforms.strength.value = (.25 + horizon * .07 + vortexExplode * .06) * fieldOpacity
+        accretionDust.material.uniforms.opacity.value = (.34 + vortexExplode * .1) * fieldOpacity
+        stars.material.opacity = .24 * fieldOpacity * (1 - horizon) * (1 - vortexDissolve)
 
-        scene.updateMatrixWorld(true)
-        updateDraggedPiece()
+        if (drag.pointerId !== null) {
+          scene.updateMatrixWorld(true)
+          updateDraggedPiece()
+        }
         const dragReturning = cubeGroup.userData.tickPieceDrag?.(delta) ?? false
         renderer.render(scene, camera)
         if (!reducedMotion || drag.pointerId !== null || dragReturning) {
@@ -795,11 +988,31 @@ export default function BlackHole3D({ className = '' }) {
 
       const onReducedMotionChange = event => {
         reducedMotion = event.matches
+        tapCandidate = null
+        tapTurn.startedAt = null
+        delete cubeMotionRoot?.dataset.cubeTurning
         if (frame) cancelAnimationFrame(frame)
         frame = 0
-        if (!isVisible) return
+        lastFrameTime = 0
+        if (!canRender()) return
         clock.getDelta()
         frame = requestAnimationFrame(animate)
+      }
+      requestSceneRender = requestRender
+      // Resume the same renderer when the hidden scene enters the parallax.
+      // Layout and preference changes also need a correctly composed static frame.
+      if (cubeMotionRoot) {
+        motionObserver = new MutationObserver(records => {
+          const visibilityChanged = records.some(record => record.attributeName === 'data-scene-opacity')
+          if (visibilityChanged && readMotionValue('sceneOpacity', 1, 0, 1) === 0) {
+            delete cubeMotionRoot.dataset.cubeHover
+          }
+          if (reducedMotion || visibilityChanged) requestRender()
+        })
+        motionObserver.observe(cubeMotionRoot, {
+          attributes: true,
+          attributeFilter: ['data-scene-x', 'data-scene-y', 'data-scene-size', 'data-scene-field-width', 'data-scene-horizon', 'data-scene-opacity'],
+        })
       }
       reducedMotionQuery.addEventListener('change', onReducedMotionChange)
 
@@ -871,6 +1084,37 @@ export default function BlackHole3D({ className = '' }) {
       }
 
       const onPiecePointerLeave = () => setHoverState(false)
+      const cancelTap = () => { tapCandidate = null }
+      const onTapDown = event => {
+        if (event.pointerType !== 'touch') return
+        if (!event.isPrimary || reducedMotion || tapTurn.startedAt !== null) { cancelTap(); return }
+        if (event.target instanceof Element && event.target.closest(interactiveSelector)) return
+        if (!pickPiece(event.clientX, event.clientY)) return
+        tapCandidate = { id: event.pointerId, x: event.clientX, y: event.clientY, at: performance.now(), scroll: window.scrollY }
+      }
+      const onTapMove = event => {
+        if (tapCandidate && event.pointerId === tapCandidate.id && Math.hypot(event.clientX - tapCandidate.x, event.clientY - tapCandidate.y) > 10) cancelTap()
+      }
+      const onTapUp = event => {
+        const candidate = tapCandidate
+        if (!candidate || candidate.id !== event.pointerId) return
+        cancelTap()
+        if (reducedMotion || performance.now() - candidate.at > 280 || Math.abs(window.scrollY - candidate.scroll) > 3) return
+        if (Math.hypot(event.clientX - candidate.x, event.clientY - candidate.y) > 10 || !pickPiece(event.clientX, event.clientY)) return
+        tapTurn.from = tapTurn.angle
+        tapTurn.startedAt = performance.now()
+        cubeMotionRoot.dataset.cubeTurning = 'true'
+        requestRender()
+      }
+      // Passive observation preserves native vertical scrolling and pinch zoom.
+      if (cubeMotionRoot) {
+        cubeMotionRoot.addEventListener('pointerdown', onTapDown, { passive: true })
+        cubeMotionRoot.addEventListener('pointermove', onTapMove, { passive: true })
+        cubeMotionRoot.addEventListener('pointerup', onTapUp, { passive: true })
+        cubeMotionRoot.addEventListener('pointercancel', cancelTap, { passive: true })
+        window.addEventListener('scroll', cancelTap, { passive: true })
+        window.addEventListener('blur', cancelTap)
+      }
       const onPiecePointerUp = event => finishPieceDrag(event)
       const onPiecePointerCancel = event => finishPieceDrag(event)
       const onPieceLostCapture = event => finishPieceDrag(event)
@@ -878,56 +1122,67 @@ export default function BlackHole3D({ className = '' }) {
         setHoverState(false)
         finishPieceDrag(null, true)
       }
-      const onPieceTouchGesture = event => {
-        if (drag.pointerId !== null) event.preventDefault()
-      }
-
-      if (cubeMotionRoot && dragPickables.length) {
+      if (cubeMotionRoot && dragEnabled) {
         cubeMotionRoot.addEventListener('pointerdown', onPiecePointerDown, { capture: true })
         cubeMotionRoot.addEventListener('pointermove', onPiecePointerMove, { capture: true, passive: false })
         cubeMotionRoot.addEventListener('pointerup', onPiecePointerUp, { capture: true })
         cubeMotionRoot.addEventListener('pointercancel', onPiecePointerCancel, { capture: true })
         cubeMotionRoot.addEventListener('lostpointercapture', onPieceLostCapture, { capture: true })
         cubeMotionRoot.addEventListener('pointerleave', onPiecePointerLeave, { capture: true })
-        cubeMotionRoot.addEventListener('touchstart', onPieceTouchGesture, { capture: true, passive: false })
-        cubeMotionRoot.addEventListener('touchmove', onPieceTouchGesture, { capture: true, passive: false })
         window.addEventListener('blur', onWindowBlur)
       }
 
-      visibilityObserver = new IntersectionObserver(entries => {
-        isVisible = entries[0]?.isIntersecting ?? true
-        if (isVisible && !reducedMotion && !frame) {
-          clock.getDelta()
-          frame = requestAnimationFrame(animate)
-        } else if (!isVisible && frame) {
+      const syncAnimation = () => {
+        if (canRender()) {
+          if (!frame) {
+            clock.getDelta()
+            lastFrameTime = 0
+            frame = requestAnimationFrame(animate)
+          }
+        } else if (frame) {
           cancelAnimationFrame(frame)
           frame = 0
         }
+      }
+      visibilityObserver = new IntersectionObserver(entries => {
+        isIntersecting = entries[0]?.isIntersecting ?? true
+        syncAnimation()
       }, { rootMargin: '120px' })
       visibilityObserver.observe(root)
+      document.addEventListener('visibilitychange', syncAnimation)
 
-      if (reducedMotion) renderer.render(scene, camera)
-      else frame = requestAnimationFrame(animate)
+      frame = requestAnimationFrame(animate)
 
       return () => {
         disposed = true
         cancelAnimationFrame(frame)
         visibilityObserver?.disconnect()
+        motionObserver?.disconnect()
         resizeObserver?.disconnect()
+        document.removeEventListener('visibilitychange', syncAnimation)
         reducedMotionQuery.removeEventListener('change', onReducedMotionChange)
         finishPieceDrag(null, true)
         cubeGroup.userData.resetPieceDrag?.()
-        root.removeEventListener('pointermove', updatePointer)
-        root.removeEventListener('pointerleave', resetPointer)
-        if (cubeMotionRoot && dragPickables.length) {
+        if (cubeMotionRoot) {
+          cubeMotionRoot.removeEventListener('pointerdown', onTapDown)
+          cubeMotionRoot.removeEventListener('pointermove', onTapMove)
+          cubeMotionRoot.removeEventListener('pointerup', onTapUp)
+          cubeMotionRoot.removeEventListener('pointercancel', cancelTap)
+          window.removeEventListener('scroll', cancelTap)
+          window.removeEventListener('blur', cancelTap)
+          delete cubeMotionRoot.dataset.cubeTurning
+        }
+        if (!coarsePointer) {
+          root.removeEventListener('pointermove', updatePointer)
+          root.removeEventListener('pointerleave', resetPointer)
+        }
+        if (cubeMotionRoot && dragEnabled) {
           cubeMotionRoot.removeEventListener('pointerdown', onPiecePointerDown, true)
           cubeMotionRoot.removeEventListener('pointermove', onPiecePointerMove, true)
           cubeMotionRoot.removeEventListener('pointerup', onPiecePointerUp, true)
           cubeMotionRoot.removeEventListener('pointercancel', onPiecePointerCancel, true)
           cubeMotionRoot.removeEventListener('lostpointercapture', onPieceLostCapture, true)
           cubeMotionRoot.removeEventListener('pointerleave', onPiecePointerLeave, true)
-          cubeMotionRoot.removeEventListener('touchstart', onPieceTouchGesture, true)
-          cubeMotionRoot.removeEventListener('touchmove', onPieceTouchGesture, true)
           window.removeEventListener('blur', onWindowBlur)
           delete cubeMotionRoot.dataset.cubeDragging
           delete cubeMotionRoot.dataset.cubePiece
@@ -957,7 +1212,7 @@ export default function BlackHole3D({ className = '' }) {
       setFailed(true)
       return undefined
     }
-  }, [renderAttempt])
+  }, [renderAttempt, compactLayout])
 
   if (failed) return <div
     className={`black-hole-3d is-fallback ${className}`}

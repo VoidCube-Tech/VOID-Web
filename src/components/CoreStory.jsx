@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useEffect, useRef, useState } from 'react'
-import { animate, createScope, onScroll } from 'animejs'
+import { animate, createScope } from 'animejs'
 import { Link } from 'react-router-dom'
 import { ArrowIcon, CapabilityIcon } from './Icons'
 
@@ -75,6 +75,10 @@ const smoothstep = (from, to, value) => {
   const amount = clamp((value - from) / Math.max(.0001, to - from))
   return amount * amount * (3 - 2 * amount)
 }
+const smootherstep = (from, to, value) => {
+  const amount = clamp((value - from) / Math.max(.0001, to - from))
+  return amount * amount * amount * (amount * (amount * 6 - 15) + 10)
+}
 
 export default function CoreStory() {
   const [heroBeat, setHeroBeat] = useState(0)
@@ -101,10 +105,17 @@ export default function CoreStory() {
     const solutionsTrack = solutionsRef.current
     const solutionsScene = solutionsSceneRef.current
     if (!story || !hero || !heroScene || !solutionsTrack || !solutionsScene) return undefined
+    const heroPanels = [...heroScene.querySelectorAll('[data-hero-beat]')]
+    const solutionPanels = [...solutionsScene.querySelectorAll('[data-solution-beat]')]
+    const model = story.querySelector('.core-story__model')
+    const visualStage = story.querySelector('.core-story__visual-stage')
+    const page = story.parentElement
+    const solutionsSection = solutionsTrack.parentElement
+    const solutionsIntro = solutionsSection.querySelector('.section-intro')
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
 
-    const storyState = { progress: 0 }
     const pointer = { x: 0, y: 0 }
-    const metrics = { storyTravel: 1, heroTravel: 1, solutionsStart: 1, solutionsTravel: 1 }
+    const metrics = { heroTravel: 1, solutionsStart: 1, solutionsTravel: 1 }
     let currentHeroBeat = -2
     let currentSolutionBeat = -2
     let pointerAnimation
@@ -114,12 +125,40 @@ export default function CoreStory() {
     let disposed = false
 
     const measure = () => {
+      metrics.viewportWidth = model.offsetWidth
+      metrics.viewportHeight = model.offsetHeight
+      metrics.headerClear = (document.querySelector('.site-header')?.offsetHeight || 76) + 24
+      const title = heroPanels[0].querySelector('h1')
+      metrics.heroTitleCenter = heroPanels[0].offsetTop + title.offsetTop + title.offsetHeight / 2
+      metrics.heroTitleHeight = title.offsetHeight
+      metrics.heroClearLeft = heroPanels[0].offsetLeft + (window.innerWidth <= 760 ? title.offsetWidth : heroPanels[0].offsetWidth)
+      // Measure every panel before animating: even the longest copy gets a clear reading area.
+      metrics.solutionPanelBottoms = solutionPanels.map(panel => panel.offsetTop + panel.offsetHeight)
+      metrics.solutionClear = Math.max(...metrics.solutionPanelBottoms) + 32
+      const height = metrics.viewportHeight
+      const entryOverlap = reducedMotionQuery.matches ? 0 : Math.max(0, height - Math.min(height * .35, 280))
+      const handoffOverlap = reducedMotionQuery.matches ? 0 : Math.max(0, height - metrics.solutionPanelBottoms.at(-1) - 24)
+      // Static, measured overlaps remove empty sticky tails without animating layout.
+      page.style.setProperty('--story-entry-overlap', `${entryOverlap.toFixed(2)}px`)
+      page.style.setProperty('--story-handoff-overlap', `${handoffOverlap.toFixed(2)}px`)
       const storyBounds = story.getBoundingClientRect()
-      const trackBounds = solutionsTrack.getBoundingClientRect()
-      metrics.storyTravel = Math.max(1, story.offsetHeight - window.innerHeight)
-      metrics.heroTravel = Math.max(1, hero.offsetHeight - heroScene.offsetHeight)
-      metrics.solutionsStart = trackBounds.top - storyBounds.top
+      metrics.storyTop = storyBounds.top + window.scrollY
+      metrics.introStart = solutionsSection.getBoundingClientRect().top - storyBounds.top
+      // Read layout coordinates: the global text reveal temporarily translates the heading.
+      let introCopyTop = 0
+      for (let node = solutionsIntro.querySelector('h2'); node && node !== story; node = node.offsetParent) {
+        introCopyTop += node.offsetTop
+      }
+      // Finish the hero's dissipation with the next heading already in view.
+      metrics.heroTravel = Math.max(1, introCopyTop - height * .58)
+      metrics.solutionsStart = solutionsTrack.getBoundingClientRect().top - storyBounds.top
       metrics.solutionsTravel = Math.max(1, solutionsTrack.offsetHeight - solutionsScene.offsetHeight)
+      metrics.exitTravel = Math.max(180, handoffOverlap)
+      metrics.readingTravel = Math.max(1, metrics.solutionsTravel - metrics.exitTravel)
+      const horizonSize = Math.min(metrics.viewportWidth * .94, Math.max(0, height - metrics.solutionClear) * 1.8, height * .96)
+      metrics.departureLead = Math.min(height * .18, metrics.readingTravel * .12)
+      metrics.departureTravel = metrics.departureLead + Math.min(metrics.exitTravel, Math.max(180, horizonSize * .5))
+      metrics.projectsStart = metrics.solutionsStart + solutionsTrack.offsetHeight - handoffOverlap
     }
 
     const paintHeroPanel = (panel, opacity, x) => {
@@ -135,20 +174,27 @@ export default function CoreStory() {
     }
 
     const paint = () => {
-      const scrollDistance = storyState.progress * metrics.storyTravel
+      const compactLayout = window.innerWidth <= 760
+      // Text and canvas share native scroll, including fast reversals and sticky release.
+      const scrollDistance = reducedMotionQuery.matches ? 0 : Math.max(0, window.scrollY - metrics.storyTop)
       const heroProgress = clamp(scrollDistance / metrics.heroTravel)
-      const solutionsProgress = clamp((scrollDistance - metrics.solutionsStart) / metrics.solutionsTravel)
+      const solutionsProgress = clamp((scrollDistance - metrics.solutionsStart) / metrics.readingTravel)
+      const exitProgress = clamp((scrollDistance - metrics.solutionsStart - metrics.readingTravel) / metrics.exitTravel)
+      // Start while the final capability is still being read, so narrow screens
+      // show the downward turn before the incoming section reaches the cube.
+      const departure = clamp((scrollDistance - metrics.solutionsStart - metrics.readingTravel + metrics.departureLead) / metrics.departureTravel)
+      const exitEase = departure * departure
       const introTravel = Math.max(1, metrics.solutionsStart - metrics.heroTravel)
       const introProgress = clamp((scrollDistance - metrics.heroTravel) / introTravel)
       const heroActive = scrollDistance <= metrics.heroTravel + 1
       const solutionsActive = scrollDistance >= metrics.solutionsStart - 1
       const heroMoments = [
-        { id: 0, enter: null, exit: [.3, .42] },
+        { id: 0, enter: null, exit: [.24, .4] },
       ]
       let visibleHeroBeat = -1
       let visibleHeroOpacity = -1
       heroMoments.forEach(({ id, enter, exit }) => {
-        const panel = heroScene.querySelector(`[data-hero-beat="${id}"]`)
+        const panel = heroPanels[id]
         if (!panel) return
         const entrance = enter ? smoothstep(enter[0], enter[1], heroProgress) : 1
         const departure = exit ? smoothstep(exit[0], exit[1], heroProgress) : 0
@@ -161,20 +207,29 @@ export default function CoreStory() {
       })
       if (visibleHeroOpacity < .01) visibleHeroBeat = -1
 
-      const solutionMoments = [
-        { enter: [.03, .14], exit: [.22, .28] },
+      const solutionMoments = compactLayout ? [
+        { enter: null, exit: [.29, .33] },
+        { enter: [.36, .4], exit: [.63, .67] },
+        { enter: [.7, .74], exit: null },
+      ] : [
+        { enter: null, exit: [.22, .28] },
         { enter: [.34, .42], exit: [.48, .54] },
-        { enter: [.6, .68], exit: [.86, .92] },
+        { enter: [.6, .68], exit: null },
       ]
       let visibleSolutionBeat = -1
+      let sceneClearTop = metrics.solutionClear
       solutionMoments.forEach(({ enter, exit }, index) => {
-        const panel = solutionsScene.querySelector(`[data-solution-beat="${index}"]`)
+        const panel = solutionPanels[index]
         if (!panel) return
         const entrance = enter ? smoothstep(enter[0], enter[1], solutionsProgress) : 1
         const departure = exit ? smoothstep(exit[0], exit[1], solutionsProgress) : 0
-        const opacity = solutionsActive ? entrance * (1 - departure) : 0
-        const y = (1 - entrance) * 58 - departure * 40
+        // The first card enters with the section, not after an empty viewport has passed.
+        const opacity = solutionsActive || index === 0 ? entrance * (1 - departure) : 0
+        const y = (1 - entrance) * (compactLayout ? 24 : 58) - departure * (compactLayout ? 20 : 40)
         paintSolutionPanel(panel, opacity, y)
+        if (opacity > .001) {
+          sceneClearTop = Math.max(sceneClearTop, metrics.solutionPanelBottoms[index] + Math.max(0, y) + 32)
+        }
         if (opacity > .52) visibleSolutionBeat = index
       })
 
@@ -187,49 +242,42 @@ export default function CoreStory() {
         setSolutionBeat(visibleSolutionBeat)
       }
 
-      const passageSettle = smoothstep(.06, .5, introProgress)
-      const parallaxArrival = smoothstep(.02, .16, solutionsProgress)
-      const parallaxTravel = smoothstep(.16, 1, solutionsProgress)
-
-      const compactLayout = window.innerWidth <= 760
-      const sideOffset = Math.min(20, (320 / Math.max(1, window.innerWidth)) * 100)
-      const passageX = compactLayout ? 0 : Math.min(27, (410 / Math.max(1, window.innerWidth)) * 100)
-      const passageY = compactLayout ? 12 : 6
-      const passageScale = compactLayout ? .6 : .66
-      const passageOpacity = compactLayout ? .82 : .86
-      const solutionY = compactLayout ? 24 : 0
-      const solutionScale = compactLayout ? .62 : .9
-      const settledScale = compactLayout ? .62 : .82
-      const heroFocus = smoothstep(.26, .46, heroProgress)
-      const heroFocusScale = compactLayout ? 1.06 : 1.18
-      let visualX = 0
-      let visualY = 0
-      let visualScale = .94
-      let visualOpacity = 1
+      const passageSettle = smoothstep(0, .92, introProgress)
+      const solutionSettle = smoothstep(.12, .88, solutionsProgress)
+      const heroFocus = smootherstep(.28, .54, heroProgress)
+      const heroVisibility = 1 - smootherstep(.92, 1, heroProgress)
+      const solutionVisibility = smoothstep(0, .055, solutionsProgress) * (1 - smoothstep(.76, .99, departure))
+      // A cubic release spends more of the arrival slowing down than accelerating.
+      const arrival = 1 - Math.pow(1 - clamp(solutionsProgress / .18), 3)
+      // Reposition the shared scene while hidden. It returns only after the
+      // capabilities track is pinned and its full reading area is protected.
+      const sceneOpacity = heroActive ? heroVisibility : solutionsActive ? solutionVisibility : 0
+      const { viewportWidth: width, viewportHeight: height } = metrics
+      const heroSize = compactLayout
+        ? Math.min(width * .4, metrics.heroTitleHeight + 40)
+        : Math.min(width * .39, height * .65)
+      // Frame the whole opening cube between the navigation and the incoming section.
+      const focusBottom = Math.min(height - 32, metrics.introStart - scrollDistance - 32)
+      const focusHeight = Math.max(96, focusBottom - metrics.headerClear)
+      const focusSize = Math.min(width * .52, focusHeight * .72)
+      const horizonSize = Math.min(width * .94, Math.max(0, height - metrics.solutionClear) * 1.8, height * .96)
+      const horizon = heroActive ? 0 : solutionsActive ? 1 : passageSettle
+      const heroY = compactLayout ? metrics.heroTitleCenter / height : .48
+      const focusY = (metrics.headerClear + focusHeight / 2) / height
+      let visualX = lerp(compactLayout ? .8 : .78, .5, heroFocus)
+      let visualY = lerp(heroY, focusY, heroFocus)
+      let cubeSize = lerp(heroSize, focusSize, heroFocus)
       if (heroActive) {
-        visualX = lerp(sideOffset, 0, heroFocus)
-        visualScale = lerp(.94, heroFocusScale, heroFocus)
-      } else if (!solutionsActive) {
-        visualX = lerp(0, passageX, passageSettle)
-        visualY = lerp(0, passageY, passageSettle)
-        visualScale = lerp(heroFocusScale, passageScale, passageSettle)
-        visualOpacity = lerp(1, passageOpacity, passageSettle)
-      } else if (solutionsActive) {
-        // Cross the viewport only while both adjacent panels are fully hidden.
-        const travelLeft = smoothstep(.28, .34, solutionsProgress)
-        const travelRight = smoothstep(.54, .6, solutionsProgress)
-        const settleCenter = smoothstep(.92, 1, solutionsProgress)
-        const arrivalX = passageX
-        visualX = lerp(lerp(lerp(arrivalX, -sideOffset, travelLeft), sideOffset, travelRight), 0, settleCenter)
-        visualY = lerp(passageY, solutionY, parallaxArrival) + lerp(0, 2, parallaxTravel)
-        const arrivalScale = lerp(passageScale, solutionScale, parallaxArrival)
-        visualScale = lerp(arrivalScale, settledScale, smoothstep(.68, 1, solutionsProgress))
-        visualOpacity = lerp(passageOpacity, 1, parallaxArrival)
+        visualY -= Math.sin(heroFocus * Math.PI) * .018
+      } else {
+        visualX = .5
+        visualY = lerp(focusY, 1.01 + solutionSettle * .025, horizon)
+        if (solutionsActive) visualY += (1 - arrival) * .16 + exitEase * .2
+        cubeSize = lerp(focusSize, horizonSize, horizon)
+        if (solutionsActive) cubeSize *= (.9 + arrival * .1) * (1 - exitEase * .08)
       }
 
-      if (compactLayout) visualX = 0
-
-      const pointerAvailable = solutionsActive && solutionsProgress >= .16
+      const pointerAvailable = !compactLayout && solutionsActive && solutionsProgress >= .16 && departure === 0
       if (pointerEnabled !== pointerAvailable) {
         pointerEnabled = pointerAvailable
         if (!pointerEnabled) {
@@ -241,23 +289,45 @@ export default function CoreStory() {
       const pointerWeight = solutionsActive ? smoothstep(.16, .24, solutionsProgress) : 0
       const pointerX = (pointerEnabled ? pointer.x : 0) * pointerWeight
       const pointerY = (pointerEnabled ? pointer.y : 0) * pointerWeight
-      story.style.setProperty('--story-visual-x', `${(visualX + pointerX * .35).toFixed(3)}vw`)
-      story.style.setProperty('--story-visual-y', `${(visualY + pointerY * .7).toFixed(3)}vh`)
-      story.style.setProperty('--story-visual-scale', visualScale.toFixed(4))
-      story.style.setProperty('--story-visual-opacity', visualOpacity.toFixed(4))
+      visualX += pointerX * .004
+      visualY += pointerY * .003
+      story.dataset.sceneX = visualX.toFixed(5)
+      story.dataset.sceneY = visualY.toFixed(5)
+      story.dataset.sceneSize = cubeSize.toFixed(2)
+      story.dataset.sceneFieldWidth = lerp(cubeSize * 2.6, width * 1.8, horizon).toFixed(2)
+      story.dataset.sceneHorizon = horizon.toFixed(4)
+      story.dataset.sceneOpacity = sceneOpacity.toFixed(4)
+      visualStage.setAttribute('aria-hidden', sceneOpacity < .01 ? 'true' : 'false')
+      story.style.setProperty('--story-scene-opacity', sceneOpacity.toFixed(4))
+      story.style.setProperty('--story-scene-x', `${(visualX * 100).toFixed(3)}%`)
+      story.style.setProperty('--story-scene-y', `${(visualY * 100).toFixed(3)}%`)
+      story.style.setProperty('--story-cube-size', `${cubeSize.toFixed(2)}px`)
+      story.style.setProperty('--story-clear-top', `${(heroActive ? 0 : sceneClearTop).toFixed(2)}px`)
+      const nextSectionTop = heroActive ? metrics.introStart : metrics.projectsStart
+      story.style.setProperty('--story-visible-bottom', `${Math.min(height + 48, nextSectionTop - scrollDistance).toFixed(2)}px`)
+      const heroReading = heroActive ? 1 - smoothstep(.24, .4, heroProgress) : 0
+      story.style.setProperty('--story-clear-left', `${(metrics.heroClearLeft * heroReading).toFixed(2)}px`)
+      story.style.setProperty('--story-clear-feather', `${((compactLayout ? 18 : 32) * heroReading).toFixed(2)}px`)
       story.style.setProperty('--hero-progress', heroProgress.toFixed(4))
       story.style.setProperty('--solutions-progress', solutionsProgress.toFixed(4))
+      story.style.setProperty('--solutions-exit', exitProgress.toFixed(4))
 
-      const explodeOut = smoothstep(.38, .64, heroProgress)
-      const assembleBack = smoothstep(.72, .92, heroProgress)
-      const cubeFocus = heroActive ? heroFocus : !solutionsActive ? 1 - passageSettle : 0
-      const focusedCubeScale = compactLayout ? 1.05 : 1.1
-      story.dataset.cubeExplode = (explodeOut * (1 - assembleBack)).toFixed(4)
+      // Dissolve the separated pieces, then return with an already assembled cube.
+      // These values are scroll-derived, so reversing the gesture rebuilds every piece.
+      // Each piece supplies its own easing; a linear driver avoids accelerating twice.
+      story.dataset.cubeExplode = (heroActive ? clamp((heroProgress - .46) / .38) : smoothstep(.05, .75, departure) * .18).toFixed(4)
+      story.dataset.cubeDissolve = (heroActive ? smootherstep(.74, 1, heroProgress) : smoothstep(.12, .88, departure)).toFixed(4)
+      story.dataset.vortexDissolve = (heroActive ? smootherstep(.7, 1, heroProgress) : smoothstep(.08, .98, departure)).toFixed(4)
+      story.dataset.cubeTurn = (solutionsActive ? -(1 - arrival) * Math.PI * 1.35 + exitEase * .95 : heroActive ? smootherstep(.34, .92, heroProgress) * .58 : 0).toFixed(5)
+      story.dataset.cubePitch = (exitEase * 1.15).toFixed(5)
       story.dataset.cubeDepth = '0'
       story.dataset.cubeDescent = '0'
-      story.dataset.cubeScale = lerp(1, focusedCubeScale, cubeFocus).toFixed(4)
+      story.dataset.cubeScale = '1'
       story.dataset.cubeField = '1'
-      story.dataset.parallaxPhase = heroActive ? 'hero' : solutionsActive && solutionsProgress >= .16 ? 'solutions' : 'passage'
+      story.dataset.parallaxPhase = heroActive ? 'hero' : solutionsActive && solutionsProgress >= .16 && departure === 0 ? 'solutions' : 'passage'
+      story.dataset.motionPhase = heroActive
+        ? heroProgress < .28 ? 'hero' : heroProgress < .46 ? 'focus' : heroProgress < .74 ? 'decompose' : 'dissolve'
+        : solutionsActive ? departure >= .99 ? 'complete' : departure > 0 ? 'depart' : solutionsProgress < .18 ? 'arrive' : 'settled' : 'handoff'
 
       const activeBeat = solutionsActive ? visibleSolutionBeat : visibleHeroBeat
       const gravity = activeBeat === 1 ? 'left' : 'right'
@@ -272,7 +342,7 @@ export default function CoreStory() {
       measure()
       paint()
     })
-    ;[hero, heroScene, solutionsTrack, solutionsScene].forEach(element => layoutObserver.observe(element))
+    ;[hero, heroScene, solutionsIntro, solutionsTrack, solutionsScene, model, ...solutionPanels].forEach(element => layoutObserver.observe(element))
     document.fonts?.ready.then(() => {
       if (disposed) return
       measure()
@@ -287,7 +357,6 @@ export default function CoreStory() {
       },
     }).add(self => {
       if (self.matches.reduceMotion) {
-        storyState.progress = 0
         story.dataset.cubeExplode = '0'
         story.dataset.cubeDepth = '0'
         story.dataset.cubeDescent = '0'
@@ -296,22 +365,13 @@ export default function CoreStory() {
         return undefined
       }
 
-      animate(storyState, {
-        progress: 1,
-        duration: 1000,
-        ease: 'linear',
-        autoplay: onScroll({
-          target: story,
-          enter: 'start start',
-          leave: 'end end',
-          sync: .18,
-          onResize: () => {
-            measure()
-            paint()
-          },
-        }),
-        onUpdate: paint,
-      })
+      let scrollFrame = 0
+      const update = () => {
+        if (scrollFrame) return
+        scrollFrame = requestAnimationFrame(() => { scrollFrame = 0; paint() })
+      }
+      window.addEventListener('scroll', update, { passive: true })
+      update()
 
       const queuePointer = (x, y) => {
         cancelAnimationFrame(pointerFrame)
@@ -338,15 +398,23 @@ export default function CoreStory() {
         measure()
         paint()
       }
+      const pointerTrackingEnabled = !self.matches.compact
 
-      story.addEventListener('pointermove', move, { passive: true })
-      story.addEventListener('pointerleave', reset)
+      if (pointerTrackingEnabled) {
+        story.addEventListener('pointermove', move, { passive: true })
+        story.addEventListener('pointerleave', reset)
+      }
       window.addEventListener('resize', resize)
       return () => {
         cancelAnimationFrame(pointerFrame)
-        story.removeEventListener('pointermove', move)
-        story.removeEventListener('pointerleave', reset)
+        cancelAnimationFrame(scrollFrame)
+        pointerAnimation?.pause()
+        if (pointerTrackingEnabled) {
+          story.removeEventListener('pointermove', move)
+          story.removeEventListener('pointerleave', reset)
+        }
         window.removeEventListener('resize', resize)
+        window.removeEventListener('scroll', update)
       }
     })
 
@@ -354,10 +422,19 @@ export default function CoreStory() {
       disposed = true
       layoutObserver?.disconnect()
       scope.revert()
+      page.style.removeProperty('--story-entry-overlap')
+      page.style.removeProperty('--story-handoff-overlap')
     }
-  }, [])
+  }, [reduceMotion])
 
-  return <div ref={storyRef} className="core-story" data-cube-motion data-gravity="right" data-parallax-phase="hero">
+  return <div
+    ref={storyRef}
+    className="core-story"
+    data-cube-motion
+    data-gravity="right"
+    data-parallax-phase="hero"
+    data-motion-phase="hero"
+  >
     <div className="core-story__visual">
       <div className="core-story__visual-stage">
         <div className="core-story__model">
@@ -369,7 +446,6 @@ export default function CoreStory() {
     <section id="inicio" ref={heroRef} className="home-hero" data-header-theme="dark" aria-label="Abertura interativa VoidCube">
       <div ref={heroSceneRef} className="home-hero__scene" data-gravity="right">
         <div className="hero-copy hero-beat hero-beat--left" data-hero-beat="0" aria-hidden={heroBeat !== 0}>
-          <p className="eyebrow"><span className="status-dot" /> Engenharia de software · Pará</p>
           <h1>Complexidade<br />entra. <em>Fluxo sai.</em></h1>
           <p className="hero-lede">Sistemas, automações e integrações para operações que precisam funcionar com clareza — inclusive nas exceções.</p>
           <div className="hero-actions">
@@ -382,7 +458,7 @@ export default function CoreStory() {
     </section>
 
     <section id="solucoes" className="solutions-section section-light">
-      <header className="section-intro" data-reveal>
+      <header className="section-intro">
         <div><span className="section-index">Capacidades</span><h2>Uma base técnica.<br />Três frentes de trabalho.</h2></div>
         <p>Não empilhamos ferramentas. Desenhamos a menor estrutura capaz de tornar uma operação legível, conectada e sustentável.</p>
       </header>
@@ -398,7 +474,7 @@ export default function CoreStory() {
                 aria-hidden={reduceMotion ? false : solutionBeat !== index}
               >
                 <div className="solution-beat__meta"><span>{item.code}</span><CapabilityIcon type={item.mode} /></div>
-                <h3>{item.title}</h3>
+                <div className="solution-beat__title-row"><h3>{item.title}</h3></div>
                 <p>{item.text}</p>
                 <footer><span>{item.detail}</span><b>{item.signal}</b></footer>
               </article>

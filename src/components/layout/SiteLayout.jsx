@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { animate, createScope, onScroll } from 'animejs'
+import { animate, createScope } from 'animejs'
 import { Link, Outlet, useLocation } from 'react-router-dom'
 import { navigation } from '../../content/siteContent'
 import { ArrowIcon, MenuIcon } from '../Icons'
@@ -79,42 +79,44 @@ function Header() {
     return href === '/' ? location.pathname === '/' : location.pathname.startsWith(href)
   }
 
-  return <header className={scrolled ? 'site-header is-scrolled' : 'site-header'}>
+  const headerClassName = ['site-header', scrolled && 'is-scrolled', open && 'is-menu-open'].filter(Boolean).join(' ')
+
+  return <header className={headerClassName}>
     <Logo />
     <nav ref={navRef} id="main-navigation" className={open ? 'site-nav is-open' : 'site-nav'} aria-label="Navegação principal">
-      {navigation.map(item => <Link key={item.href} to={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</Link>)}
-      <Link className="header-cta" to="/contato" aria-current={location.pathname === '/contato' ? 'page' : undefined}>Iniciar projeto <ArrowIcon size={15} /></Link>
+      {navigation.map(item => <Link key={item.href} to={item.href} onClick={() => setOpen(false)} aria-current={isCurrent(item.href) ? 'page' : undefined}>{item.label}</Link>)}
+      <Link className="header-cta" to="/contato" onClick={() => setOpen(false)} aria-current={location.pathname === '/contato' ? 'page' : undefined}>Iniciar projeto <ArrowIcon size={15} /></Link>
     </nav>
     <button ref={menuButtonRef} className="menu-button" type="button" onClick={() => setOpen(value => !value)} aria-expanded={open} aria-controls="main-navigation" aria-label={open ? 'Fechar menu' : 'Abrir menu'}><MenuIcon open={open} /></button>
   </header>
 }
 
-function Footer() {
-  return <footer className="site-footer">
+function Footer({ footerRef }) {
+  return <footer ref={footerRef} className="site-footer">
     <div className="footer-heading">
-      <div className="footer-heading__brand">
+      <div className="footer-heading__brand" data-reveal>
         <Logo />
         <span>Engenharia de software<br />no Pará</span>
       </div>
       <div className="footer-heading__message">
-        <span className="footer-kicker">Perto da operação · presente depois da entrega</span>
+        <span className="footer-kicker" data-reveal>Perto da operação · presente depois da entrega</span>
         <h2>Software criado <em>perto de quem usa.</em></h2>
         <div className="footer-heading__action">
           <p>Começamos pelo processo real e seguimos responsáveis pelo que precisa continuar funcionando.</p>
           <div className="footer-heading__links">
-            <nav aria-label="Navegação do rodapé"><Link to="/#solucoes">Soluções</Link><Link to="/sobre">Sobre</Link><Link to="/blog">VOID/LOG</Link></nav>
-            <Link className="footer-cta" to="/contato">Conversar com engenharia <ArrowIcon size={20} /></Link>
+            <nav aria-label="Navegação do rodapé" data-reveal><Link to="/#solucoes">Soluções</Link><Link to="/sobre">Sobre</Link><Link to="/blog">VOID/LOG</Link></nav>
+            <Link className="footer-cta" to="/contato" data-reveal>Conversar com engenharia <ArrowIcon size={20} /></Link>
           </div>
         </div>
       </div>
     </div>
-    <div className="footer-territory" role="img" aria-label="VoidCube, de Belém a Ananindeua, Pará">
+    <div className="footer-territory" role="img" aria-label="VoidCube, de Belém a Ananindeua, Pará" data-reveal>
       <span><i aria-hidden="true" />Belém</span>
       <b aria-hidden="true"><i /></b>
       <span><i aria-hidden="true" />Ananindeua</span>
       <small>Pará · Brasil</small>
     </div>
-    <div className="footer-bottom"><span>© 2026 VoidCube</span><p>O contato abre no WhatsApp; este site não armazena os dados do formulário.</p><span>Feito no Pará</span></div>
+    <div className="footer-bottom" data-reveal><span>© 2026 VoidCube</span><p>O contato abre no WhatsApp; este site não armazena os dados do formulário.</p><span>Feito no Pará</span></div>
   </footer>
 }
 
@@ -149,22 +151,28 @@ function restoreStyle(element, property, snapshot) {
   else element.style.removeProperty(property)
 }
 
-function ScrollReveal({ mainRef, animateRouteEntry }) {
+const revealSelector = '[data-reveal], [data-reveal-item], h1, h2, h3, h4, h5, h6, p, blockquote, .section-index, .button, .text-link'
+// Sticky story panels already have a reversible, scroll-driven choreography.
+const managedMotionSelector = '[data-reveal="off"], [data-hero-beat], [data-solution-beat], [aria-hidden="true"], [role="status"], [role="alert"], .contact-error'
+
+function ScrollReveal({ mainRef, footerRef, animateRouteEntry }) {
   useLayoutEffect(() => {
     const main = mainRef.current
     if (!main) return undefined
+    const roots = [main, footerRef.current].filter(Boolean)
 
     let routeEntryPending = animateRouteEntry
     const motionScope = createScope({
-      root: main,
+      root: main.parentElement,
       mediaQueries: { reducedMotion: '(prefers-reduced-motion: reduce)' },
     })
 
     motionScope.add(currentScope => {
       const reducedMotion = currentScope.matches.reducedMotion
       const prepared = new Map()
-      const scrollObservers = new Map()
       const activeAnimations = new Map()
+      let previousScrollY = window.scrollY
+      let direction = 1
       const mainAnimationStyle = snapshotStyle(main, 'animation')
       const mainOpacityStyle = snapshotStyle(main, 'opacity')
 
@@ -189,27 +197,34 @@ function ScrollReveal({ mainRef, animateRouteEntry }) {
 
       const settleWillChange = element => {
         const state = prepared.get(element)
-        if (state) restoreStyle(element, 'will-change', state.willChange)
+        state?.targets.forEach(targetState => restoreStyle(targetState.element, 'will-change', targetState.willChange))
       }
 
       const reveal = (element, offset) => currentScope.execute(() => {
         stopActiveAnimation(element)
-        const currentOpacity = Number.parseFloat(getComputedStyle(element).opacity)
-        if (!Number.isFinite(currentOpacity) || currentOpacity <= .05) {
-          element.style.setProperty('opacity', '0')
-          element.style.setProperty('transform', `translateY(${offset}px)`)
-        }
-        element.classList.add('is-visible')
-        element.style.setProperty('will-change', 'opacity, transform')
+        const state = prepared.get(element)
+        if (!state) return
+        const targets = state.targets.map(targetState => targetState.element)
+        targets.forEach(target => {
+          const currentOpacity = Number.parseFloat(getComputedStyle(target).opacity)
+          if (!Number.isFinite(currentOpacity) || currentOpacity <= .05) {
+            target.style.setProperty('opacity', '0')
+            target.style.setProperty('transform', `translateY(${offset}px)`)
+          }
+          target.classList.add('is-visible')
+          target.style.setProperty('will-change', 'opacity, transform')
+        })
 
         let entrance
-        entrance = animate(element, {
+        entrance = animate(targets, {
           opacity: 1,
           translateY: 0,
+          delay: state.delay,
           duration: 560,
           ease: 'outExpo',
           onComplete: () => {
             if (activeAnimations.get(element) === entrance) activeAnimations.delete(element)
+            state.targets.forEach(targetState => restoreStyle(targetState.element, 'transform', targetState.transform))
             settleWillChange(element)
           },
         })
@@ -217,58 +232,84 @@ function ScrollReveal({ mainRef, animateRouteEntry }) {
       })
 
       const conceal = (element, offset) => currentScope.execute(() => {
+        // A focused form control or link must remain visible during keyboard use.
+        if (document.activeElement?.matches('a, button, input, textarea, select, [contenteditable="true"]') && element.contains(document.activeElement)) return
         stopActiveAnimation(element)
-        element.classList.add('is-visible')
-        element.style.setProperty('will-change', 'opacity, transform')
+        const state = prepared.get(element)
+        if (!state) return
+        const targets = state.targets.map(targetState => targetState.element)
+        targets.forEach(target => {
+          target.classList.add('is-visible')
+          target.style.setProperty('will-change', 'opacity, transform')
+        })
 
         let exit
-        exit = animate(element, {
+        exit = animate(targets, {
           opacity: 0,
           translateY: offset,
           duration: 240,
           ease: 'inCubic',
           onComplete: () => {
             if (activeAnimations.get(element) === exit) activeAnimations.delete(element)
-            element.classList.remove('is-visible')
+            targets.forEach(target => target.classList.remove('is-visible'))
             settleWillChange(element)
           },
         })
         activeAnimations.set(element, exit)
       })
 
-      const registerReveal = element => {
-        if (prepared.has(element)) return
+      const updateDirection = () => {
+        const scrollY = window.scrollY
+        if (scrollY !== previousScrollY) direction = scrollY > previousScrollY ? 1 : -1
+        previousScrollY = scrollY
+      }
+      // Actual intersections also handle sticky asides, font loading and filtered lists.
+      const observer = !reducedMotion && 'IntersectionObserver' in window
+        ? new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) reveal(entry.target, direction * 24)
+            else if (entry.target.classList.contains('is-visible')) {
+              conceal(entry.target, entry.boundingClientRect.bottom <= entry.rootBounds.top ? -18 : 18)
+            }
+          })
+        }, { rootMargin: '-24px 0px 0px 0px', threshold: 0 })
+        : null
 
+      const registerReveal = element => {
+        if (prepared.has(element) || element.closest(managedMotionSelector)) return
+        // Animate one content block only; never fade both it and its descendants.
+        if (element.parentElement?.closest(revealSelector)) return
+
+        // Observe each list item independently, including lists taller than a screen.
+        const targets = [element]
+        const group = element.closest('[data-reveal-group]')
+        const siblings = group ? [...group.querySelectorAll('[data-reveal-item]')] : []
         const state = {
-          hadReadyAttribute: element.hasAttribute('data-reveal-ready'),
-          hadVisibleClass: element.classList.contains('is-visible'),
-          opacity: snapshotStyle(element, 'opacity'),
-          transform: snapshotStyle(element, 'transform'),
-          willChange: snapshotStyle(element, 'will-change'),
+          delay: Math.min(Math.max(0, siblings.indexOf(element)) * 55, 165),
+          targets: targets.map(target => ({
+            element: target,
+            hadReadyAttribute: target.hasAttribute('data-reveal-ready'),
+            hadVisibleClass: target.classList.contains('is-visible'),
+            opacity: snapshotStyle(target, 'opacity'),
+            transform: snapshotStyle(target, 'transform'),
+            willChange: snapshotStyle(target, 'will-change'),
+          })),
         }
         prepared.set(element, state)
-        element.removeAttribute('data-reveal-ready')
+        targets.forEach(target => target.setAttribute('data-reveal-ready', ''))
 
-        if (reducedMotion) {
-          element.classList.add('is-visible')
+        if (!observer) {
+          targets.forEach(target => target.classList.add('is-visible'))
           return
         }
 
-        element.classList.remove('is-visible')
-        element.style.setProperty('opacity', '0')
-        element.style.setProperty('transform', 'translateY(24px)')
-
-        const scrollObserver = onScroll({
-          target: element,
-          enter: 'end-=7% start',
-          leave: 'start+=3% end',
-          repeat: true,
-          onEnterForward: () => reveal(element, 24),
-          onLeaveForward: () => conceal(element, -18),
-          onEnterBackward: () => reveal(element, -24),
-          onLeaveBackward: () => conceal(element, 18),
+        targets.forEach(target => {
+          target.classList.remove('is-visible')
+          target.style.setProperty('opacity', '0')
+          target.style.setProperty('transform', 'translateY(24px)')
         })
-        scrollObservers.set(element, scrollObserver)
+
+        observer.observe(element)
       }
 
       const unregisterReveal = element => {
@@ -276,36 +317,60 @@ function ScrollReveal({ mainRef, animateRouteEntry }) {
         if (!state) return
 
         stopActiveAnimation(element)
-        scrollObservers.get(element)?.revert()
-        scrollObservers.delete(element)
-        if (state.hadReadyAttribute) element.setAttribute('data-reveal-ready', '')
-        else element.removeAttribute('data-reveal-ready')
-        element.classList.toggle('is-visible', state.hadVisibleClass)
-        restoreStyle(element, 'opacity', state.opacity)
-        restoreStyle(element, 'transform', state.transform)
-        restoreStyle(element, 'will-change', state.willChange)
+        observer?.unobserve(element)
+        state.targets.forEach(targetState => {
+          const target = targetState.element
+          if (targetState.hadReadyAttribute) target.setAttribute('data-reveal-ready', '')
+          else target.removeAttribute('data-reveal-ready')
+          target.classList.toggle('is-visible', targetState.hadVisibleClass)
+          restoreStyle(target, 'opacity', targetState.opacity)
+          restoreStyle(target, 'transform', targetState.transform)
+          restoreStyle(target, 'will-change', targetState.willChange)
+        })
         prepared.delete(element)
       }
 
       const visitRevealElements = (root, visitor) => {
         if (root.nodeType !== 1) return
-        if (root.matches?.('[data-reveal]')) visitor(root)
-        root.querySelectorAll?.('[data-reveal]').forEach(visitor)
+        if (root.matches?.(revealSelector)) visitor(root)
+        root.querySelectorAll?.(revealSelector).forEach(visitor)
       }
 
-      visitRevealElements(main, registerReveal)
+      const revealFocusedBlock = event => {
+        for (const element of prepared.keys()) {
+          if (!element.contains(event.target)) continue
+          stopActiveAnimation(element)
+          const state = prepared.get(element)
+          element.style.setProperty('opacity', '1')
+          element.classList.add('is-visible')
+          restoreStyle(element, 'transform', state.targets[0].transform)
+          settleWillChange(element)
+        }
+      }
+
+      roots.forEach(root => visitRevealElements(root, registerReveal))
       const mutations = new MutationObserver(records => {
+        // Ignore text scrambling and counters; only DOM structure changes targets.
+        const changed = records.filter(record => [...record.addedNodes, ...record.removedNodes].some(node => node.nodeType === 1))
+        if (!changed.length) return
         currentScope.execute(() => {
-          records.forEach(record => {
+          changed.forEach(record => {
             record.removedNodes.forEach(node => visitRevealElements(node, unregisterReveal))
             record.addedNodes.forEach(node => visitRevealElements(node, registerReveal))
           })
         })
       })
-      mutations.observe(main, { childList: true, subtree: true })
+      roots.forEach(root => {
+        mutations.observe(root, { childList: true, subtree: true })
+        root.addEventListener('focusin', revealFocusedBlock)
+      })
+      if (observer) window.addEventListener('scroll', updateDirection, { passive: true })
 
       return () => {
         mutations.disconnect()
+        observer?.disconnect()
+        window.removeEventListener('scroll', updateDirection)
+        roots.forEach(root => root.removeEventListener('focusin', revealFocusedBlock))
         Array.from(prepared.keys()).forEach(unregisterReveal)
         restoreStyle(main, 'animation', mainAnimationStyle)
         restoreStyle(main, 'opacity', mainOpacityStyle)
@@ -313,7 +378,7 @@ function ScrollReveal({ mainRef, animateRouteEntry }) {
     })
 
     return () => motionScope.revert()
-  }, [animateRouteEntry, mainRef])
+  }, [animateRouteEntry, mainRef, footerRef])
 
   return null
 }
@@ -321,6 +386,7 @@ function ScrollReveal({ mainRef, animateRouteEntry }) {
 export default function SiteLayout() {
   const location = useLocation()
   const mainRef = useRef(null)
+  const footerRef = useRef(null)
   const routeMotionPathname = useRef(null)
   const focusPathname = useRef(location.pathname)
   const animateRouteEntry = useMemo(
@@ -398,7 +464,8 @@ export default function SiteLayout() {
     <a className="skip-link" href="#main-content">Pular para o conteúdo</a>
     <ScrollProgress />
     <Header />
-    <main ref={mainRef} id="main-content" className="page-main" key={`${location.pathname}${location.hash}`}><Outlet /><ScrollReveal mainRef={mainRef} animateRouteEntry={animateRouteEntry} /></main>
-    <Footer />
+    <main ref={mainRef} id="main-content" className="page-main" key={`${location.pathname}${location.hash}`}><Outlet /></main>
+    <Footer footerRef={footerRef} />
+    <ScrollReveal key={`reveal:${location.pathname}${location.hash}`} mainRef={mainRef} footerRef={footerRef} animateRouteEntry={animateRouteEntry} />
   </>
 }

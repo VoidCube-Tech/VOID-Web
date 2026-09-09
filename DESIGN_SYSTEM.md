@@ -1,6 +1,6 @@
 # VoidCube Design System
 
-Versão 1.0 — implementação vigente<br>
+Versão 1.2 — implementação vigente<br>
 Direção: **Campo operacional**
 
 Este documento registra a linguagem visual, os tokens, a arquitetura da cena compartilhada e as regras de movimento que já orientam o site. O código é a fonte operacional; este arquivo existe para manter futuras alterações coerentes com ele.
@@ -11,7 +11,7 @@ Este documento registra a linguagem visual, os tokens, a arquitetura da cena com
 
 **A VoidCube transforma complexidade em fluxo.**
 
-O campo gravitacional representa a complexidade operacional. O cubo representa a estrutura construída pela VoidCube. A desmontagem mostra o problema sendo decomposto; a remontagem mostra a estrutura ganhando forma; a descida contínua conecta a promessa inicial às capacidades técnicas.
+O campo gravitacional representa a complexidade operacional. O cubo representa a estrutura construída pela VoidCube. A desmontagem mostra o problema sendo decomposto; a remontagem mostra a estrutura ganhando forma. A cena desaparece durante a introdução das capacidades e reaparece no horizonte inferior do parallax.
 
 ### Hierarquia conceitual
 
@@ -25,8 +25,26 @@ O campo gravitacional representa a complexidade operacional. O cubo representa a
 - Precisa, sem frieza.
 - Paraense, sem caricatura regional.
 - Técnica, sem futurismo gratuito.
-- Confiante, sem grandiosidade.
+- Confiante, com escala expressiva e leitura preservada.
 - Editorial, sem aparência de painel administrativo.
+
+### Decisão de direção — versão 1.1
+
+- **Cor:** Vazio `#040a16`, Navy operacional `#07162b`, Azul estrutural `#1478d4`, Azul de luz `#79b7e8`, Papel técnico `#f4f8ff` e Tinta `#061426`.
+- **Tipo:** Archivo Variable para afirmações, IBM Plex Sans para explicação e IBM Plex Mono apenas para códigos, estados e coordenadas reais.
+- **Layout:** cubo à direita do título na abertura, inclusive no celular. No parallax, os textos ocupam a faixa superior e um cubo ampliado aparece parcialmente na base, como um pôr do sol.
+- **Assinatura:** **trilho orbital** — o cubo sai da abertura, desmonta, volta a formar uma estrutura e passa a acompanhar cada capacidade como evidência visual do fluxo.
+
+```text
+ABERTURA                       HANDOFF                      PARALLAX
+┌────────────────────┐         ┌────────────────────┐       ┌────────────────────┐
+│ texto      campo   │         │                    │       │ conteúdo           │
+│            + cubo  │    →    │   peças / cubo     │  →    │                    │
+│                    │         │                    │       │       cubo + campo │
+└────────────────────┘         └────────────────────┘       └────────────────────┘
+```
+
+O risco visual deliberado está na separação vertical do parallax: em vez do arranjo previsível “texto de um lado, imagem do outro” no mesmo eixo, a leitura acontece acima e a cena se move abaixo. Isso preserva a escala cinematográfica sem transformar as capacidades em cards.
 
 ---
 
@@ -210,27 +228,85 @@ CoreStory
 
 | Atributo de dados | Responsabilidade |
 |---|---|
+| `data-scene-x`, `data-scene-y` | Centro da cena em coordenadas normalizadas do viewport |
+| `data-scene-size` | Tamanho de referência do cubo em pixels CSS |
+| `data-scene-field-width` | Largura do campo, independente do tamanho do cubo |
+| `data-scene-horizon` | Transição entre composição lateral e horizonte inferior |
+| `data-scene-opacity` | Visibilidade do conjunto; zero durante a introdução das capacidades |
 | `data-cube-explode` | Separação e recomposição das 27 peças |
+| `data-cube-dissolve` | Erosão das superfícies, redução e dispersão das peças |
+| `data-vortex-dissolve` | Dissipação do gás e das partículas, da matéria difusa aos filamentos |
+| `data-cube-turn` | Giro de saída e rotação de chegada que desacelera até zero |
+| `data-cube-pitch` | Inclinação para baixo durante a saída do parallax |
 | `data-cube-depth` | Aproximação e recuo no eixo de profundidade |
-| `data-cube-descent` | Descida contínua ao longo das capacidades |
-| `data-cube-scale` | Ajuste de escala no assentamento final |
-| `data-gravity` | Direção lateral da composição |
+| `data-cube-descent` | Deslocamento local adicional; a composição atual mantém zero |
+| `data-cube-scale` | Multiplicador local adicional; a composição atual mantém um |
+| `data-gravity` | Pequena inclinação de apoio durante as capacidades |
+| `data-cube-field-scale` | Enquadramento do campo em telas compactas |
+| `data-motion-phase` | Estado narrativo atual: `hero`, `focus`, `decompose`, `dissolve`, `handoff`, `arrive`, `settled`, `depart` ou `complete` |
 
-A desmontagem ocorre no hero, a remontagem termina ainda na narrativa inicial e a descida continua até o fim do parallax. Como todos os valores derivam do mesmo progresso, o movimento é reversível ao subir a página.
+No hero, o cubo centraliza entre 28% e 54% do percurso, antes da abertura principal das peças entre 46% e 84%. Cada peça aplica sua própria curva de aceleração, sem duplicar o easing no progresso geral. A matéria se desfaz entre 74% e 100%; o gás perde densidade entre 70% e 100%. O fade final entre 92% e 100% encerra a passagem. No parallax, o cubo retorna já montado: aparece nos primeiros 5,5% e desacelera o giro e a subida até 18%, quando atinge a orientação estabelecida. O gás continua fluindo. Os parâmetros da passagem são reversíveis ao subir a página.
+
+O enquadramento da passagem considera a navegação e a posição real da próxima seção. A escala do renderer compensa o raio medido das peças, preservando o cubo inteiro durante a abertura, em vez de reduzir sua escala antes de as peças se separarem. A chegada das capacidades conduz um recuo progressivo do conjunto. O percurso do hero usa `max(1480px, 240svh)` no desktop e `max(1100px, 190svh)` no celular.
+
+No fim da leitura das três capacidades, um trecho próprio de saída acompanha a entrada de “Em produção”. O cubo gira nos eixos horizontal e vertical, desce até 20% da altura da tela e perde matéria. O vórtice se dissipa junto; o último texto permanece visível e sai pelo fluxo normal da página. A cena já está oculta antes de liberar o sticky.
+
+### Faixas seguras da cena
+
+| Faixa | Desktop | Mobile | Responsabilidade |
+|---|---:|---:|---|
+| Leitura | Medida pelo maior painel | Medida pelo maior painel | Título, explicação, metadata e escopo |
+| Respiro | 32 px após a leitura | 32 px após a leitura | Máscara impede que a cena atravesse o conteúdo |
+| Horizonte | Centro em `101–103.5svh` | Centro em `101–103.5svh` | Metade superior do cubo aparece na base |
+
+- Cubo e campo ficam abaixo da faixa de leitura; a medida considera todos os painéis, inclusive os ocultos.
+- A máscara também considera o deslocamento dos textos que estão entrando. Se a leitura ocupar toda a altura da tela, a cena permanece recortada em vez de avançar sobre o conteúdo.
+- O cubo sai da direita para o centro depois que o texto do hero desaparece.
+- Na abertura, uma máscara lateral protege a largura medida do título no celular e do painel de texto no desktop; ela é liberada junto com a saída do texto.
+- Durante as capacidades, o cubo permanece centralizado na base e desce apenas 2,5% da altura do viewport.
+- No fim do parallax, o cubo se dissipa antes da liberação do sticky. Uma máscara com borda suave também acompanha o limite da próxima seção, sem invadir “Em produção”.
+
+### Continuidade entre as seções
+
+- As margens de sobreposição são medidas no resize, sem animação de altura ou margem durante o scroll. A introdução ocupa a cauda vazia do hero; a dissipação termina com seu título já visível a 58% da altura da tela.
+- A introdução usa altura automática, com 16 px de padding inferior no desktop e 8 px no celular, em vez de uma altura mínima de até 600 px.
+- O percurso de leitura usa `max(1000px, 140svh)` no desktop e `max(720px, 95svh)` no celular. A saída tem percurso separado, calculado a partir do espaço abaixo do último painel, com mínimo de 180 px.
+- O giro começa nos últimos 12% da leitura, limitado a 18% da altura da tela; a duração da dissipação considera a parte visível do cubo. Assim, ela é perceptível no celular antes que a próxima seção alcance sua base.
+- “Em produção” ocupa a cauda vazia do parallax, começando 24 px após o último painel no fim do sticky. Seu cabeçalho entra no fluxo normal, sem um segundo reveal que atrasaria a leitura.
+- A cena permanece invisível depois da saída e o renderer fica pausado. O modo de movimento reduzido zera as sobreposições e mantém o fluxo normal de todas as seções.
 
 ### Proporções
 
-- Ilustração desktop: 42–48% da largura útil do hero.
-- Cubo: 15–19% da largura total da ilustração.
-- Horizonte: 2,2–2,6 vezes a largura do cubo.
-- Inclinação principal: entre `-10deg` e `-16deg`.
-- No mobile, cubo e horizonte permanecem reconhecíveis durante todo o percurso.
+- Hero desktop: cubo com referência de 39% da largura, limitado a 65% da altura da tela; centro horizontal em 78%.
+- Hero mobile: centro em 80% da largura, alinhado ao centro do título; tamanho de até 40% da largura, limitado à altura do título mais 40 px para deixar descrição e ações livres.
+- Parallax: cubo até 94% da largura, limitado pelo espaço livre abaixo dos textos; campo com 180% da largura, recortado pelo viewport.
+- Na abertura, o diâmetro do vórtice acompanha 2,6 vezes o tamanho de referência do cubo, incluindo a aproximação e a desmontagem.
+- Inclinação do campo passa de `-8deg` para `-3deg`, ficando mais horizontal na base; a abertura da elipse usa 56° e 60° na abertura e fecha para 68° e 72° no parallax. O achatamento preserva 62% da altura local do disco.
+- No horizonte, o campo sobe independentemente do cubo em até 20% do tamanho do cubo, limitado a 17% da altura da tela; o gás fica visível sem atravessar a máscara dos textos.
+- Câmera ortográfica mantém proporções previsíveis. A ampliação acontece na geometria, sem ampliar ou deslocar o canvas.
+
+### Estabilidade do vórtice
+
+- Filamentos irregulares, bolsões densos e bordas difusas substituem o anel luminoso contínuo. A luz se concentra no gás interno, com azul profundo nas regiões de sombra.
+- Dois ciclos de fluxo se sobrepõem: o gás interno avança mais rápido, mas cada ciclo é reiniciado com contribuição zero, sem acumular voltas ou criar saltos.
+- O ruído é filtrado pelo tamanho do pixel e normalizado entre os níveis de detalhe do desktop e do celular; detalhes muito finos desaparecem progressivamente.
+- Duas superfícies levemente onduladas formam as camadas de matéria e brilho. A camada principal usa transparência normal, enquanto a atmosfera externa usa mistura aditiva.
+- A camada frontal é atenuada. As 220 partículas dos dispositivos compactos e 640 do desktop giram em velocidades diferentes e migram para dentro, desaparecendo antes de reiniciar na borda externa.
+- A geometria do disco é renderizada em passagem única por camada; o canvas e os limites de resolução e FPS permanecem os mesmos.
+- A dissolução do cubo usa erosão procedural com descarte de fragmentos, preservando o teste de profundidade dos materiais opacos. Peças e faces diminuem juntas e se dispersam em trajetórias determinísticas; não há pós-processamento ou novos sistemas de partículas.
 
 ---
 
 ## 7. Sistema de movimento com Anime.js
 
 O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes React.
+
+As primitivas escolhidas seguem a documentação oficial:
+
+- [`createScope()`](https://animejs.com/documentation/scope/) isola seletores, media queries e limpeza por componente.
+- [`animate()`](https://animejs.com/documentation/animation/) combina opacidade e deslocamento nas entradas e saídas de conteúdo.
+- Um `IntersectionObserver` compartilhado acompanha os blocos de texto no viewport, inclusive elementos sticky e listas filtradas. A direção do scroll determina o sentido da entrada.
+- Itens de listas usam atrasos de 55 ms, limitados a 165 ms, e são observados individualmente.
 
 ### Escopo e ciclo de vida
 
@@ -242,16 +318,33 @@ O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes Re
 
 ### Story controlado por scroll
 
-- `onScroll()` vincula o progresso da história ao intervalo entre início e fim de `CoreStory`.
-- `sync: .32` suaviza a resposta sem quebrar a relação com o scroll.
+- Scroll nativo alimenta o mesmo `paint()` em `requestAnimationFrame` no desktop e no mobile, inclusive no retorno e na liberação do sticky.
+- Curvas `smoothstep` suavizam as mudanças de enquadramento sem atrasar os textos em relação à posição real da página. Anime.js mantém os scopes e a resposta do ponteiro.
 - O progresso linear alimenta `paint()`, que atualiza painéis, posição da cena e atributos do cubo.
 - O mesmo progresso funciona para avanço e retorno; não existe timeline exclusiva para uma direção.
 
+### Sequência principal
+
+| Fase | Progresso | Ação primária | Ação de apoio |
+|---|---:|---|---|
+| `hero` | hero `0–0.28` | Cubo ampliado sustenta a composição à direita | Texto começa a sair em 24% e termina em 40% |
+| `focus` | hero `0.28–0.46` | Cubo centraliza em um arco curto, com aceleração e desaceleração suaves | Enquadramento reserva espaço abaixo da navegação |
+| `decompose` | hero `0.46–0.74` | 27 peças abrem progressivamente, com rotações contidas | Escala acompanha a separação real; a abertura termina em 84% |
+| `dissolve` | hero `0.74–1` | Peças perdem matéria enquanto o conjunto recua | Próxima seção entra e o gás desaparece gradualmente |
+| `handoff` | fim do hero até capacidades | Cena oculta enquanto é reposicionada | Introdução e primeiro painel ficam livres do cubo e do vórtice |
+| `arrive` | parallax `0–0.18` | Cubo já montado sobe da base e desacelera a rotação | Vórtice reaparece ao redor |
+| `settled` | parte central da leitura, após `0.18` | Cubo permanece na orientação estabelecida, parcialmente abaixo da tela | Gás continua fluindo; painéis alternam acima da faixa reservada à cena |
+| `depart` | percurso adicional de saída | Cubo gira para baixo, afasta levemente as peças e se dissipa | Última capacidade permanece visível enquanto os projetos entram |
+| `complete` | após a saída | Cena oculta e renderer pausado | Conteúdo dos projetos segue no fluxo da página |
+
 ### Entrada e saída de conteúdo
 
-- `SiteLayout` cria um scope para cada rota.
-- Elementos com `data-reveal` entram por baixo ao descer e por cima ao subir.
-- `onEnterForward`, `onLeaveForward`, `onEnterBackward` e `onLeaveBackward` mantêm a direção perceptível.
+- `SiteLayout` cria um scope para cada rota, cobrindo o conteúdo principal e o rodapé.
+- Títulos, parágrafos, índices, citações e ações editoriais recebem reveal automaticamente; `data-reveal` permite animar um bloco como unidade, sem duplicar o efeito nos descendentes.
+- Textos entram 24 px abaixo ao descer e 24 px acima ao subir. Ao sair completamente da área de leitura, ficam prontos para reaparecer na próxima passagem.
+- Listas marcadas com `data-reveal-group` animam cada `data-reveal-item` ao entrar na tela, mesmo quando a lista ocupa várias telas.
+- Painéis sticky do hero e das capacidades mantêm a coreografia própria de `CoreStory`; `data-reveal="off"` permite dispensar o efeito em um bloco.
+- Conteúdo adicionado por navegação ou filtros entra no mesmo sistema. Campos e links focados permanecem visíveis; movimento reduzido e impressão mostram o texto diretamente.
 - Mudanças usam `transform` e `opacity`.
 - `will-change` existe somente durante a animação ativa.
 
@@ -278,6 +371,7 @@ O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes Re
 - O scope da história zera explosão, profundidade e descida, e mantém escala estável.
 - O CSS remove loops e apresenta a cena em composição estática.
 - O renderer produz um quadro estático quando a preferência está ativa.
+- Mudanças de tamanho e enquadramento solicitam outro quadro estático, sem reativar a rotação contínua.
 - Todos os painéis de capacidade permanecem no fluxo e usam `aria-hidden="false"`.
 - Reveals e entrada de rota resolvem imediatamente no estado final.
 - Nenhuma ação, texto ou capacidade desaparece por causa da preferência.
@@ -368,7 +462,8 @@ O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes Re
 - Hero usa composição assimétrica entre texto e cena.
 - Texto ocupa no máximo 55% da largura útil.
 - O canvas compartilhado atravessa hero e capacidades sem cobrir ações.
-- O cubo alterna lados e termina centralizado no final do parallax.
+- No parallax, conteúdo ocupa a faixa superior e o cubo forma um horizonte centralizado na base.
+- O cubo mantém o recorte inferior até a cena ser liberada.
 
 ### Tablet
 
@@ -378,10 +473,11 @@ O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes Re
 
 ### Mobile
 
-- Ordem inicial: rótulo, título, lead, ações e cena.
+- A abertura mantém título e cubo lado a lado desde 320 px; lead e ações continuam em largura total logo abaixo.
 - CTA primário ocupa a largura disponível.
 - Canvas continua único e recebe enquadramento próprio para a faixa.
-- Painéis de capacidade mantêm área segura sem sobrepor o cubo.
+- Painéis de capacidade permanecem na metade superior; cubo e campo ocupam o terço inferior sem encobrir texto.
+- Em telas horizontais de até 520 px de altura, o conteúdo das capacidades usa duas colunas para reservar espaço à cena.
 - Menu permite rolagem em viewport baixa.
 - A página não produz overflow horizontal em 320 px.
 
@@ -408,8 +504,11 @@ O projeto usa Anime.js 4.5 e integra a biblioteca diretamente aos componentes Re
 
 - A narrativa principal monta apenas um renderer WebGL.
 - O loop da cena pausa fora do viewport.
+- O loop também pausa quando a opacidade da cena chega a zero na introdução; a entrada do parallax retoma o mesmo renderer. A cena oculta não responde a toque/arraste e fica fora da árvore de acessibilidade.
 - Geometrias e materiais são descartados no cleanup.
 - Pixel ratio e quantidade de partículas são reduzidos em dispositivos compactos.
+- DPR máximo de 1,25 no mobile, com orçamento de 1,3 milhão de pixels nos dispositivos compactos e 2,6 milhões no desktop. O canvas permanece no tamanho do viewport.
+- Dispositivos compactos mantêm limite de 30 FPS; o tamanho visual do cubo não aumenta a resolução do canvas.
 - Matrizes instanciadas evitam criar um objeto React por peça do cubo.
 - ResizeObserver atualiza câmera e renderer sem alterar o layout do documento.
 - Anime.js opera em scopes locais e libera observadores ao desmontar.

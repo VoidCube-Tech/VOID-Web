@@ -7,12 +7,12 @@ import { usePageMeta } from '../hooks/usePageMeta'
 
 function Projects() {
   return <section id="projetos" className="projects-section section-dark">
-    <header className="section-intro section-intro--dark" data-reveal>
+    <header className="section-intro section-intro--dark">
       <div><span className="section-index">02 / Em produção</span><h2>O trabalho muda.<br />O resultado aparece.</h2></div>
       <p>Projetos medidos junto de quem sustenta a operação todos os dias — sem métricas de demonstração.</p>
     </header>
-    <div className="project-list">
-      {projects.map((project, index) => <Link className="project-row" to={`/blog/${project.slug}`} key={project.slug} data-reveal>
+    <div className="project-list" data-reveal-group>
+      {projects.map((project, index) => <Link className="project-row" to={`/blog/${project.slug}`} key={project.slug} data-reveal-item>
         <span className="project-number">{String(index + 1).padStart(2, '0')}</span>
         <div className="project-copy"><span>{project.sector}</span><h3>{project.title}</h3><p>{project.tags.join(' · ')}</p></div>
         <div className="project-outcome"><strong>{project.result}</strong><span>{project.metricLabel}</span></div>
@@ -34,8 +34,8 @@ function Method() {
       <p>Somos uma empresa paraense de desenvolvimento. Entramos perto da operação, escutamos quem sustenta o processo e construímos só o que precisa existir.</p>
       <Link className="text-link text-link--dark" to="/sobre">Como trabalhamos <ArrowIcon size={15} /></Link>
     </div>
-    <div className="principle-list">
-      {principles.map(([verb, title, text], index) => <article key={verb} data-reveal><span>{String(index + 1).padStart(2, '0')}</span><div><b>{verb}</b><h3>{title}</h3><p>{text}</p></div></article>)}
+    <div className="principle-list" data-reveal-group>
+      {principles.map(([verb, title, text], index) => <article key={verb} data-reveal-item><span>{String(index + 1).padStart(2, '0')}</span><div><b>{verb}</b><h3>{title}</h3><p>{text}</p></div></article>)}
     </div>
   </section>
 }
@@ -43,8 +43,8 @@ function Method() {
 function JournalPreview() {
   return <section className="journal-section">
     <div className="journal-heading" data-reveal><span className="section-index">04 / VOID·LOG</span><h2>Decisões de engenharia, sem a parte polida.</h2><p>O que aprendemos quando o sistema encontra planilhas, exceções e trabalho real.</p><Link className="button button--ink" to="/blog">Abrir caderno <ArrowIcon /></Link></div>
-    <div className="journal-list">
-      {posts.map((post, index) => <Link className="journal-row" to={`/blog/${post.slug}`} key={post.slug} data-reveal>
+    <div className="journal-list" data-reveal-group>
+      {posts.map((post, index) => <Link className="journal-row" to={`/blog/${post.slug}`} key={post.slug} data-reveal-item>
         <span>{String(index + 1).padStart(2, '0')}</span><div><small>{post.category} · {post.date}</small><h3>{post.title}</h3></div><b>{post.read}</b><ArrowIcon size={16}/>
       </Link>)}
     </div>
