@@ -1,0 +1,215 @@
+.site-header {
+  position: fixed;
+  z-index: 100;
+  inset: 0 0 auto;
+  height: 76px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--gutter);
+  border-bottom: 1px solid transparent;
+  transition: background var(--standard) var(--ease-standard), border-color var(--standard) var(--ease-standard);
+}
+
+.site-header.is-scrolled {
+  background: rgba(14, 21, 20, .86);
+  border-color: rgba(221, 228, 227, .1);
+  backdrop-filter: blur(16px);
+}
+
+.logo {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  font: 600 13px var(--display);
+  letter-spacing: .06em;
+}
+
+.logo b {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.logo-symbol {
+  width: 29px;
+  height: 29px;
+  color: var(--paper);
+  transition: transform var(--standard) var(--ease-out);
+  border-radius: 0;
+}
+
+.logo:hover .logo-symbol {
+  transform: rotate(-8deg);
+}
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(22px, 3vw, 42px);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.site-nav > a:not(.header-cta) {
+  position: relative;
+  padding-block: 12px;
+}
+
+.site-nav > a:not(.header-cta)::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 5px;
+  height: 1px;
+  background: var(--blue-light);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform var(--standard) var(--ease-out);
+}
+
+.site-nav > a:hover,
+.site-nav > a[aria-current='page'] {
+  color: var(--paper);
+}
+
+.site-nav > a:hover::after,
+.site-nav > a[aria-current='page']::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.header-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 15px;
+  border: 1px solid rgba(221, 228, 227, .24);
+  color: var(--paper);
+  border-radius: var(--radius-ui);
+  transition: color var(--fast), background var(--fast), border-color var(--fast);
+}
+
+.site-nav > .header-cta:hover,
+.site-nav > .header-cta:focus-visible {
+  border-color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.menu-button {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: transparent;
+  place-items: center;
+  cursor: pointer;
+}
+
+.menu-icon {
+  position: relative;
+  width: 21px;
+  height: 14px;
+  display: block;
+}
+
+.menu-icon i {
+  position: absolute;
+  left: 0;
+  width: 21px;
+  height: 1px;
+  background: currentColor;
+  transition: transform var(--standard) var(--ease-out), top var(--standard) var(--ease-out);
+}
+
+.menu-icon i:first-child {  top: 3px;
+}
+.menu-icon i:last-child {  top: 11px;
+}
+
+.menu-icon.is-open i:first-child {
+  top: 7px;
+  transform: rotate(45deg);
+}
+
+.menu-icon.is-open i:last-child {
+  top: 7px;
+  transform: rotate(-45deg);
+}
+
+.site-header.is-menu-open {
+  background: var(--void);
+  border-color: var(--line);
+  backdrop-filter: none;
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    height: 68px;
+  }
+
+  .menu-button {
+    display: grid;
+  }
+
+  .site-nav {
+    position: fixed;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: translateX(101%);
+    visibility: hidden;
+    transition: transform var(--standard) var(--ease-out), visibility 0s linear var(--standard);
+    padding: clamp(28px, 7svh, 56px) 20px max(24px, env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, var(--void) 0%, var(--void-soft) 100%);
+    top: 68px;
+    left: 0;
+    width: 100vw;
+    height: calc(100dvh - 68px);
+  }
+
+  .site-nav.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--standard) var(--ease-out);
+  }
+
+  .site-nav > a:not(.header-cta) {
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--line);
+    line-height: 1.1;
+    padding: 12px 0;
+    font: 520 clamp(30px, 9vw, 42px)/1 var(--display);
+    display: flex;
+    min-height: 68px;
+    align-items: center;
+    justify-content: space-between;
+    letter-spacing: -.035em;
+  }
+
+  .site-nav > a:not(.header-cta)::after {
+    display: none;
+  }
+
+  .header-cta {
+    flex-shrink: 0;
+    justify-content: space-between;
+    margin-top: auto;
+    width: 100%;
+    min-height: 58px;
+  }
+
+  .menu-open {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .menu-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+}

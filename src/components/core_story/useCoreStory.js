@@ -1,86 +1,8 @@
-import React, { Suspense, lazy, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { animate, createScope } from 'animejs'
-import { Link } from 'react-router-dom'
-import { ArrowIcon, CapabilityIcon } from './Icons'
+import { clamp, lerp, smoothstep, smootherstep } from './coreStory.utils'
 
-const BlackHole3D = lazy(() => import('./BlackHole3D'))
-
-function HeroModelFallback() {
-  return <div
-    className="hero-model-fallback"
-    role="img"
-    aria-label="Cubo tridimensional VoidCube sobre um campo gravitacional azul"
-  >
-    <span className="hero-model-fallback__core" aria-hidden="true" />
-  </div>
-}
-
-class VisualErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { failed: false }
-  }
-
-  static getDerivedStateFromError() {
-    return { failed: true }
-  }
-
-  componentDidCatch(error) {
-    console.warn('A cena 3D não carregou; usando o estado visual estático.', error)
-  }
-
-  render() {
-    return this.state.failed ? this.props.fallback : this.props.children
-  }
-}
-
-function ThreeDimensionalCore({ className = '' }) {
-  return <VisualErrorBoundary fallback={<HeroModelFallback />}>
-    <Suspense fallback={<HeroModelFallback />}>
-      <BlackHole3D className={className} />
-    </Suspense>
-  </VisualErrorBoundary>
-}
-
-const capabilities = [
-  {
-    mode: 'system',
-    code: 'SYS / 01',
-    title: 'Sistemas sob medida',
-    text: 'ERPs, portais e plataformas que seguem o fluxo real da empresa — inclusive quando o processo sai do caminho feliz.',
-    detail: 'Arquitetura web · APIs · aplicações internas',
-    signal: 'um núcleo operacional',
-  },
-  {
-    mode: 'automate',
-    code: 'AUT / 02',
-    title: 'Automação de processos',
-    text: 'Fluxos que conciliam dados, executam o trabalho repetitivo e encaminham cada exceção para a pessoa certa.',
-    detail: 'Financeiro · operações · atendimento',
-    signal: 'orquestração contínua',
-  },
-  {
-    mode: 'connect',
-    code: 'INT / 03',
-    title: 'Integrações confiáveis',
-    text: 'ERP, CRM, pagamentos e logística conectados com rastreabilidade, filas e recuperação segura de falhas.',
-    detail: 'REST · webhooks · eventos · ETL',
-    signal: 'falhas observáveis',
-  },
-]
-
-const clamp = value => Math.max(0, Math.min(1, value))
-const lerp = (from, to, amount) => from + (to - from) * amount
-const smoothstep = (from, to, value) => {
-  const amount = clamp((value - from) / Math.max(.0001, to - from))
-  return amount * amount * (3 - 2 * amount)
-}
-const smootherstep = (from, to, value) => {
-  const amount = clamp((value - from) / Math.max(.0001, to - from))
-  return amount * amount * amount * (amount * (amount * 6 - 15) + 10)
-}
-
-export default function CoreStory() {
+export default function useCoreStory() {
   const [heroBeat, setHeroBeat] = useState(0)
   const [solutionBeat, setSolutionBeat] = useState(0)
   const [reduceMotion, setReduceMotion] = useState(() => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -427,61 +349,8 @@ export default function CoreStory() {
     }
   }, [reduceMotion])
 
-  return <div
-    ref={storyRef}
-    className="core-story"
-    data-cube-motion
-    data-gravity="right"
-    data-parallax-phase="hero"
-    data-motion-phase="hero"
-  >
-    <div className="core-story__visual">
-      <div className="core-story__visual-stage">
-        <div className="core-story__model">
-          <ThreeDimensionalCore className="black-hole-3d--story" />
-        </div>
-      </div>
-    </div>
-
-    <section id="inicio" ref={heroRef} className="home-hero" data-header-theme="dark" aria-label="Abertura interativa VoidCube">
-      <div ref={heroSceneRef} className="home-hero__scene" data-gravity="right">
-        <div className="hero-copy hero-beat hero-beat--left" data-hero-beat="0" aria-hidden={heroBeat !== 0}>
-          <h1>Complexidade<br />entra. <em>Fluxo sai.</em></h1>
-          <p className="hero-lede">Sistemas, automações e integrações para operações que precisam funcionar com clareza — inclusive nas exceções.</p>
-          <div className="hero-actions">
-            <Link tabIndex={heroBeat === 0 ? 0 : -1} className="button button--solid" to="/contato">Mapear minha operação <ArrowIcon /></Link>
-            <Link tabIndex={heroBeat === 0 ? 0 : -1} className="text-link" to="/#projetos">Ver trabalho em produção <ArrowIcon size={15} /></Link>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <section id="solucoes" className="solutions-section section-light">
-      <header className="section-intro">
-        <div><span className="section-index">Capacidades</span><h2>Uma base técnica.<br />Três frentes de trabalho.</h2></div>
-        <p>Não empilhamos ferramentas. Desenhamos a menor estrutura capaz de tornar uma operação legível, conectada e sustentável.</p>
-      </header>
-      <div ref={solutionsRef} className="solutions-parallax">
-        <div ref={solutionsSceneRef} className="solutions-parallax__scene" data-gravity="right">
-          <div className="solutions-parallax__content">
-            {capabilities.map((item, index) => {
-              const modelOnRight = index !== 1
-              return <article
-                key={item.mode}
-                className={`solution-beat solution-beat--${modelOnRight ? 'left' : 'right'}`}
-                data-solution-beat={index}
-                aria-hidden={reduceMotion ? false : solutionBeat !== index}
-              >
-                <div className="solution-beat__meta"><span>{item.code}</span><CapabilityIcon type={item.mode} /></div>
-                <div className="solution-beat__title-row"><h3>{item.title}</h3></div>
-                <p>{item.text}</p>
-                <footer><span>{item.detail}</span><b>{item.signal}</b></footer>
-              </article>
-            })}
-          </div>
-        </div>
-      </div>
-    </section>
-  </div>
+  return {
+    storyRef, heroRef, heroSceneRef, solutionsRef, solutionsSceneRef,
+    heroBeat, solutionBeat, reduceMotion,
+  }
 }

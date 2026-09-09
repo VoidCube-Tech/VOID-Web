@@ -1,0 +1,17 @@
+{
+    "meta": {
+        "title": "VoidCube - 404",
+        "description": "Essa rota não existe, mas ainda há muito para explorar."
+    },
+
+    "intro": {
+        "index": "Erro / 404",
+        "title": "Você saiu da rota.",
+        "description": "O endereço que você procura não está mais aqui. Volte ao início e continue explorando o universo da VoidCube.",
+        "backHome": "Voltar ao início"
+    },
+
+    "visual": {
+        "label": "Cubo tridimensional VoidCube flutuando sobre um campo gravitacional azul"
+    }
+}

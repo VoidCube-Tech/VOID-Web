@@ -1,6 +1,6 @@
 # VoidCube Design System
 
-Versão 1.2 — implementação vigente<br>
+Versão 1.3 — implementação integrada<br>
 Direção: **Campo operacional**
 
 Este documento registra a linguagem visual, os tokens, a arquitetura da cena compartilhada e as regras de movimento que já orientam o site. O código é a fonte operacional; este arquivo existe para manter futuras alterações coerentes com ele.
@@ -60,7 +60,7 @@ O cubo é o movimento dominante da abertura e do parallax. Texto, estados e micr
 
 ### P3. Cor estrita
 
-Toda superfície, texto, estado e iluminação deriva exclusivamente das famílias navy, azul e branco definidas nos tokens reais do CSS.
+A interface usa os tokens oficiais escuros, turquesa e claros de `src/style/variables.css`. A cena WebGL mantém sua paleta navy e azul própria em `BlackHole3D.jsx`.
 
 ### P4. Estrutura editorial
 
@@ -78,41 +78,45 @@ Nenhuma informação essencial depende de cor, posição transitória, WebGL ou 
 
 ## 3. Tokens de cor
 
-Os nomes e valores abaixo espelham `src/styles.css`.
+Os nomes e valores abaixo espelham `src/style/variables.css`.
+
+A nomenclatura `--blue*` foi preservada pelo remoto, mas seus valores atuais são turquesa. O WebGL conserva as cores próprias da cena.
 
 ### Tokens reais
 
 | Token CSS | Valor | Uso principal |
 |---|---:|---|
-| `--void` | `#040a16` | Canvas, fundo principal e centro do horizonte |
-| `--void-soft` | `#07162b` | Superfície navy secundária |
-| `--void-raised` | `#0b2442` | Estado elevado ou hover sobre navy |
-| `--ink` | `#061426` | Texto e ícones sobre superfícies claras |
-| `--paper` | `#f4f8ff` | Fundo claro e texto principal sobre navy |
-| `--paper-deep` | `#e6effc` | Superfície clara secundária |
-| `--muted` | `#9eb3cb` | Texto secundário sobre navy |
-| `--muted-dark` | `#425c78` | Texto secundário sobre branco |
-| `--line` | `rgba(214, 230, 250, 0.16)` | Separação estrutural sobre navy |
-| `--line-dark` | `rgba(6, 20, 38, 0.14)` | Separação estrutural sobre branco |
-| `--blue` | `#1478d4` | Ação, progresso e destaque principal |
-| `--blue-deep` | `#0753a6` | Texto azul de maior contraste sobre branco |
-| `--blue-light` | `#79b7e8` | Iluminação, detalhes e estados sobre navy |
+| `--void` | `#0E1514` | Fundo principal da interface |
+| `--void-soft` | `#161D1D` | Superfície escura secundária |
+| `--void-raised` | `#1A2121` | Estado elevado ou hover sobre fundo escuro |
+| `--ink` | `#0E1514` | Texto e ícones sobre superfícies claras |
+| `--paper` | `#DDE4E3` | Fundo claro e texto principal sobre fundo escuro |
+| `--paper-deep` | `#CCE8E7` | Superfície clara secundária |
+| `--muted` | `#BEC9C8` | Texto secundário sobre fundo escuro |
+| `--muted-dark` | `#3F4948` | Texto secundário sobre branco |
+| `--line` | `rgba(190, 201, 200, 0.16)` | Separação estrutural sobre fundo escuro |
+| `--line-dark` | `rgba(14, 21, 20, 0.14)` | Separação estrutural sobre branco |
+| `--blue` | `#80D5D4` | Ação, progresso e destaque principal |
+| `--blue-deep` | `#006A6A` | Texto turquesa de maior contraste sobre branco |
+| `--tertiary` | `#B3C8E8` | Acento secundário |
+| `--blue-light` | `#9CF1F0` | Iluminação, detalhes e estados sobre fundo escuro |
 
 ```css
 :root {
-  --void: #040a16;
-  --void-soft: #07162b;
-  --void-raised: #0b2442;
-  --ink: #061426;
-  --paper: #f4f8ff;
-  --paper-deep: #e6effc;
-  --muted: #9eb3cb;
-  --muted-dark: #425c78;
-  --line: rgba(214, 230, 250, 0.16);
-  --line-dark: rgba(6, 20, 38, 0.14);
-  --blue: #1478d4;
-  --blue-deep: #0753a6;
-  --blue-light: #79b7e8;
+  --void: #0E1514;
+  --void-soft: #161D1D;
+  --void-raised: #1A2121;
+  --ink: #0E1514;
+  --paper: #DDE4E3;
+  --paper-deep: #CCE8E7;
+  --muted: #BEC9C8;
+  --muted-dark: #3F4948;
+  --line: rgba(190, 201, 200, 0.16);
+  --line-dark: rgba(14, 21, 20, 0.14);
+  --blue: #80D5D4;
+  --blue-deep: #006A6A;
+  --blue-light: #9CF1F0;
+  --tertiary: #B3C8E8;
 }
 ```
 
@@ -120,9 +124,9 @@ Os nomes e valores abaixo espelham `src/styles.css`.
 
 - Superfícies de página usam `--void`, `--void-soft`, `--paper` ou `--paper-deep`.
 - `--blue` identifica ação, progresso e mudança de estado.
-- `--blue-deep` é a escolha para texto azul pequeno sobre superfícies claras.
-- `--blue-light` é reservado para detalhes, luz e informação não essencial sobre navy.
-- Texto principal usa `--paper` sobre navy e `--ink` sobre branco.
+- `--blue-deep` é a escolha para texto turquesa pequeno sobre superfícies claras.
+- `--blue-light` é reservado para detalhes, luz e informação não essencial sobre fundo escuro.
+- Texto principal usa `--paper` sobre fundo escuro e `--ink` sobre branco.
 - Não criar novos matizes fora desses tokens.
 - Gradientes combinam apenas valores da própria paleta e transparência.
 - Estados não dependem exclusivamente de cor.
@@ -133,11 +137,11 @@ Os nomes e valores abaixo espelham `src/styles.css`.
 
 ### Famílias
 
-- **Display:** Archivo Variable.
-- **Texto:** IBM Plex Sans.
+- **Display:** Inter, com Archivo e Arial Narrow como fallback.
+- **Texto:** Inter, com IBM Plex Sans e Arial como fallback.
 - **Dados e códigos:** IBM Plex Mono.
 
-Archivo usa largura entre 90 e 94 nos títulos. IBM Plex Sans sustenta leitura longa; IBM Plex Mono aparece apenas onde o conteúdo realmente representa código, índice, coordenada, duração ou estado.
+Inter sustenta os títulos e a leitura longa; IBM Plex Mono aparece apenas onde o conteúdo realmente representa código, índice, coordenada, duração ou estado.
 
 ### Escala
 
@@ -180,7 +184,7 @@ Archivo usa largura entre 90 e 94 nos títulos. IBM Plex Sans sustenta leitura l
 - Conteúdo máximo: 1440 px.
 - Seções editoriais: 104–174 px no desktop e 72–96 px no mobile.
 - O ritmo vertical acompanha a leitura e não precisa ser simétrico.
-- Contêineres editoriais permanecem retos, com raio entre 0 e 4 px.
+- Os componentes da interface usam `--radius-ui: 8px`; a geometria editorial e a cena preservam seus recortes próprios.
 - Alvos interativos têm pelo menos 44 px.
 - Profundidade vem de contraste, oclusão, escala e sobreposição.
 
@@ -200,7 +204,7 @@ CoreStory
 └── solutions-section
 ```
 
-- `src/components/CoreStory.jsx` mede o percurso completo e converte scroll em progresso normalizado.
+- `src/components/core_story/useCoreStory.js` mede o percurso completo e converte scroll em progresso normalizado.
 - `src/components/BlackHole3D.jsx` renderiza o campo, o horizonte e o cubo no único canvas.
 - Hero e capacidades nunca montam cópias independentes da cena.
 - O fallback ocupa a mesma camada e preserva a composição sem alterar o fluxo do documento.
@@ -516,7 +520,7 @@ As primitivas escolhidas seguem a documentação oficial:
 - ResizeObserver atualiza câmera e renderer sem alterar o layout do documento.
 - Anime.js opera em scopes locais e libera observadores ao desmontar.
 - Animações priorizam `transform` e `opacity`.
-- Alterações em tokens começam em `src/styles.css` e são refletidas neste documento.
+- Alterações em tokens começam em `src/style/variables.css` e são refletidas neste documento.
 
 ---
 
@@ -535,11 +539,12 @@ As primitivas escolhidas seguem a documentação oficial:
 
 | Responsabilidade | Fonte principal |
 |---|---|
-| Tokens, layout e breakpoints | `src/styles.css` |
-| História compartilhada e progresso | `src/components/CoreStory.jsx` |
+| Tokens, layout e breakpoints | `src/style/variables.css` e os módulos de `src/style/` |
+| História compartilhada e progresso | `src/components/core_story/useCoreStory.js` |
 | Cubo, desmontagem e renderer | `src/components/BlackHole3D.jsx` |
-| Reveals, rotas e navegação | `src/components/layout/SiteLayout.jsx` |
-| Conteúdo editorial | `src/content/siteContent.js` |
+| Reveals e rotas | `src/components/layout/SiteLayout.jsx` |
+| Navegação e rodapé | `src/components/Header.jsx` e `src/components/Footer.jsx` |
+| Conteúdo editorial | `public/language/pt-BR/*.json` |
 | Metadados de página | `src/hooks/usePageMeta.js` |
 
 ---

@@ -1,14 +1,20 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowIcon } from '../components/Icons'
-import { journalItems } from '../content/siteContent'
 import { usePageMeta } from '../hooks/usePageMeta'
+import { useTranslation } from 'react-i18next'
+import "../style/blog.css"
 
 const categories = ['Todos', 'Projetos', 'Arquitetura', 'Automação', 'Integrações']
 
 export default function BlogPage() {
+  const { t } = useTranslation('home')
+  const journalItems = useMemo(() => [
+    ...t('projects.items', { returnObjects: true }),
+    ...t('journal.items', { returnObjects: true }),
+  ], [t])
   const [category, setCategory] = useState('Todos')
-  const items = useMemo(() => category === 'Todos' ? journalItems : journalItems.filter(item => item.category === category), [category])
+  const items = useMemo(() => category === 'Todos' ? journalItems : journalItems.filter(item => item.category === category), [category, journalItems])
   usePageMeta('VOID/LOG — Ideias, sistemas e trabalho real', 'Arquitetura, automação, integrações, projetos e decisões de engenharia da VoidCube.')
 
   return <div className="blog-page">

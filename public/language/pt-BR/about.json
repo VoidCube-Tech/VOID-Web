@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "title": "VoidCube - Sobre",
+    "description": "Engenharia de software para transformar processos complexos em operações claras, eficientes e confiáveis — de Belém e Ananindeua para todo o Brasil."
+  },
+
+  "hero": {
+    "index": "Sobre / VoidCube",
+    "location": "Belém—Ananindeua",
+    "scope": "Pará · Brasil",
+    "titleLine1": "Engenharia não começa",
+    "titleLine2": "no código.",
+    "description": "Começa entendendo o que precisa funcionar. Transformamos processos complexos em software que simplifica a operação, reduz atrito e continua evoluindo com o negócio."
+  },
+
+  "work": {
+    "index": "01 / Como trabalhamos",
+    "title": "Entendemos o problema antes de decidir a tecnologia.",
+    "principles": [
+      {
+        "verb": "ENTENDER",
+        "title": "Descobrimos onde a operação trava.",
+        "text": "Mapeamos processos, pessoas, sistemas e exceções para encontrar onde o trabalho realmente perde tempo, informação ou previsibilidade."
+      },
+      {
+        "verb": "SIMPLIFICAR",
+        "title": "Eliminamos complexidade antes de automatizá-la.",
+        "text": "Nem todo problema precisa de mais software. Simplificamos o processo primeiro e construímos apenas o que realmente precisa existir."
+      },
+      {
+        "verb": "CONSTRUIR",
+        "title": "Transformamos o processo em produto.",
+        "text": "Arquitetura, automação e integrações são escolhidas para funcionar no ambiente real da empresa — inclusive quando o processo foge do planejado."
+      }
+    ]
+  },
+
+  "outcomes": {
+    "index": "02 / O que entregamos",
+    "title": "Não entregamos apenas software. Entregamos uma operação melhor.",
+    "items": [
+      {
+        "name": "CLAREZA",
+        "text": "Processos que deixam de depender de conhecimento espalhado, planilhas paralelas e improvisos."
+      },
+      {
+        "name": "EFICIÊNCIA",
+        "text": "Menos tarefas repetitivas, menos retrabalho e mais tempo para atividades que realmente exigem pessoas."
+      },
+      {
+        "name": "CONTROLE",
+        "text": "Dados conectados e operações rastreáveis para que decisões sejam tomadas com o que está realmente acontecendo."
+      },
+      {
+        "name": "CONTINUIDADE",
+        "text": "Sistemas construídos para sobreviver à próxima mudança, crescer com a empresa e continuar recebendo evolução."
+      }
+    ]
+  },
+
+  "commitments": {
+    "index": "03 / Compromissos",
+    "title": "Construímos para continuar responsáveis depois da entrega.",
+    "values": [
+      {
+        "name": "PROXIMIDADE",
+        "text": "Trabalhamos perto de quem conhece a operação porque nenhuma documentação substitui entender como o trabalho realmente acontece."
+      },
+      {
+        "name": "RESPONSABILIDADE",
+        "text": "Não tratamos software como uma entrega isolada. Assumimos responsabilidade pelas decisões técnicas e pelo impacto que elas causam na operação."
+      },
+      {
+        "name": "DURABILIDADE",
+        "text": "Construímos pensando no que acontece depois: manutenção, evolução, novas integrações e mudanças que ainda nem foram previstas."
+      }
+    ],
+    "cta": "Conversar sobre um projeto"
+  }
+}

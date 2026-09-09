@@ -11,8 +11,11 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "animejs": "^4.5.0",
+    "i18next": "^26.4.1",
+    "i18next-http-backend": "^4.0.2",
     "react": "latest",
     "react-dom": "latest",
+    "react-i18next": "^17.0.13",
     "react-router-dom": "^7.18.2",
     "three": "0.170.0",
     "vite": "latest"

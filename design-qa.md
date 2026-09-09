@@ -74,6 +74,15 @@ Rodada de 9 de setembro de 2026. Validação automatizada em Chrome headless com
 - Passagem revalidada em seis dimensões, com 144 amostras sincronizadas aos frames: ida e volta consistentes, enquadramento preservado e nenhum erro JavaScript/WebGL.
 - Build e `git diff --check` aprovados.
 
+## Integração com o remoto — 09/09/2026
+
+- Animações migradas para `src/components/core_story/` e estilos modulares, preservando as traduções, identidade visual, contato e SEO recebidos do remoto.
+- Blog e artigos conectados às novas coleções traduzidas; projetos e artigos continuam acessíveis, incluindo filtros e seções do conteúdo.
+- Build de produção e `git diff origin/main --check` aprovados. Permanece o aviso conhecido do chunk 3D acima de 500 kB.
+- Inclinação, arraste, desmontagem e remontagem revalidados; 144 amostras de passagem em seis dimensões, sem falhas.
+- Sete rotas verificadas em desktop e celular (14 combinações): navegação, reveals nos dois sentidos, filtros, retenção dos campos do formulário, menu e movimento reduzido. Nenhum erro JavaScript/WebGL; formulário não enviado.
+- Capturas revisadas em 1440 × 900 e 390 × 844 após a integração.
+
 ## Limites da validação
 
 Capturas e interações foram verificadas em emulação local do Chrome. Não houve medição de FPS, bateria ou temperatura em celulares físicos. O build mantém o aviso de chunk 3D acima de 500 kB; ele continua carregado sob demanda.
