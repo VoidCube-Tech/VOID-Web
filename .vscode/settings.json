@@ -1,6 +1,7 @@
 {
     "files.exclude": {
         ".agents": true,
-        "$VENDOR_DIR": true
+        "$VENDOR_DIR": true,
+        "graphify-out": true
     }
 }
