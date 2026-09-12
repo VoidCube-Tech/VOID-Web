@@ -1,1 +1,14 @@
-{}
+{
+	"primaryLabel": "Navegação principal",
+	"mobileLabel": "Navegação móvel",
+	"logoLabel": "Início da VoidCube",
+	"projects": "Projetos",
+	"landingPage": "Landing Page",
+	"language": "Idioma",
+	"contact": "Contato",
+	"openMenu": "Abrir menu",
+	"closeMenu": "Fechar menu",
+	"website": "Website",
+	"mockProject": "Projeto de website demonstrativo",
+	"currentLanguage": "Idioma atual"
+}

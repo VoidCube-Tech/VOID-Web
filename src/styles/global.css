@@ -1,5 +1,6 @@
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Lato:wght@400;500;700&family=Newsreader:wght@400;500;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Lato:wght@400;500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0&family=Newsreader:wght@400;500;700&display=swap");
 @import "tailwindcss";
+@import "./animation.css";
 
 @theme {
 	--color-primary: #80D5D4;
@@ -90,4 +91,11 @@ body {
 	background-color: var(--color-background);
 	color: var(--color-on-background);
 	font-family: var(--font-primary);
+}
+
+.material-symbols-outlined {
+	font-family: "Material Symbols Outlined";
+	font-style: normal;
+	font-variation-settings: "FILL" 0, "GRAD" 0, "opsz" 24, "wght" 400;
+	line-height: 1;
 }

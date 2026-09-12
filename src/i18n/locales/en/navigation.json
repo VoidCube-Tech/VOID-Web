@@ -1,1 +1,14 @@
-{}
+{
+	"primaryLabel": "Primary navigation",
+	"mobileLabel": "Mobile navigation",
+	"logoLabel": "VoidCube home",
+	"projects": "Projects",
+	"landingPage": "Landing Page",
+	"language": "Language",
+	"contact": "Contact",
+	"openMenu": "Open menu",
+	"closeMenu": "Close menu",
+	"website": "Website",
+	"mockProject": "Mock website project",
+	"currentLanguage": "Current language"
+}

@@ -2,6 +2,8 @@
     "files.exclude": {
         ".agents": true,
         "$VENDOR_DIR": true,
-        "graphify-out": true
+        "graphify-out": true,
+        "dist": true,
+        ".astro": true,
     }
 }
