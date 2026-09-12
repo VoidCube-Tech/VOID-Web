@@ -1,22 +1,21 @@
-## Development
+## Graphify
 
-When starting the dev server, use background mode:
+Use Graphify before inspecting source code when `graphify-out/graph.json` exists.
 
-```
-astro dev --background
-```
+Commands:
+- `graphify query "<question>"` — primary command for scoped codebase context.
+- `graphify explain "<concept>"` — preferred for focused inspection of a known component, class, function, or module.
+- `graphify path "<A>" "<B>"` — use only when the relationship between two concepts is relevant.
+- `graphify update .` — update/rebuild the graph.
 
-Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
-
-## Documentation
-
-Full documentation: https://docs.astro.build
-
-Consult these guides before working on related tasks:
-
-- [Adding pages, dynamic routes, or middleware](https://docs.astro.build/en/guides/routing/)
-- [Working with Astro components](https://docs.astro.build/en/basics/astro-components/)
-- [Using React, Vue, Svelte, or other framework components](https://docs.astro.build/en/guides/framework-components/)
-- [Adding or managing content](https://docs.astro.build/en/guides/content-collections/)
-- [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
-- [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
+Rules:
+- First check whether `graphify-out/graph.json` exists.
+- If the relevant component is already known, prefer `graphify explain` instead of a broad `graphify query`.
+- Otherwise start with a narrow, task-specific `graphify query`.
+- Keep Graphify queries as narrow as possible to avoid unnecessary nodes, edges, and token usage.
+- After Graphify identifies the relevant source files, read only those files required for the change.
+- Never inspect `graphify-out/graph.json` using `rg`, `grep`, `findstr`, or manual parsing.
+- Do not read `GRAPH_REPORT.md` or the entire graph unless the task explicitly requires broad architecture analysis.
+- If the graph does not exist, do not retry Graphify; inspect only the source files directly relevant to the task.
+- Do not perform broad repository scans.
+- Do not inspect unrelated files.
