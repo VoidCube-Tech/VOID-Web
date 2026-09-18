@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import type { Locale } from "../../../i18n/config";
 import { getLocalizedPath } from "../routing/localePath";
 import type { NavigationContent } from "../types";
@@ -14,6 +15,52 @@ interface Props {
 }
 
 const SCROLL_THRESHOLD = 8;
+
+// Glass
+/** Controla o desfoque do conteúdo atrás da navbar; valores maiores deixam o vidro mais fosco. */
+const GLASS_BLUR = "15px";
+
+/** Controla a saturação das cores vistas através do vidro. */
+const GLASS_SATURATION = "100%";
+
+/** Controla o brilho do conteúdo visto através do vidro. */
+const GLASS_BRIGHTNESS = "115%";
+
+/** Controla a transparência de toda a superfície; 0 remove os tons de fundo e 1 mantém o visual atual. */
+const GLASS_OPACITY = 1;
+
+/** Controla a força do tom claro nas extremidades da superfície. */
+const GLASS_EDGE_TINT = 10;
+
+/** Controla a força do tom escuro no centro da superfície. */
+const GLASS_CENTER_TINT = 20;
+
+/** Controla a visibilidade da borda externa do vidro. */
+const GLASS_BORDER_OPACITY = 15;
+
+/** Controla a profundidade da sombra externa. */
+const GLASS_SHADOW_OPACITY = 20;
+
+// Liquid
+/** Controla a força conjunta dos reflexos e do brilho interno; 0 os remove e 1 mantém o visual atual. */
+const LIQUID_INTENSITY = 1;
+
+/** Controla a intensidade da reflexão fina na parte superior. */
+const LIQUID_REFLECTION_OPACITY = 40;
+
+/** Controla o brilho da sombra interna, que dá volume à superfície. */
+const LIQUID_HIGHLIGHT_OPACITY = 20;
+
+/** Controla o contraste do contorno interno da superfície. */
+const LIQUID_INNER_CONTRAST = 10;
+
+const liquidGlassStyle = {
+	"--liquid-reflection-color": `color-mix(in srgb, var(--color-on-surface) ${LIQUID_REFLECTION_OPACITY * LIQUID_INTENSITY}%, transparent)`,
+	backdropFilter: `blur(${GLASS_BLUR}) saturate(${GLASS_SATURATION}) brightness(${GLASS_BRIGHTNESS})`,
+	backgroundImage: `linear-gradient(to bottom, color-mix(in srgb, var(--color-on-surface) ${GLASS_EDGE_TINT * GLASS_OPACITY}%, transparent), color-mix(in srgb, var(--color-surface) ${GLASS_CENTER_TINT * GLASS_OPACITY}%, transparent), color-mix(in srgb, var(--color-surface) ${GLASS_EDGE_TINT * GLASS_OPACITY}%, transparent))`,
+	borderColor: `color-mix(in srgb, var(--color-on-surface) ${GLASS_BORDER_OPACITY}%, transparent)`,
+	boxShadow: `0 10px 15px -3px color-mix(in srgb, var(--color-shadow) ${GLASS_SHADOW_OPACITY}%, transparent), 0 4px 6px -4px color-mix(in srgb, var(--color-shadow) ${GLASS_SHADOW_OPACITY}%, transparent), inset 0 2px 4px color-mix(in srgb, var(--color-on-surface) ${LIQUID_HIGHLIGHT_OPACITY * LIQUID_INTENSITY}%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--color-on-surface) ${LIQUID_INNER_CONTRAST * LIQUID_INTENSITY}%, transparent)`,
+} as CSSProperties;
 
 export function Header({ content, currentPath, locale }: Props) {
 	const [hiddenByScroll, setHiddenByScroll] = useState(false);
@@ -111,7 +158,18 @@ export function Header({ content, currentPath, locale }: Props) {
 					if (hiddenByScroll) setRevealedByPointer(false);
 				}}
 			>
-				<div className={`pointer-events-auto px-8 mx-auto mt-2 h-14 w-fit max-w-full rounded-ui border border-outline bg-surface text-on-surface shadow-lg shadow-shadow/30 transition-transform duration-ui ease-ui motion-reduce:transition-none md:w-3/4 md:bg-transparent ${hidden ? "-translate-y-full" : "translate-y-0"}`}>
+				<div
+					style={liquidGlassStyle}
+					className={
+						`pointer-events-auto relative isolate overflow-hidden px-8 mx-auto mt-2 h-14 w-fit max-w-full rounded-ui
+						border
+						text-on-surface
+						before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px
+						before:bg-linear-to-r before:from-transparent before:via-[var(--liquid-reflection-color)] before:to-transparent
+						transition-transform duration-ui ease-ui motion-reduce:transition-none
+						md:w-3/4
+						${hidden ? "-translate-y-full" : "translate-y-0"}`
+					}>
 					<div className="flex h-full w-fit max-w-full items-center justify-between gap-4 px-3 sm:px-4 md:grid md:w-full md:grid-cols-[1fr_auto_1fr] md:gap-6">
 						<a
 							href={getLocalizedPath("/", locale)}

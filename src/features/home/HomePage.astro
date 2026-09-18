@@ -1,1 +1,71 @@
-<h1>Astro</h1>
+---
+import type { Locale } from "../../i18n/config";
+import { Hero } from "./components/Hero";
+import { CloudSection } from "./components/CloudSection";
+import type { HeroMedia } from "./components/heroMedia";
+
+interface Props {
+	readonly locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = locale === "pt-BR"
+	? {
+		eyebrow: "VoidCube — experiências digitais",
+		hint: "Role para explorar",
+		title: "Ideias ganham outra dimensão.",
+		description: "Criamos experiências digitais que transformam ideias em presença, movimento e conexão.",
+		cta: { label: "Vamos conversar", href: "#contact" },
+	}
+	: {
+		eyebrow: "VoidCube — digital experiences",
+		hint: "Scroll to explore",
+		title: "Ideas take another dimension.",
+		description: "We create digital experiences that turn ideas into presence, motion, and connection.",
+		cta: { label: "Let's talk", href: "#contact" },
+	};
+
+const media: HeroMedia = {
+	mobile: {
+		main: "/assets/videos/mobile/Void_Center.mp4",
+		center: "/assets/videos/mobile/Void_Center.mp4",
+		zoom: "/assets/videos/mobile/Void_Zoom.mp4",
+		migration: "/assets/videos/mobile/Void_Migration.mp4",
+		right: "/assets/videos/mobile/Void_Right.mp4",
+		final: "/assets/videos/mobile/Void_Right.mp4",
+	},
+	desktop: {
+		main: "/assets/videos/desktop/Void_Center.mp4",
+		center: "/assets/videos/desktop/Void_Center.mp4",
+		zoom: "/assets/videos/desktop/Void_Zoom.mp4",
+		migration: "/assets/videos/desktop/Void_Migration.mp4",
+		right: "/assets/videos/desktop/Void_Right.mp4",
+		final: "/assets/videos/desktop/Void_Right.mp4",
+	},
+	tv: {
+		main: "/assets/videos/tv/Void_Center.mp4",
+		center: "/assets/videos/tv/Void_Center.mp4",
+		zoom: "/assets/videos/tv/Void_Zoom.mp4",
+		migration: "/assets/videos/tv/Void_Migration.mp4",
+		right: "/assets/videos/tv/Void_Right.mp4",
+		final: "/assets/videos/tv/Void_Right.mp4",
+	},
+};
+---
+
+<Hero client:load media={media} {...content} />
+<CloudSection
+	client:load
+	height="40vh"
+	fillColor="#6086a4"
+	cloudColor="#6086a4"
+	secondaryColor="#9265a6"
+	blur={12}
+	density={0.7}
+	softness={0.65}
+	edgeNoise={0.65}
+	dispersion={{ top: true, bottom: true }}
+	dispersionSize={{ top: 120, bottom: 160 }}
+>
+	<h2>Ola Mundo + Astro</h2>
+</CloudSection>

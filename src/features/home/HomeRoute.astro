@@ -14,5 +14,5 @@ const { locale } = Astro.props;
 
 <SiteLayout lang={locale} title="Astro">
 	<Header client:load content={navigationContent[locale]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={locale} />
-	<HomePage />
+	<HomePage locale={locale} />
 </SiteLayout>
