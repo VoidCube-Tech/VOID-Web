@@ -1,7 +1,9 @@
 ---
 import type { Locale } from "../../i18n/config";
 import { Hero } from "./components/Hero";
+import HeroScroll from "./components/HeroScroll.astro";
 import { CloudSection } from "./components/CloudSection";
+import type { HeroAnimation } from "./components/heroAnimation";
 import type { HeroMedia } from "./components/heroMedia";
 
 interface Props {
@@ -19,41 +21,58 @@ const content = locale === "pt-BR"
 	}
 	: {
 		eyebrow: "VoidCube — digital experiences",
-		hint: "Scroll to explore",
 		title: "Ideas take another dimension.",
 		description: "We create digital experiences that turn ideas into presence, motion, and connection.",
 		cta: { label: "Let's talk", href: "#contact" },
 	};
 
 const media: HeroMedia = {
-	mobile: {
-		main: "/assets/videos/mobile/Void_Center.mp4",
-		center: "/assets/videos/mobile/Void_Center.mp4",
-		zoom: "/assets/videos/mobile/Void_Zoom.mp4",
-		migration: "/assets/videos/mobile/Void_Migration.mp4",
-		right: "/assets/videos/mobile/Void_Right.mp4",
-		final: "/assets/videos/mobile/Void_Right.mp4",
+	mobile: "/assets/videos/cube_hole_720p.webm",
+	desktop: "/assets/videos/cube_hole_4k.webm",
+	tv: "/assets/videos/cube_hole_4k.webm",
+};
+
+const animation: HeroAnimation = {
+	content: {
+		revealAt: 0.82,
+		offsetY: 0,
+		easing: "smooth",
+		heightVh: 90,
+		x: 5,
+		y: 25,
+		mobileHeightVh: 95,
+		mobileX: 0,
+		mobileY: 68,
 	},
 	desktop: {
-		main: "/assets/videos/desktop/Void_Center.mp4",
-		center: "/assets/videos/desktop/Void_Center.mp4",
-		zoom: "/assets/videos/desktop/Void_Zoom.mp4",
-		migration: "/assets/videos/desktop/Void_Migration.mp4",
-		right: "/assets/videos/desktop/Void_Right.mp4",
-		final: "/assets/videos/desktop/Void_Right.mp4",
+		scrollHeight: 400,
+		startScale: 0.3,
+		zoomScale: 0.65,
+		endScale: 0.65,
+		endX: 42,
+		endY: 0,
+		startRotation: -2,
+		zoomRotation: 0,
+		endRotation: 2,
+		zoomAt: 0.35,
+		smoothing: 10,
+		easing: "smooth",
 	},
-	tv: {
-		main: "/assets/videos/tv/Void_Center.mp4",
-		center: "/assets/videos/tv/Void_Center.mp4",
-		zoom: "/assets/videos/tv/Void_Zoom.mp4",
-		migration: "/assets/videos/tv/Void_Migration.mp4",
-		right: "/assets/videos/tv/Void_Right.mp4",
-		final: "/assets/videos/tv/Void_Right.mp4",
+	mobile: {
+		initialScale: 1,
+		finalScale: 0.55,
+		finalY: 20,
+		initialRotation: -1,
+		finalRotation: 1,
+		duration: 1200,
+		easing: "smooth",
+		fit: "contain",
 	},
 };
 ---
 
-<Hero client:load media={media} {...content} />
+<HeroScroll distance={animation.desktop.scrollHeight ?? 300}>
+<Hero client:load media={media} animation={animation} {...content} />
 <CloudSection
 	client:load
 	height="40vh"
@@ -69,3 +88,4 @@ const media: HeroMedia = {
 >
 	<h2>Ola Mundo + Astro</h2>
 </CloudSection>
+</HeroScroll>
