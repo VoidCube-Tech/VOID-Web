@@ -1,16 +1,52 @@
 ---
 import type { HomeContent } from "../content/homeContent";
-interface Props { readonly content: HomeContent["process"];  }
+interface Props {
+    readonly content: HomeContent["process"];
+}
 const { content } = Astro.props;
 ---
-<section id="process" aria-labelledby="process-title" class="relative px-6 py-20 text-on-surface sm:px-10 sm:py-28">
- <div class="mx-auto max-w-6xl">
-  <p class="text-sm font-bold uppercase tracking-widest text-primary">{content.eyebrow}</p>
-  <h2 id="process-title" class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl">{content.title}</h2>
-  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>
-  <ol class="mt-10 grid list-inside list-decimal gap-5 sm:grid-cols-2 lg:grid-cols-3">
-   {content.items.map((item) => <li class="border-b border-outline/30 py-4 text-lg">{item}</li>)}
-  </ol>
 
- </div>
+<section
+    id="process"
+    aria-labelledby="process-title"
+    class="relative px-6 py-20 text-on-surface sm:px-10 sm:py-28"
+>
+    <div class="mx-auto max-w-6xl">
+        <p
+            data-reveal
+            class="text-sm font-bold uppercase tracking-widest text-primary"
+        >
+            {content.eyebrow}
+        </p>
+        <h2
+            id="process-title"
+            data-reveal
+            data-reveal-delay="1"
+            class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl"
+        >
+            {content.title}
+        </h2>
+        <p
+            data-reveal
+            data-reveal-delay="2"
+            class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant"
+        >
+            {content.description}
+        </p>
+        <ol
+            class="mt-10 grid list-inside list-decimal gap-5 sm:grid-cols-2 lg:grid-cols-3"
+        >
+            {
+                content.items.map((item, index) => (
+                    <li
+                        data-reveal
+                        data-reveal-delay={String(index + 1)}
+                        class="border-b border-outline/30 py-4 text-lg"
+                    >
+                        {item}
+                    </li>
+                ))
+            }
+        </ol>
+    </div>
 </section>

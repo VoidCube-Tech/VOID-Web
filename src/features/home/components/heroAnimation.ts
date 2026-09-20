@@ -1,6 +1,15 @@
 export type HeroEasing = "linear" | "smooth" | "ease-in" | "ease-out" | "ease-in-out";
 export type HeroVideoFit = "contain" | "cover";
 
+export interface HeroBrandingAnimation {
+	readonly hideAt?: number;
+	readonly offsetY?: number;
+	readonly easing?: HeroEasing;
+	readonly opacity?: number;
+	readonly fillOpacity?: number;
+	readonly outlineOpacity?: number;
+}
+
 export interface HeroContentAnimation {
 	readonly revealAt?: number;
 	readonly offsetY?: number;
@@ -52,6 +61,7 @@ export interface HeroMobileAnimation {
 export interface HeroAnimation {
 	readonly desktop: HeroDesktopAnimation;
 	readonly mobile: HeroMobileAnimation;
+	readonly branding?: HeroBrandingAnimation;
 	readonly content?: HeroContentAnimation;
 }
 

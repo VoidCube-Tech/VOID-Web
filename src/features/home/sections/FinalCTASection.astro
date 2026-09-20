@@ -3,20 +3,51 @@ import type { HomeContent } from "../content/homeContent";
 import type { Locale } from "../../../i18n/config";
 import { getLocalizedPath } from "../../navigation/routing/localePath";
 import {
- liquidGlassSurfaceStyle,
- liquidGlassPrimaryControlStyle,
- navigationGlassControlClass,
+    liquidGlassSurfaceStyle,
+    liquidGlassPrimaryControlStyle,
+    navigationGlassControlClass,
 } from "../../navigation/styles/liquidGlass";
 import "../../navigation/styles/liquidGlass.css";
-interface Props { readonly content: HomeContent["finalCta"]; readonly locale: Locale; }
+interface Props {
+    readonly content: HomeContent["finalCta"];
+    readonly locale: Locale;
+}
 const { content, locale } = Astro.props;
 ---
-<section id="contact" aria-labelledby="finalCta-title" class="relative px-6 py-28 text-on-surface sm:px-10 sm:py-40">
- <div style={liquidGlassSurfaceStyle} class="navigation-glass mx-auto max-w-6xl rounded-ui px-6 py-10 sm:p-12 lg:p-16">
-  <p class="text-sm font-bold uppercase tracking-widest text-primary">{content.eyebrow}</p>
-  <h2 id="finalCta-title" class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl">{content.title}</h2>
-  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>
 
-  <a href={getLocalizedPath(content.cta.href, locale)} style={{ ...liquidGlassPrimaryControlStyle, backdropFilter: "none" }} class={`${navigationGlassControlClass} mt-8 inline-flex min-h-12 items-center rounded-ui px-7 py-3 font-bold text-primary-fixed`}>{content.cta.label}</a>
- </div>
+<section
+    id="contact"
+    aria-labelledby="finalCta-title"
+    class="relative px-6 py-28 text-on-surface sm:px-10 sm:py-40"
+>
+    <div
+        data-reveal
+        style={liquidGlassSurfaceStyle}
+        class="navigation-glass mx-auto max-w-6xl rounded-ui px-6 py-10 sm:p-12 lg:p-16"
+    >
+        <p class="text-sm font-bold uppercase tracking-widest text-primary">
+            {content.eyebrow}
+        </p>
+        <h2
+            id="finalCta-title"
+            class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl"
+        >
+            {content.title}
+        </h2>
+        <p
+            class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant"
+        >
+            {content.description}
+        </p>
+
+        <a
+            href={getLocalizedPath(content.cta.href, locale)}
+            style={{
+                ...liquidGlassPrimaryControlStyle,
+                backdropFilter: "none",
+            }}
+            class={`${navigationGlassControlClass} mt-8 inline-flex min-h-12 items-center rounded-ui px-7 py-3 font-bold text-primary-fixed`}
+            >{content.cta.label}</a
+        >
+    </div>
 </section>

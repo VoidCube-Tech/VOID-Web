@@ -16,14 +16,21 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 	const sectionRef = useRef<HTMLElement>(null);
 	const viewportRef = useRef<HTMLDivElement>(null);
 	const videoWrapperRef = useRef<HTMLDivElement>(null);
+	const brandingRef = useRef<HTMLDivElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const videoRef = useRef<HTMLVideoElement>(null);
 	const selectedSourceRef = useRef<string>("");
 	const [source, setSource] = useState<string>();
 	const [videoReady, setVideoReady] = useState(false);
 	const mobileVideoFit = animation.mobile.fit === "cover" ? "object-cover" : "object-contain";
-	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, contentRef, animation);
+	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, brandingRef, contentRef, animation);
 	const contentAnimation = animation.content;
+	const brandingAnimation = animation.branding;
+	const brandingTextStyle = brandingAnimation ? {
+		color: `color-mix(in srgb, var(--color-on-surface) ${(brandingAnimation.fillOpacity ?? 0.5) * 100}%, transparent)`,
+		WebkitTextStroke: `1px color-mix(in srgb, var(--color-on-surface) ${(brandingAnimation.outlineOpacity ?? 0.55) * 100}%, transparent)`,
+		textShadow: "0 0 20px color-mix(in srgb, var(--color-on-surface) 8%, transparent)",
+	} as CSSProperties : undefined;
 	const desktopHeight = contentAnimation?.heightVh ?? 90;
 	const heroStyles = {
 		"--hero-height": `${desktopHeight}svh`,
@@ -97,6 +104,15 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 					/>
 				</div>
 				<div className="absolute inset-0 bg-linear-to-t" aria-hidden="true" />
+				{brandingAnimation && (
+					<div ref={brandingRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-[5] flex items-center px-2">
+						<div className="grid w-full grid-cols-[minmax(0,1fr)_clamp(1.5rem,8vw,3rem)_minmax(0,1fr)] items-center md:grid-cols-[minmax(0,1fr)_clamp(3rem,10vw,10rem)_minmax(0,1fr)]">
+							<span style={brandingTextStyle} className="justify-self-end whitespace-nowrap font-secondary text-[clamp(2.5rem,12vw,4.5rem)] leading-none tracking-[0.02em] md:text-[clamp(4.5rem,9vw,9rem)]">Void</span>
+							<span></span>
+							<span style={brandingTextStyle} className="justify-self-start whitespace-nowrap font-secondary text-[clamp(2.5rem,12vw,4.5rem)] leading-none tracking-[0.02em] md:text-[clamp(4.5rem,9vw,9rem)]">Cube</span>
+						</div>
+					</div>
+				)}
 				<div className="absolute right-0 left-[var(--hero-mobile-content-x)] top-[var(--hero-mobile-content-y)] z-10 md:left-[var(--hero-content-x)] md:top-[var(--hero-content-y)]">
 					<div ref={contentRef} inert aria-hidden="true" className="max-w-7xl px-6 pb-12 opacity-0 will-change-[transform,opacity] sm:px-10 md:pb-20">
 						<div className="mb-4 flex items-center justify-between gap-6 font-mono text-xs uppercase tracking-[0.2em]">

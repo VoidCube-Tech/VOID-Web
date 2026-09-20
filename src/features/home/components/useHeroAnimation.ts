@@ -19,6 +19,7 @@ export function useHeroAnimation(
 	sectionRef: RefObject<HTMLElement | null>,
 	viewportRef: RefObject<HTMLDivElement | null>,
 	videoWrapperRef: RefObject<HTMLDivElement | null>,
+	brandingRef: RefObject<HTMLDivElement | null>,
 	contentRef: RefObject<HTMLDivElement | null>,
 	animation: HeroAnimation,
 ) {
@@ -26,6 +27,7 @@ export function useHeroAnimation(
 		const section = sectionRef.current;
 		const viewport = viewportRef.current;
 		const wrapper = videoWrapperRef.current;
+		const branding = brandingRef.current;
 		const content = contentRef.current;
 		if (!section || !viewport || !wrapper || !content) return;
 		const track = section.closest<HTMLElement>('[data-hero-scroll]');
@@ -40,6 +42,7 @@ export function useHeroAnimation(
 		let renderedProgress = 0;
 		let mobilePlayed = false;
 		let mobileAnimation: Animation | undefined;
+		let mobileBrandingAnimation: Animation | undefined;
 		let contentFrame = 0;
 		let mobileContentStart = 0;
 		let measureFrame = 0;
@@ -59,6 +62,18 @@ export function useHeroAnimation(
 			const revealProgress = revealAt >= 1 ? Number(progress >= 1) : (progress - revealAt) / (1 - revealAt);
 			setContentProgress(clampProgress(revealProgress));
 		};
+		const setBrandingProgress = (progress: number) => {
+			if (!branding || !animation.branding) return;
+			const hideAt = clampProgress(animation.branding.hideAt ?? 0.18);
+			const localProgress = hideAt <= SETTLE_EPSILON ? 1 : clampProgress(progress / hideAt);
+			const blend = easedProgress(localProgress, animation.branding.easing ?? "smooth");
+			const opacity = clampProgress(animation.branding.opacity ?? 1);
+			branding.style.opacity = String(opacity * (1 - blend));
+			branding.style.transform = `translate3d(0, ${(animation.branding.offsetY ?? -16) * blend}px, 0)`;
+			branding.style.willChange = blend > SETTLE_EPSILON && blend < 1 - SETTLE_EPSILON
+				? "transform, opacity"
+				: "";
+		};
 		const revealMobileContent = (time: number) => {
 			if (!mobileContentStart) mobileContentStart = time;
 			const progress = clampProgress((time - mobileContentStart) / 450);
@@ -75,6 +90,7 @@ export function useHeroAnimation(
 			const state = desktopTransform(animation.desktop, progress);
 			setTransform(motion.matches ? withoutRotation(state) : state);
 			setDesktopContent(progress);
+			setBrandingProgress(progress);
 			wrapper.style.willChange = "";
 		};
 		const stopFrame = () => {
@@ -85,6 +101,8 @@ export function useHeroAnimation(
 		const stopMobileAnimation = () => {
 			mobileAnimation?.cancel();
 			mobileAnimation = undefined;
+			mobileBrandingAnimation?.cancel();
+			mobileBrandingAnimation = undefined;
 			wrapper.style.willChange = "";
 		};
 		const showMobileFinal = (reduced = false) => {
@@ -94,6 +112,7 @@ export function useHeroAnimation(
 			const state = mobileTransform(animation.mobile, 1);
 			setTransform(reduced ? withoutRotation(state) : state);
 			setContentProgress(1);
+			setBrandingProgress(1);
 		};
 		const playMobileAnimation = () => {
 			if (mobilePlayed || motion.matches || desktop) return;
@@ -112,9 +131,24 @@ export function useHeroAnimation(
 				easing: cssEasing(animation.mobile.easing),
 				fill: "forwards",
 			});
+			if (branding && animation.branding) {
+				const hideAt = Math.max(SETTLE_EPSILON, clampProgress(animation.branding.hideAt ?? 0.18));
+				const offsetY = animation.branding.offsetY ?? -16;
+				const opacity = clampProgress(animation.branding.opacity ?? 1);
+				mobileBrandingAnimation = branding.animate([
+					{ opacity, transform: "translate3d(0, 0, 0)", offset: 0 },
+					{ opacity: 0, transform: `translate3d(0, ${offsetY}px, 0)`, offset: hideAt },
+					{ opacity: 0, transform: `translate3d(0, ${offsetY}px, 0)`, offset: 1 },
+				], {
+					duration: animation.mobile.duration ?? 1200,
+					easing: cssEasing(animation.branding.easing),
+					fill: "forwards",
+				});
+			}
 			mobileAnimation.onfinish = () => {
 				setTransform(endState);
 				stopMobileAnimation();
+				setBrandingProgress(1);
 				mobileContentStart = 0;
 				contentFrame = requestAnimationFrame(revealMobileContent);
 			};
@@ -126,6 +160,7 @@ export function useHeroAnimation(
 				renderedProgress = 1;
 				setTransform(withoutRotation(desktopTransform(animation.desktop, 1)));
 				setContentProgress(1);
+				setBrandingProgress(1);
 				wrapper.style.willChange = "";
 				return;
 			}
@@ -139,6 +174,7 @@ export function useHeroAnimation(
 			if (remaining <= SETTLE_EPSILON) renderedProgress = targetProgress;
 			setTransform(desktopTransform(animation.desktop, renderedProgress));
 			setDesktopContent(renderedProgress);
+			setBrandingProgress(renderedProgress);
 			wrapper.style.willChange = remaining > SETTLE_EPSILON ? "transform" : "";
 			if (remaining > SETTLE_EPSILON) frame = requestAnimationFrame(renderDesktop);
 			else lastFrameTime = 0;
@@ -219,5 +255,5 @@ export function useHeroAnimation(
 			track?.removeEventListener('hero-measure', measure);
 			stopMobileAnimation();
 		};
-	}, [animation, contentRef, sectionRef, videoWrapperRef, viewportRef]);
+	}, [animation, brandingRef, contentRef, sectionRef, videoWrapperRef, viewportRef]);
 }

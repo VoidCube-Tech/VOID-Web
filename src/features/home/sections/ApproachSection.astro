@@ -1,14 +1,37 @@
 ---
 import type { HomeContent } from "../content/homeContent";
-interface Props { readonly content: HomeContent["approach"];  }
+interface Props {
+    readonly content: HomeContent["approach"];
+}
 const { content } = Astro.props;
 ---
-<section id="approach" aria-labelledby="approach-title" class="relative px-6 py-20 text-on-surface sm:px-10 sm:py-28">
- <div class="mx-auto max-w-6xl">
-  <p class="text-sm font-bold uppercase tracking-widest text-primary">{content.eyebrow}</p>
-  <h2 id="approach-title" class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl">{content.title}</h2>
-  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>
 
-
- </div>
+<section
+    id="approach"
+    aria-labelledby="approach-title"
+    class="relative px-6 py-20 text-on-surface sm:px-10 sm:py-28"
+>
+    <div class="mx-auto max-w-6xl">
+        <p
+            data-reveal
+            class="text-sm font-bold uppercase tracking-widest text-primary"
+        >
+            {content.eyebrow}
+        </p>
+        <h2
+            id="approach-title"
+            data-reveal
+            data-reveal-delay="1"
+            class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl"
+        >
+            {content.title}
+        </h2>
+        <p
+            data-reveal
+            data-reveal-delay="2"
+            class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant"
+        >
+            {content.description}
+        </p>
+    </div>
 </section>

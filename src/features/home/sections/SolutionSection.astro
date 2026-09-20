@@ -1,69 +1,128 @@
 ---
 import type { CSSProperties } from "react";
 import type { HomeContent } from "../content/homeContent";
-interface Props { readonly content: HomeContent["solution"];  }
+interface Props {
+    readonly content: HomeContent["solution"];
+}
 const { content } = Astro.props;
 
 const background = {
-	small: "/assets/images/moon_720p.webp",
-	large: "/assets/images/moon_8k.webp",
-	topMask: "/assets/masks/solution-edge-top.svg",
-	bottomMask: "/assets/masks/solution-edge-bottom.svg",
-	size: "cover",
-	mobilePosition: "62% center",
-	position: "center",
-	opacity: 0.72,
-	overlayOpacity: 0.78,
+    small: "/assets/images/moon_720p.webp",
+    large: "/assets/images/moon_8k.webp",
+    topMask: "/assets/masks/solution-edge-top.svg",
+    bottomMask: "/assets/masks/solution-edge-bottom.svg",
+    size: "cover",
+    mobilePosition: "62% center",
+    position: "center",
+    opacity: 0.72,
+    overlayOpacity: 0.78,
 } as const;
 
 const backgroundStyle = {
-	"--solution-background-size": background.size,
-	"--solution-background-position-mobile": background.mobilePosition,
-	"--solution-background-position": background.position,
-	"--solution-background-opacity": background.opacity,
-	"--solution-overlay-opacity": background.overlayOpacity,
-	"--solution-mask-top": `url("${background.topMask}")`,
-	"--solution-mask-bottom": `url("${background.bottomMask}")`,
+    "--solution-background-size": background.size,
+    "--solution-background-position-mobile": background.mobilePosition,
+    "--solution-background-position": background.position,
+    "--solution-background-opacity": background.opacity,
+    "--solution-overlay-opacity": background.overlayOpacity,
+    "--solution-mask-top": `url("${background.topMask}")`,
+    "--solution-mask-bottom": `url("${background.bottomMask}")`,
 } as CSSProperties;
 ---
-<section id="solution" aria-labelledby="solution-title" style={backgroundStyle} class="relative isolate flex min-h-[70svh] items-center px-6 py-32 text-on-surface sm:px-10 sm:py-40">
- <div class="solution-visual pointer-events-none absolute inset-x-0 -top-32 -bottom-32 -z-20" aria-hidden="true">
-  <picture class="absolute inset-0 block opacity-[var(--solution-background-opacity)]">
-   <source media="(min-width: 1280px)" srcset={background.large} type="image/webp" />
-   <img src={background.small} alt="" loading="lazy" decoding="async" class="size-full object-cover" />
-  </picture>
-  <div class="absolute inset-0 bg-background opacity-[var(--solution-overlay-opacity)]"></div>
-  <div class="absolute inset-0 bg-gradient-to-r from-background/85 via-surface/55 to-background/35"></div>
- </div>
 
- <div class="mx-auto w-full max-w-6xl">
-  <p class="text-sm font-bold uppercase tracking-widest text-primary">{content.eyebrow}</p>
-  <h2 id="solution-title" class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl">{content.title}</h2>
-  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>
- </div>
+<section
+    id="solution"
+    aria-labelledby="solution-title"
+    style={backgroundStyle}
+    class="relative isolate flex min-h-[70svh] items-center px-6 py-32 text-on-surface sm:px-10 sm:py-40"
+>
+    <div
+        class="solution-visual pointer-events-none absolute inset-x-0 -top-32 -bottom-32 -z-20"
+        aria-hidden="true"
+    >
+        <picture
+            class="absolute inset-0 block opacity-[var(--solution-background-opacity)]"
+        >
+            <source
+                media="(min-width: 1280px)"
+                srcset={background.large}
+                type="image/webp"
+            />
+            <img
+                src={background.small}
+                alt=""
+                loading="eager"
+                decoding="async"
+                class="size-full object-cover"
+            />
+        </picture>
+        <div
+            class="absolute inset-0 bg-background opacity-[var(--solution-overlay-opacity)]"
+        >
+        </div>
+        <div
+            class="absolute inset-0 bg-gradient-to-r from-background/85 via-surface/55 to-background/35"
+        >
+        </div>
+    </div>
+
+    <div class="mx-auto w-full max-w-6xl">
+        <p
+            data-reveal
+            class="text-sm font-bold uppercase tracking-widest text-primary"
+        >
+            {content.eyebrow}
+        </p>
+        <h2
+            id="solution-title"
+            data-reveal
+            data-reveal-delay="1"
+            class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl"
+        >
+            {content.title}
+        </h2>
+        <p
+            data-reveal
+            data-reveal-delay="2"
+            class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant"
+        >
+            {content.description}
+        </p>
+    </div>
 </section>
 
 <style>
- .solution-visual {
-  /* Mask the continuous image and its overlays together; edges add no painted surface. */
-  -webkit-mask-image: var(--solution-mask-top), linear-gradient(#000, #000), var(--solution-mask-bottom);
-  -webkit-mask-position: top, center, bottom;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-size: 100% 9rem, 100% calc(100% - 17.8rem), 100% 9rem;
-  mask-image: var(--solution-mask-top), linear-gradient(#000, #000), var(--solution-mask-bottom);
-  mask-position: top, center, bottom;
-  mask-repeat: no-repeat;
-  mask-size: 100% 9rem, 100% calc(100% - 17.8rem), 100% 9rem;
-  mask-mode: alpha;
-  mask-composite: add;
- }
+    .solution-visual {
+        /* Mask the continuous image and its overlays together; edges add no painted surface. */
+        -webkit-mask-image:
+            var(--solution-mask-top), linear-gradient(#000, #000),
+            var(--solution-mask-bottom);
+        -webkit-mask-position: top, center, bottom;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-size:
+            100% 9rem,
+            100% calc(100% - 17.8rem),
+            100% 9rem;
+        mask-image:
+            var(--solution-mask-top), linear-gradient(#000, #000),
+            var(--solution-mask-bottom);
+        mask-position: top, center, bottom;
+        mask-repeat: no-repeat;
+        mask-size:
+            100% 9rem,
+            100% calc(100% - 17.8rem),
+            100% 9rem;
+        mask-mode: alpha;
+        mask-composite: add;
+    }
 
- .solution-visual img {
-  object-position: var(--solution-background-position-mobile);
-  object-fit: var(--solution-background-size);
- }
+    .solution-visual img {
+        object-position: var(--solution-background-position-mobile);
+        object-fit: var(--solution-background-size);
+    }
 
- @media (min-width: 768px) {
-  .solution-visual img { object-position: var(--solution-background-position); }
- }
+    @media (min-width: 768px) {
+        .solution-visual img {
+            object-position: var(--solution-background-position);
+        }
+    }
 </style>

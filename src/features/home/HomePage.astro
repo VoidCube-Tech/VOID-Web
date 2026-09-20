@@ -11,6 +11,7 @@ import ApproachSection from "./sections/ApproachSection.astro";
 import DifferentialsSection from "./sections/DifferentialsSection.astro";
 import ProcessSection from "./sections/ProcessSection.astro";
 import FinalCTASection from "./sections/FinalCTASection.astro";
+import RevealOnView from "../../shared/motion/RevealOnView.astro";
 interface Props {
 	readonly locale: Locale;
 }
@@ -19,7 +20,7 @@ const content = homeContent[locale];
 ---
 
 <main>
-	<!-- Separate narrative sections share only the existing Hero transition stage. -->
+	<RevealOnView />
 	<HeroSection content={content.hero}>
 		<ProblemSection content={content.problem} />
 	</HeroSection>

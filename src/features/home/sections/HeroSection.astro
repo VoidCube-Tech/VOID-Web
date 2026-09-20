@@ -4,7 +4,9 @@ import HeroScroll from "../components/HeroScroll.astro";
 import type { HeroAnimation } from "../components/heroAnimation";
 import type { HeroMedia } from "../components/heroMedia";
 import type { HomeContent } from "../content/homeContent";
-interface Props { readonly content: HomeContent["hero"] }
+interface Props {
+	readonly content: HomeContent["hero"];
+}
 const { content } = Astro.props;
 const media: HeroMedia = {
 	mobile: "/assets/videos/cube_hole_720p.webm",
@@ -13,6 +15,14 @@ const media: HeroMedia = {
 };
 
 const animation: HeroAnimation = {
+	branding: {
+		hideAt: 0.18,
+		offsetY: -12,
+		easing: "smooth",
+		opacity: 0.8,
+		fillOpacity: 0.25,
+		outlineOpacity: 0.72,
+	},
 	content: {
 		revealAt: 0.82,
 		offsetY: 0,
@@ -43,7 +53,7 @@ const animation: HeroAnimation = {
 	mobile: {
 		initialScale: 1,
 		finalScale: 0.55,
-		finalY: 20,
+		finalY: 24,
 		initialRotation: -1,
 		finalRotation: 1,
 		duration: 1200,
@@ -52,8 +62,9 @@ const animation: HeroAnimation = {
 	},
 };
 ---
+
 <HeroScroll distance={animation.desktop.scrollHeight ?? 300}>
- <Hero client:load media={media} animation={animation} {...content} />
- <!-- Keep the following section in the sticky stage for the existing cloud transition. -->
- <slot />
+	<Hero client:load media={media} animation={animation} {...content} />
+
+	<slot />
 </HeroScroll>

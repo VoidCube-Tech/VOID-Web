@@ -1,1 +1,15 @@
-{}
+{
+  "hero": { "eyebrow": "VoidCube — digital experiences", "title": "Ideas take another dimension.", "description": "We create digital experiences that turn ideas into presence, motion, and connection.", "cta": { "label": "Let's talk", "href": "#contact" } },
+  "problem": { "eyebrow": "The problem", "title": "Growing should not mean losing control.", "description": "As operations grow, tools, processes, and information accumulate. Systems that once helped begin to struggle to keep up.", "items": [
+    { "title": "Tools piling up", "description": "As the business grows, new tools address individual needs, and everyday work begins to fragment.", "mobileDescription": "More tools divide daily operations across separate places." },
+    { "title": "Disconnected systems", "description": "Information, processes, and services spread across systems that do not share a common picture.", "mobileDescription": "Information spreads across systems that do not work together." },
+    { "title": "Operational complexity", "description": "The more parts you manage separately, the harder it becomes to maintain clarity, consistency, and control.", "mobileDescription": "Managing every part separately reduces clarity and control." }
+  ] },
+  "disconnected": { "eyebrow": "When everything grows apart", "title": "Good tools need to work together.", "description": "Scattered information and fragmented processes create rework and make it harder to see the whole operation.", "items": ["Websites", "Operations", "Events", "Data", "Processes"] },
+  "solution": { "eyebrow": "The connection", "title": "VoidCube connects websites and services.", "description": "We bring digital presence, services, processes, and integrations into a connected experience built around your business." },
+  "results": { "eyebrow": "What changes", "title": "More clarity to decide. More room to evolve.", "description": "Connected operations help turn isolated parts into a consistent experience.", "items": ["Clearer operational visibility", "Less fragmentation", "Connected processes", "A consistent experience", "More control", "Room to evolve"] },
+  "approach": { "eyebrow": "Our approach", "title": "The solution starts with your context.", "description": "We understand your business needs, design a coherent solution, and integrate what matters so it can evolve with your operations." },
+  "differentials": { "eyebrow": "Why VoidCube", "title": "A solution that makes sense for your business.", "description": "Every choice should simplify daily work and create possibilities for the next step.", "items": ["Customization for your context", "Integration across services and processes", "Clarity in the experience", "Evolution alongside your business"] },
+  "process": { "eyebrow": "How we work", "title": "From understanding to continuous evolution.", "description": "A clear process to build, connect, and support your solution.", "items": ["Understand", "Plan", "Develop", "Integrate", "Launch", "Maintain and evolve"] },
+  "finalCta": { "eyebrow": "The next step", "title": "Ready to connect your next step?", "description": "Let's understand your operations and build the right solution together.", "cta": { "label": "Let's talk", "href": "/contact" } }
+}

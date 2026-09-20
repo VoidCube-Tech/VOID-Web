@@ -1,0 +1,102 @@
+---
+import { localeNames, locales, type Locale } from "../../../i18n/config";
+import { navigationContent } from "../content";
+import { serviceCategories } from "../data/services";
+import { footerContent } from "../footerContent";
+import { getLocalizedPath, isLandingPage, removeLocalePrefix } from "../routing/localePath";
+import { LogoIcon } from "./LogoIcon";
+
+interface Props {
+	readonly locale: Locale;
+	readonly currentPath: string;
+}
+
+const { locale, currentPath } = Astro.props;
+const content = navigationContent[locale];
+const footer = footerContent[locale];
+const currentRoute = removeLocalePrefix(currentPath).split(/[?#]/, 1)[0];
+const services = serviceCategories.flatMap((category) => category.services);
+const year = new Date().getFullYear();
+
+const linkClass = "w-fit text-sm text-on-surface-variant transition-colors duration-ui ease-ui hover:text-on-surface focus-visible:rounded-ui focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none aria-[current=page]:font-bold aria-[current=page]:text-on-surface aria-[current=page]:underline aria-[current=page]:decoration-primary aria-[current=page]:underline-offset-4";
+---
+
+<footer
+	aria-label={footer.label}
+	class="relative z-10 bg-surface-container-lowest px-6 pt-20 pb-14 text-on-surface
+		before:pointer-events-none before:absolute before:inset-x-0 before:-top-32 before:h-32
+		before:bg-gradient-to-b before:from-transparent before:via-surface-container-lowest/80 before:to-surface-container-lowest
+		sm:px-10 sm:pt-24 sm:pb-16
+		lg:pt-32 lg:pb-20"
+>
+	<div class="footer-void-transition pointer-events-none absolute inset-x-0 bottom-full h-24 sm:h-32 lg:h-40" aria-hidden="true"></div>
+	<div class="relative z-10 mx-auto max-w-6xl">
+		<div class="grid gap-12 md:grid-cols-[minmax(14rem,1.5fr)_repeat(3,minmax(8rem,1fr))] md:gap-8">
+			<div>
+				<a href={getLocalizedPath("/", locale)} aria-label={content.logoLabel} class="group flex h-10 w-fit items-center gap-3 rounded-ui font-secondary text-xl font-bold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+					<LogoIcon />
+					<span>Void<span class="text-primary">Cube</span></span>
+				</a>
+				<p class="mt-4 max-w-xs text-sm leading-relaxed text-on-surface-variant">{footer.brandDescription}</p>
+			</div>
+
+			<nav aria-label={content.primaryLabel}>
+				<p class="font-secondary text-lg text-on-surface">{footer.navigationLabel}</p>
+				<ul class="mt-4 grid gap-3">
+					<li><a href={getLocalizedPath("/", locale)} aria-current={isLandingPage(currentPath) ? "page" : undefined} class={linkClass}>{content.landingPage}</a></li>
+					<li><a href={getLocalizedPath("/about", locale)} aria-current={currentRoute === "/about" ? "page" : undefined} class={linkClass}>{content.about}</a></li>
+					<li><a href={getLocalizedPath("/contact", locale)} aria-current={currentRoute === "/contact" ? "page" : undefined} class={linkClass}>{content.contact}</a></li>
+				</ul>
+			</nav>
+
+			<nav aria-label={content.services}>
+				<p class="font-secondary text-lg text-on-surface">{content.services}</p>
+				<ul class="mt-4 grid gap-3">
+					{services.map((service) => (
+						<li><a href={getLocalizedPath(service.path, locale)} aria-current={currentRoute === service.path ? "page" : undefined} class={linkClass}>{content[service.labelKey]}</a></li>
+					))}
+				</ul>
+			</nav>
+
+			<nav aria-label={content.language}>
+				<p class="font-secondary text-lg text-on-surface">{content.language}</p>
+				<ul class="mt-4 grid gap-3">
+					{locales.map((option) => (
+						<li>
+							<a href={getLocalizedPath(currentPath, option)} hreflang={option} lang={option} aria-current={option === locale ? "page" : undefined} class={linkClass}>{localeNames[option]}</a>
+						</li>
+					))}
+				</ul>
+			</nav>
+		</div>
+
+		<div class="mt-16 border-t border-outline/10 pt-6 text-sm text-on-surface-variant">
+			<p>© {year} {footer.copyright}</p>
+		</div>
+	</div>
+</footer>
+
+<style>
+	.footer-void-transition {
+		background:
+			radial-gradient(
+				ellipse 72% 105% at 50% 118%,
+				var(--color-surface-container-lowest) 0%,
+				color-mix(in srgb, var(--color-surface-container-lowest) 72%, transparent) 42%,
+				color-mix(in srgb, var(--color-surface-container-lowest) 18%, transparent) 72%,
+				transparent 100%
+			),
+			radial-gradient(
+				ellipse 46% 82% at 96% 116%,
+				color-mix(in srgb, var(--color-surface-container-lowest) 68%, transparent) 0%,
+				color-mix(in srgb, var(--color-surface-container-lowest) 16%, transparent) 66%,
+				transparent 100%
+			),
+			linear-gradient(
+				to bottom,
+				transparent 0 55%,
+				color-mix(in srgb, var(--color-surface-container-lowest) 14%, transparent) 72%,
+				var(--color-surface-container-lowest) 100%
+			);
+	}
+</style>

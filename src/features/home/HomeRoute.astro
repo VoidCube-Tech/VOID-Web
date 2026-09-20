@@ -1,8 +1,6 @@
 ---
 import type { Locale } from "../../i18n/config";
 import SiteLayout from "../../layouts/SiteLayout.astro";
-import { Header } from "../navigation/components/Header";
-import { navigationContent } from "../navigation/content";
 import HomePage from "./HomePage.astro";
 import HomeSpaceBackground from "./components/HomeSpaceBackground.astro";
 
@@ -15,9 +13,7 @@ const { locale } = Astro.props;
 
 <SiteLayout lang={locale} title="Astro">
 	<div class="home-shell">
-		<HomeSpaceBackground />
 		<div class="home-content">
-			<Header client:load content={navigationContent[locale]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={locale} />
 			<HomePage locale={locale} />
 		</div>
 	</div>
