@@ -1,93 +1,35 @@
 ---
 import type { Locale } from "../../i18n/config";
-import { Hero } from "./components/Hero";
-import HeroScroll from "./components/HeroScroll.astro";
-import { CloudSection } from "./components/CloudSection";
-import type { HeroAnimation } from "./components/heroAnimation";
-import type { HeroMedia } from "./components/heroMedia";
-
+import { homeContent } from "./content/homeContent";
+import NebulaArea from "./components/NebulaArea.astro";
+import HeroSection from "./sections/HeroSection.astro";
+import ProblemSection from "./sections/ProblemSection.astro";
+import DisconnectedSection from "./sections/DisconnectedSection.astro";
+import SolutionSection from "./sections/SolutionSection.astro";
+import ResultsSection from "./sections/ResultsSection.astro";
+import ApproachSection from "./sections/ApproachSection.astro";
+import DifferentialsSection from "./sections/DifferentialsSection.astro";
+import ProcessSection from "./sections/ProcessSection.astro";
+import FinalCTASection from "./sections/FinalCTASection.astro";
 interface Props {
 	readonly locale: Locale;
 }
-
 const { locale } = Astro.props;
-const content = locale === "pt-BR"
-	? {
-		eyebrow: "VoidCube — experiências digitais",
-		hint: "Role para explorar",
-		title: "Ideias ganham outra dimensão.",
-		description: "Criamos experiências digitais que transformam ideias em presença, movimento e conexão.",
-		cta: { label: "Vamos conversar", href: "#contact" },
-	}
-	: {
-		eyebrow: "VoidCube — digital experiences",
-		title: "Ideas take another dimension.",
-		description: "We create digital experiences that turn ideas into presence, motion, and connection.",
-		cta: { label: "Let's talk", href: "#contact" },
-	};
-
-const media: HeroMedia = {
-	mobile: "/assets/videos/cube_hole_720p.webm",
-	desktop: "/assets/videos/cube_hole_4k.webm",
-	tv: "/assets/videos/cube_hole_4k.webm",
-};
-
-const animation: HeroAnimation = {
-	content: {
-		revealAt: 0.82,
-		offsetY: 0,
-		easing: "smooth",
-		heightVh: 90,
-		x: 5,
-		y: 25,
-		mobileHeightVh: 95,
-		mobileX: 0,
-		mobileY: 10,
-	},
-	desktop: {
-		scrollHeight: 400,
-		startScale: 0.3,
-		zoomScale: 0.65,
-		endScale: 0.65,
-		endX: 42,
-		endY: 0,
-		startRotation: -2,
-		zoomRotation: 0,
-		endRotation: 2,
-		finalRotationAt: 0.5,
-		finalRotation: 20,
-		zoomAt: 0.35,
-		smoothing: 10,
-		easing: "smooth",
-	},
-	mobile: {
-		initialScale: 1,
-		finalScale: 0.55,
-		finalY: 20,
-		initialRotation: -1,
-		finalRotation: 1,
-		duration: 1200,
-		easing: "smooth",
-		fit: "contain",
-	},
-};
+const content = homeContent[locale];
 ---
 
-<HeroScroll distance={animation.desktop.scrollHeight ?? 300}>
-<Hero client:load media={media} animation={animation} {...content} />
-<CloudSection
-	client:load
-	height="40vh"
-	fillColor="#6086a4"
-	cloudColor="#6086a4"
-	secondaryColor="#9265a6"
-	blur={12}
-	density={0.7}
-	softness={0.65}
-	edgeNoise={0.65}
-	dispersion={{ top: true, bottom: true }}
-	dispersionSize={{ top: 120, bottom: 160 }}
->
-	<h2>Ola Mundo + Astro</h2>
-</CloudSection>
-</HeroScroll>
+<main>
+	<!-- Separate narrative sections share only the existing Hero transition stage. -->
+	<HeroSection content={content.hero}>
+		<ProblemSection content={content.problem} />
+	</HeroSection>
+	<DisconnectedSection content={content.disconnected} />
+	<SolutionSection content={content.solution} />
+	<ResultsSection content={content.results} />
+	<NebulaArea>
+		<ApproachSection content={content.approach} />
+		<DifferentialsSection content={content.differentials} />
+	</NebulaArea>
+	<ProcessSection content={content.process} />
+	<FinalCTASection content={content.finalCta} locale={locale} />
+</main>

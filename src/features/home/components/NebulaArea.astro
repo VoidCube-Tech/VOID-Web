@@ -1,0 +1,70 @@
+<div class="nebula-area relative isolate overflow-hidden">
+	<div class="nebula-background pointer-events-none absolute inset-0 z-0" aria-hidden="true">
+		<img
+			src="/assets/backgrounds/home-nebula.svg"
+			alt=""
+			width="1440"
+			height="1200"
+			loading="lazy"
+			decoding="async"
+			fetchpriority="low"
+			class="nebula-cloud absolute size-full"
+		/>
+	</div>
+	<div class="relative z-10">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.nebula-area {
+		--nebula-drift-x: 1.5%;
+		--nebula-drift-y: 1%;
+	}
+
+	.nebula-background {
+		-webkit-mask-image: linear-gradient(to bottom, transparent, black 14%, black 84%, transparent);
+		mask-image: linear-gradient(to bottom, transparent, black 14%, black 84%, transparent);
+	}
+
+	.nebula-cloud {
+		object-fit: cover;
+		object-position: center;
+		opacity: 0.78;
+		animation: nebula-drift 60s ease-in-out infinite alternate;
+	}
+
+	.nebula-background::before {
+		content: "";
+		position: absolute;
+		inset: 8% -4%;
+		background: radial-gradient(ellipse at 88% 55%, color-mix(in srgb, var(--color-primary) 12%, transparent), transparent 48%);
+		animation: nebula-drift 45s ease-in-out infinite alternate-reverse;
+	}
+
+	.nebula-background::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(to right, color-mix(in srgb, var(--color-background) 50%, transparent), transparent 85%);
+	}
+
+	@keyframes nebula-drift {
+		from { transform: translate3d(calc(-1 * var(--nebula-drift-x)), var(--nebula-drift-y), 0) scale(1.04); }
+		to { transform: translate3d(var(--nebula-drift-x), calc(-1 * var(--nebula-drift-y)), 0) scale(1.06); }
+	}
+
+	@media (max-width: 767px) {
+		.nebula-area {
+			--nebula-drift-x: 0.5%;
+			--nebula-drift-y: 0.3%;
+		}
+		.nebula-cloud { opacity: 0.5; object-position: 65% center; }
+		.nebula-background::before { display: none; }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.nebula-cloud,
+		.nebula-background::before { animation: none; transform: none; }
+	}
+</style>

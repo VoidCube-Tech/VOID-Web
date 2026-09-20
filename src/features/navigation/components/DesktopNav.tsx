@@ -1,8 +1,14 @@
 import type { Locale } from "../../../i18n/config";
-import { getLocalizedPath, isLandingPage } from "../routing/localePath";
+import { loginUrl } from "../data/navigationLinks";
+import { getLocalizedPath, isLandingPage, removeLocalePrefix } from "../routing/localePath";
+import {
+	liquidGlassControlStyle,
+	liquidGlassPrimaryControlStyle,
+	navigationGlassControlClass,
+} from "../styles/liquidGlass";
 import type { NavigationContent } from "../types";
 import { LanguageSelector } from "./LanguageSelector";
-import { ProjectsMenu } from "./ProjectsMenu";
+import { ServicesMenu } from "./ServicesMenu";
 
 interface Props {
 	readonly content: NavigationContent;
@@ -11,23 +17,39 @@ interface Props {
 }
 
 export function DesktopNav({ content, currentPath, locale }: Props) {
+	const currentRoute = removeLocalePrefix(currentPath).split(/[?#]/, 1)[0];
+	const controlClass = `${navigationGlassControlClass} flex min-h-10 items-center rounded-ui px-3 text-sm font-medium text-on-surface-variant`;
+
 	return (
 		<nav aria-label={content.primaryLabel} className="contents">
-			<div className="hidden items-center justify-self-center gap-1 md:flex">
+			<div className="hidden flex-nowrap items-center justify-self-center gap-1 md:flex">
 				<a
 					href={getLocalizedPath("/", locale)}
 					aria-current={isLandingPage(currentPath) ? "page" : undefined}
-					className="relative flex min-h-11 items-center rounded-ui px-3 text-sm font-medium text-on-surface-variant transition-colors duration-ui ease-ui after:absolute after:inset-x-3 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-ui after:ease-ui hover:text-on-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary aria-[current=page]:text-primary aria-[current=page]:after:scale-x-100"
+					style={liquidGlassControlStyle}
+					className={controlClass}
 				>
 					{content.landingPage}
 				</a>
-				<ProjectsMenu content={content} locale={locale} mode="desktop" />
+				<ServicesMenu content={content} currentPath={currentPath} locale={locale} mode="desktop" />
+				<a
+					href={getLocalizedPath("/about", locale)}
+					aria-current={currentRoute === "/about" ? "page" : undefined}
+					style={liquidGlassControlStyle}
+					className={controlClass}
+				>
+					{content.about}
+				</a>
+				<LanguageSelector content={content} currentPath={currentPath} locale={locale} mode="desktop" />
 			</div>
 			<div className="hidden items-center justify-self-end gap-1 md:flex">
-				<LanguageSelector content={content} currentPath={currentPath} locale={locale} mode="desktop" />
+				<a href={loginUrl} style={liquidGlassControlStyle} className={controlClass}>
+					{content.login}
+				</a>
 				<a
 					href={getLocalizedPath("/#contact", locale)}
-					className="flex min-h-11 items-center rounded-ui bg-primary px-5 text-sm font-bold text-on-primary transition-colors duration-ui ease-ui hover:bg-primary-fixed-dim focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+					style={liquidGlassPrimaryControlStyle}
+					className={`${navigationGlassControlClass} flex min-h-10 items-center rounded-ui px-4 text-sm font-bold text-primary-fixed`}
 				>
 					{content.contact}
 				</a>

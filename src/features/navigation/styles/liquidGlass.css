@@ -1,0 +1,39 @@
+.navigation-glass {
+	position: relative;
+	isolation: isolate;
+	border: 1px solid var(--navigation-glass-border);
+	background-image: var(--navigation-glass-background);
+	box-shadow: var(--navigation-glass-shadow);
+	transition: background-image var(--duration-ui) var(--ease-ui), border-color var(--duration-ui) var(--ease-ui), box-shadow var(--duration-ui) var(--ease-ui), color var(--duration-ui) var(--ease-ui), transform var(--duration-ui) var(--ease-ui);
+}
+
+.navigation-glass::before {
+	position: absolute;
+	inset: 0 0 auto;
+	z-index: -1;
+	height: 1px;
+	background: linear-gradient(to right, transparent, var(--navigation-glass-reflection), transparent);
+	content: "";
+	pointer-events: none;
+}
+
+.navigation-glass-control:hover,
+.navigation-glass-control[aria-expanded="true"],
+.navigation-glass-control[aria-current="page"] {
+	border-color: var(--navigation-glass-border-hover);
+	background-image: var(--navigation-glass-background-hover);
+	box-shadow: var(--navigation-glass-shadow-hover);
+}
+
+.navigation-glass-control:hover { transform: translateY(-1px); }
+.navigation-glass-control[aria-current="page"] { color: var(--color-primary); }
+
+.navigation-glass:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.navigation-glass { transition: none; }
+	.navigation-glass-control:hover { transform: none; }
+}

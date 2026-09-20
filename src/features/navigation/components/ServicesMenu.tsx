@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { localeNames, locales, type Locale } from "../../../i18n/config";
-import { getLocalizedPath } from "../routing/localePath";
+import type { Locale } from "../../../i18n/config";
+import { serviceCategories } from "../data/services";
+import { getLocalizedPath, removeLocalePrefix } from "../routing/localePath";
 import {
 	liquidGlassControlStyle,
 	liquidGlassPanelStyle,
@@ -18,12 +19,13 @@ interface Props {
 	readonly onNavigate?: () => void;
 }
 
-export function LanguageSelector({ content, currentPath, locale, mode, onNavigate }: Props) {
+export function ServicesMenu({ content, currentPath, locale, mode, onNavigate }: Props) {
 	const [open, setOpen] = useState(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
-	const panelId = `${mode}-language-menu`;
-	const localeCode = locale === "pt-BR" ? "PT" : "EN";
+	const panelId = `${mode}-services-menu`;
+	const currentRoute = removeLocalePrefix(currentPath).split(/[?#]/, 1)[0];
+	const active = currentRoute.startsWith("/services/");
 
 	useEffect(() => {
 		if (!open) return;
@@ -47,11 +49,6 @@ export function LanguageSelector({ content, currentPath, locale, mode, onNavigat
 		};
 	}, [open]);
 
-	const getLiveLocalizedPath = (targetLocale: Locale) => {
-		if (typeof window === "undefined") return getLocalizedPath(currentPath, targetLocale);
-		return getLocalizedPath(`${window.location.pathname}${window.location.search}${window.location.hash}`, targetLocale);
-	};
-
 	return (
 		<div ref={rootRef} className={mode === "desktop" ? "relative inline-flex shrink-0 items-center self-center" : "w-full"}>
 			<button
@@ -62,12 +59,12 @@ export function LanguageSelector({ content, currentPath, locale, mode, onNavigat
 					? "flex min-h-10 items-center gap-1.5 rounded-ui px-3 text-sm font-medium text-on-surface-variant"
 					: "flex min-h-12 w-full items-center justify-between rounded-ui px-4 text-left text-lg font-medium text-on-surface"}`}
 				onClick={() => setOpen((value) => !value)}
-				aria-label={`${content.language}: ${localeNames[locale]}`}
+				aria-current={active ? "page" : undefined}
 				aria-expanded={open}
 				aria-controls={panelId}
 				aria-haspopup="true"
 			>
-				<span className="flex items-center gap-2"><MaterialIcon name="language" />{mode === "desktop" ? localeCode : content.language}</span>
+				{content.services}
 				<MaterialIcon name="expand_more" className={`size-5 transition-transform duration-ui ease-ui motion-reduce:transition-none ${open ? "rotate-180" : ""}`} />
 			</button>
 
@@ -76,40 +73,32 @@ export function LanguageSelector({ content, currentPath, locale, mode, onNavigat
 					id={panelId}
 					style={mode === "desktop" ? { ...liquidGlassPanelStyle, position: "absolute" } : liquidGlassPanelStyle}
 					className={`${navigationGlassPanelClass} ${mode === "desktop"
-						? "absolute right-0 top-full z-10 mt-2 min-w-52 rounded-ui p-2"
+						? "absolute left-1/2 top-full z-10 mt-2 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-x-auto rounded-ui p-2"
 						: "mt-2 rounded-ui p-2"}`}
 				>
-					<div className="grid gap-1">
-						{locales.map((option) => {
-							const active = option === locale;
-							return (
-								<a
-									key={option}
-									href={getLocalizedPath(currentPath, option)}
-									hrefLang={option}
-									lang={option}
-									aria-current={active ? "page" : undefined}
-									style={liquidGlassControlStyle}
-									onClick={(event) => {
-										if (active) {
-											event.preventDefault();
-											setOpen(false);
-											onNavigate?.();
-											return;
-										}
-										const livePath = getLiveLocalizedPath(option);
-										if (event.currentTarget.getAttribute("href") !== livePath) {
-											event.preventDefault();
-											window.location.assign(livePath);
-										}
-									}}
-									className={`${navigationGlassControlClass} flex min-h-10 items-center justify-between gap-4 rounded-ui px-3 text-sm text-on-surface`}
-								>
-									<span>{localeNames[option]}</span>
-									{active && <span className="font-bold text-primary">✓ <span className="sr-only">{content.currentLanguage}</span></span>}
-								</a>
-							);
-						})}
+					<div className={mode === "desktop" ? "grid grid-flow-col auto-cols-max gap-2" : undefined}>
+						{serviceCategories.map((category) => (
+							<div key={category.id} className={mode === "desktop" ? "min-w-48" : "mb-2 last:mb-0"}>
+								<p className="px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-on-surface-variant">{content[category.labelKey]}</p>
+								<div className="grid gap-1">
+									{category.services.map((service) => {
+										const serviceActive = currentRoute === service.path;
+										return (
+											<a
+												key={service.id}
+												href={getLocalizedPath(service.path, locale)}
+												onClick={onNavigate}
+												aria-current={serviceActive ? "page" : undefined}
+												style={liquidGlassControlStyle}
+												className={`${navigationGlassControlClass} flex min-h-10 items-center rounded-ui px-3 text-sm text-on-surface`}
+											>
+												{content[service.labelKey]}
+											</a>
+										);
+									})}
+								</div>
+							</div>
+						))}
 					</div>
 				</div>
 			)}

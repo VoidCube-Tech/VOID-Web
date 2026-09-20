@@ -1,0 +1,16 @@
+---
+import type { HomeContent } from "../content/homeContent";
+interface Props { readonly content: HomeContent["results"];  }
+const { content } = Astro.props;
+---
+<section id="results" aria-labelledby="results-title" class="relative px-6 py-20 text-on-surface sm:px-10 sm:py-28">
+ <div class="mx-auto max-w-6xl">
+  <p class="text-sm font-bold uppercase tracking-widest text-primary">{content.eyebrow}</p>
+  <h2 id="results-title" class="mt-4 max-w-4xl font-secondary text-3xl leading-tight sm:text-5xl">{content.title}</h2>
+  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>
+  <ul class="mt-10 grid gap-x-12 gap-y-4 sm:grid-cols-2">
+   {content.items.map((item) => <li class="border-b border-outline/30 py-4 text-lg">{item}</li>)}
+  </ul>
+
+ </div>
+</section>
