@@ -27,6 +27,8 @@ export interface HeroDesktopAnimation {
 	readonly startRotation?: number;
 	readonly zoomRotation?: number;
 	readonly endRotation?: number;
+	readonly finalRotationAt?: number;
+	readonly finalRotation?: number;
 	readonly zoomAt?: number;
 	readonly smoothing?: number;
 	readonly easing?: HeroEasing;
@@ -92,18 +94,28 @@ export function desktopTransform(animation: HeroDesktopAnimation, progress: numb
 	const driftStart = zoomAt * 0.65;
 	const zoomBlend = easedProgress(position / zoomEnd, easing);
 	const endBlend = easedProgress((position - driftStart) / (1 - driftStart), easing);
+	const endRotation = animation.endRotation ?? 0;
+	const baseRotation = layeredValue(
+		animation.startRotation ?? 0,
+		animation.zoomRotation ?? 0,
+		endRotation,
+		zoomBlend,
+		endBlend,
+	);
+	const finalRotationAt = clampProgress(animation.finalRotationAt ?? 0.8);
+	const finalRotationProgress = finalRotationAt >= 1
+		? Number(position >= 1)
+		: clampProgress((position - finalRotationAt) / (1 - finalRotationAt));
+	const finalRotationBlend = easedProgress(finalRotationProgress, easing);
+	const rotation = animation.finalRotation === undefined
+		? baseRotation
+		: baseRotation + (animation.finalRotation - endRotation) * finalRotationBlend;
 
 	return {
 		scale: layeredValue(animation.startScale, animation.zoomScale, animation.endScale, zoomBlend, endBlend),
 		x: layeredValue(animation.startX ?? 0, animation.zoomX ?? 0, animation.endX, zoomBlend, endBlend),
 		y: layeredValue(animation.startY ?? 0, animation.zoomY ?? 0, animation.endY, zoomBlend, endBlend),
-		rotation: layeredValue(
-			animation.startRotation ?? 0,
-			animation.zoomRotation ?? 0,
-			animation.endRotation ?? 0,
-			zoomBlend,
-			endBlend,
-		),
+		rotation,
 	};
 }
 

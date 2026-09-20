@@ -1,3 +1,9 @@
+---
+name: spec
+description: >
+  Specification for VoidCube FrontEnd Agent Skill. Use for /spec, "spec", "spec mode", "show spec" or "show skill spec".
+---
+
 # VoidCube FrontEnd — Agent Skill
 
 ## Stack

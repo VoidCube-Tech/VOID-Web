@@ -78,7 +78,7 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 			ref={sectionRef}
 			aria-label={title}
 			style={heroStyles}
-			className="relative isolate h-[var(--hero-mobile-height)] bg-surface text-on-surface md:h-[var(--hero-height)]"
+			className="relative isolate h-[var(--hero-mobile-height)] text-on-surface md:h-[var(--hero-height)]"
 		>
 			<div ref={viewportRef} className="relative h-full overflow-hidden">
 				<div ref={videoWrapperRef} className="absolute inset-0 transform-gpu">
@@ -96,7 +96,7 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 						className={`size-full ${mobileVideoFit} transition-opacity duration-150 motion-reduce:transition-none md:object-cover ${videoReady ? "opacity-100" : "opacity-0"}`}
 					/>
 				</div>
-				<div className="absolute inset-0 bg-linear-to-t from-background/80 via-background/15 to-background/35" aria-hidden="true" />
+				<div className="absolute inset-0 bg-linear-to-t" aria-hidden="true" />
 				<div className="absolute right-0 left-[var(--hero-mobile-content-x)] top-[var(--hero-mobile-content-y)] z-10 md:left-[var(--hero-content-x)] md:top-[var(--hero-content-y)]">
 					<div ref={contentRef} inert aria-hidden="true" className="max-w-7xl px-6 pb-12 opacity-0 will-change-[transform,opacity] sm:px-10 md:pb-20">
 						<div className="mb-4 flex items-center justify-between gap-6 font-mono text-xs uppercase tracking-[0.2em]">
