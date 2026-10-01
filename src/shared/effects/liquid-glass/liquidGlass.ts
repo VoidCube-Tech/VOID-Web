@@ -73,3 +73,21 @@ export const liquidGlassSurfaceStyle = createLiquidGlassStyle({
 });
 
 export const navigationGlassPanelClass = "navigation-glass navigation-glass-panel";
+
+export const liquidGlassAuthStyle = createLiquidGlassStyle({
+  blur: "6px", tint: "var(--color-on-surface)",
+  backgroundTint: "var(--color-surface)", saturation: 102, brightness: 100,
+  edge: 7, center: 9, hoverEdge: 7, hoverCenter: 9,
+  border: 12, hoverBorder: 12,
+  shadow: 8, hoverShadow: 8, highlight: 4, reflection: 9,
+});
+
+export const liquidGlassAuthControlStyle = {
+  ...liquidGlassControlStyle,
+  backdropFilter: "none",
+};
+
+export const liquidGlassAuthPrimaryControlStyle = {
+  ...liquidGlassPrimaryControlStyle,
+  backdropFilter: "none",
+};

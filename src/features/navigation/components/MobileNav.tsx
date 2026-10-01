@@ -8,7 +8,7 @@ import {
 	liquidGlassPrimaryControlStyle,
 	navigationGlassControlClass,
 	navigationGlassPanelClass,
-} from "../styles/liquidGlass";
+} from "../../../shared/effects/liquid-glass/liquidGlass";
 import type { NavigationContent } from "../types";
 import { LanguageSelector } from "./LanguageSelector";
 import { ServicesMenu } from "./ServicesMenu";
@@ -49,7 +49,7 @@ export function MobileNav({ content, currentPath, locale, onClose, panelRef }: P
 					<a href={getLocalizedPath("/#contact", locale)} onClick={onClose} style={liquidGlassPrimaryControlStyle} className={`${navigationGlassControlClass} mt-2 flex min-h-12 items-center justify-center rounded-ui px-5 text-base font-bold text-primary-fixed`}>
 						{content.contact}
 					</a>
-					<a href={loginUrl} onClick={onClose} style={liquidGlassControlStyle} className={`${controlClass} justify-center text-base`}>
+					<a href={getLocalizedPath("/login", locale)} onClick={onClose} style={liquidGlassControlStyle} className={`${controlClass} justify-center text-base`}>
 						{content.login}
 					</a>
 				</nav>

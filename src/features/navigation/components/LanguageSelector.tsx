@@ -6,7 +6,7 @@ import {
 	liquidGlassPanelStyle,
 	navigationGlassControlClass,
 	navigationGlassPanelClass,
-} from "../styles/liquidGlass";
+} from "../../../shared/effects/liquid-glass/liquidGlass";
 import type { NavigationContent } from "../types";
 import { MaterialIcon } from "./MaterialIcon";
 

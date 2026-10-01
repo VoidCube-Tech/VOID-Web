@@ -1,5 +1,9 @@
+---
+interface Props { readonly variant?: "default" | "auth"; }
+const { variant = "default" } = Astro.props;
+---
 <svg
-	class="home-space-background"
+	class:list={["home-space-background", variant === "auth" && "[&_.nebula]:!animate-none [&_.shooting-star]:hidden [&_.star-field-small]:opacity-60 [&_.nebula]:opacity-80 md:[&_.nebula]:opacity-100"]}
 	viewBox="0 0 1600 1000"
 	preserveAspectRatio="xMidYMid slice"
 	aria-hidden="true"
@@ -405,3 +409,4 @@
 		}
 	}
 </style>
+

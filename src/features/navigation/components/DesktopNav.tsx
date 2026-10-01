@@ -5,7 +5,7 @@ import {
 	liquidGlassControlStyle,
 	liquidGlassPrimaryControlStyle,
 	navigationGlassControlClass,
-} from "../styles/liquidGlass";
+} from "../../../shared/effects/liquid-glass/liquidGlass";
 import type { NavigationContent } from "../types";
 import { LanguageSelector } from "./LanguageSelector";
 import { ServicesMenu } from "./ServicesMenu";
@@ -43,7 +43,7 @@ export function DesktopNav({ content, currentPath, locale }: Props) {
 				<LanguageSelector content={content} currentPath={currentPath} locale={locale} mode="desktop" />
 			</div>
 			<div className="hidden items-center justify-self-end gap-1 md:flex">
-				<a href={loginUrl} style={liquidGlassControlStyle} className={controlClass}>
+				<a href={getLocalizedPath("/login", locale)} style={liquidGlassControlStyle} className={controlClass}>
 					{content.login}
 				</a>
 				<a

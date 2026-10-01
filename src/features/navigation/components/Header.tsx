@@ -6,8 +6,8 @@ import { DesktopNav } from "./DesktopNav";
 import { LogoIcon } from "./LogoIcon";
 import { MaterialIcon } from "./MaterialIcon";
 import { MobileNav } from "./MobileNav";
-import "../styles/liquidGlass.css";
-import { liquidGlassControlStyle, liquidGlassHeaderStyle, navigationGlassControlClass } from "../styles/liquidGlass";
+import "../../../shared/effects/liquid-glass/liquidGlass.css";
+import { liquidGlassControlStyle, liquidGlassHeaderStyle, navigationGlassControlClass } from "../../../shared/effects/liquid-glass/liquidGlass";
 
 interface Props {
 	readonly content: NavigationContent;

@@ -4,7 +4,7 @@ import type { Locale } from "../i18n/config";
 import Footer from "../features/navigation/components/Footer.astro";
 import { Header } from "../features/navigation/components/Header";
 import { navigationContent } from "../features/navigation/content";
-import HomeSpaceBackground from "../features/home/components/HomeSpaceBackground.astro";
+import SpaceBackground from "../shared/effects/SpaceBackground.astro";
 
 interface Props {
 	readonly lang: Locale;
@@ -21,11 +21,14 @@ const { lang, title } = Astro.props;
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<slot name="head" />
 	</head>
 	<body>
 		<Header client:load content={navigationContent[lang]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={lang} />
-		<HomeSpaceBackground />
+		<SpaceBackground />
 		<slot />
 		<Footer locale={lang} currentPath={`${Astro.url.pathname}${Astro.url.search}`} />
 	</body>
 </html>
+
+
