@@ -1,0 +1,201 @@
+@reference "../../styles/global.css";
+.home-space-background {
+--breakpoint-md: theme(--breakpoint-md);
+}
+
+	.home-space-background {
+		position: fixed;
+		inset: 0;
+		z-index: 0;
+
+		width: 100%;
+		height: 100%;
+
+		pointer-events: none;
+		user-select: none;
+
+		background: var(--color-background);
+	}
+
+	/*
+	 * Background
+	 */
+
+	.home-space-background .space-base-start {
+		stop-color: var(--color-surface-container-low);
+	}
+
+	.home-space-background .space-base-middle {
+		stop-color: var(--color-background);
+	}
+
+	.home-space-background .space-base-end {
+		stop-color: var(--color-surface-container-lowest);
+	}
+
+	/*
+	 * Nebulosa primary
+	 */
+
+	.home-space-background .nebula-primary-core {
+		stop-color: var(--color-primary);
+		stop-opacity: 0.11;
+	}
+
+	.home-space-background .nebula-primary-middle {
+		stop-color: var(--color-primary-container);
+		stop-opacity: 0.055;
+	}
+
+	/*
+	 * Nebulosa tertiary
+	 */
+
+	.home-space-background .nebula-tertiary-core {
+		stop-color: var(--color-tertiary);
+		stop-opacity: 0.09;
+	}
+
+	.home-space-background .nebula-tertiary-middle {
+		stop-color: var(--color-tertiary-container);
+		stop-opacity: 0.045;
+	}
+
+	.home-space-background .nebula-transparent {
+		stop-color: var(--color-background);
+		stop-opacity: 0;
+	}
+
+	/*
+	 * Estrelas
+	 */
+
+	.home-space-background .stars {
+		fill: var(--color-on-background);
+	}
+
+	.home-space-background .star-field-small {
+		fill: var(--color-on-surface-variant);
+		opacity: var(--space-small-opacity);
+	}
+
+	.home-space-background .star-field-bright {
+		fill: var(--color-on-background);
+		opacity: 0.58;
+	}
+
+	/*
+	 * Shooting stars
+	 */
+
+	.home-space-background .shooting-tail-start {
+		stop-color: var(--color-primary-fixed);
+		stop-opacity: 0;
+	}
+
+	.home-space-background .shooting-tail-middle {
+		stop-color: var(--color-primary-fixed);
+		stop-opacity: 0.24;
+	}
+
+	.home-space-background .shooting-tail-end {
+		stop-color: var(--color-on-background);
+		stop-opacity: 0.85;
+	}
+
+	.home-space-background .shooting-head {
+		fill: var(--color-on-background);
+	}
+
+	/*
+	 * Movimento
+	 */
+
+	.home-space-background .nebula,
+	.home-space-background .shooting-star {
+		transform-box: fill-box;
+		transform-origin: center;
+	}
+
+	.home-space-background .nebula-primary {
+		animation: nebula-primary-drift var(--space-nebula-primary-duration) ease-in-out infinite alternate;
+	}
+
+	.home-space-background .nebula-tertiary {
+		animation: nebula-tertiary-drift var(--space-nebula-tertiary-duration) ease-in-out infinite alternate;
+	}
+
+	.home-space-background .shooting-star {
+		opacity: 0;
+	}
+
+	@keyframes nebula-primary-drift {
+		to {
+			transform: translate3d(55px, 24px, 0) scale(1.04);
+			opacity: 0.82;
+		}
+	}
+
+	@keyframes nebula-tertiary-drift {
+		to {
+			transform: translate3d(-48px, -28px, 0) scale(1.05);
+			opacity: 0.8;
+		}
+	}
+
+	@media (width < theme(--breakpoint-md)) {
+		/*
+		 * Mobile mantém as nebulosas, mas reduz animações decorativas.
+		 */
+		.home-space-background .shooting-star[data-space-mobile-hidden="true"] {
+			display: none;
+		}
+
+		.home-space-background .nebula-primary {
+			animation-duration: var(--space-nebula-primary-mobile-duration);
+		}
+
+		.home-space-background .nebula-tertiary {
+			animation-duration: var(--space-nebula-tertiary-mobile-duration);
+		}
+	}
+
+.home-space-background .nebula { opacity: 1; }
+.home-space-background[data-nebula-motion="false"] .nebula { animation: none; }
+.home-space-background[data-star-motion="true"] .space-star-layer {
+  transform-box: view-box;
+  transform-origin: center;
+  animation: space-star-drift var(--space-star-cycle) ease-in-out infinite alternate;
+}
+.home-space-background .space-star-layer-small { --space-depth: 1; }
+.home-space-background .space-star-layer-bright { --space-depth: .72; }
+.home-space-background .space-star-layer-large { --space-depth: .45; }
+.home-space-background .shooting-star {
+  animation: space-shooting-star var(--space-shoot-duration) ease-out var(--space-shoot-delay) infinite;
+}
+.home-space-background .space-asteroid { transform-box: fill-box; transform-origin: center; }
+@keyframes space-star-drift {
+  to { transform: translate(calc(var(--space-star-x) * var(--space-depth)), calc(var(--space-star-y) * var(--space-depth))) rotate(calc(var(--space-star-angle) * var(--space-depth))); }
+}
+@keyframes space-shooting-star {
+  0%, 78%, 100% { transform: translate(0, 0); opacity: 0; }
+  80% { opacity: .85; }
+  91% { transform: translate(var(--space-shoot-x), var(--space-shoot-y)); opacity: 0; }
+}
+@media (width < theme(--breakpoint-md)) {
+  .home-space-background .nebula { opacity: var(--space-mobile-nebula-opacity); }
+}
+.home-space-background .shooting-star[data-space-continuous="true"] {
+  animation-name: space-shooting-rain;
+  animation-timing-function: linear;
+}
+@keyframes space-shooting-rain {
+  0% { transform: translate(0, 0); opacity: 0; }
+  10% { opacity: .85; }
+  80% { opacity: .85; }
+  100% { transform: translate(var(--space-shoot-x), var(--space-shoot-y)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-space-background .nebula, .home-space-background .space-star-layer, .home-space-background .shooting-star { animation: none; }
+  .home-space-background .shooting-star, .home-space-background [data-space-asteroids] { display: none; }
+}

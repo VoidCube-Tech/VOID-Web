@@ -1,0 +1,22 @@
+---
+import type { ResolvedSection } from '../resolveServicePageConfig';
+import ServiceMedia from './ServiceMedia.astro';
+import ServiceMediaCollection from './ServiceMediaCollection.astro';
+interface Props { section: Extract<ResolvedSection, { type: 'editorial' | 'modules' | 'metrics' | 'media' }>; quoteLabel: string }
+const { section, quoteLabel } = Astro.props;
+const title = section.type === 'editorial' ? section.content.title : section.title;
+---
+<section id={section.id} aria-labelledby={`${section.id}-title`} class="py-20 sm:py-32" data-reveal>
+  <div class="grid gap-10 md:grid-cols-2 md:gap-16">
+    <h2 id={`${section.id}-title`} class="max-w-xl font-secondary text-3xl leading-tight sm:text-5xl">{title}</h2>
+    <div class:list={[section.type === 'modules' ? 'grid gap-8 sm:grid-cols-2' : 'space-y-8']}>
+      {section.type === 'editorial' && <>
+        {section.content.description && <p class="max-w-xl text-lg leading-relaxed text-on-surface-variant">{section.content.description}</p>}
+        {section.content.items?.map(item => <article><h3 class="text-xl">{item.title}</h3><p class="mt-3 leading-relaxed text-on-surface-variant">{item.description}</p></article>)}
+      </>}
+      {section.type === 'modules' && section.items.map(module => <article class="border-l border-primary/40 pl-6"><h3 class="text-2xl">{module.name}</h3><p class="mt-3 text-on-surface-variant">{module.description}</p><p class="mt-4 text-primary">{module.priceLabel}</p><button type="button" data-quote-product={module.productId} data-quote-module={module.id} aria-haspopup="dialog" aria-controls={`service-quote-${module.productId}`} class="mt-4 inline-flex min-h-12 items-center rounded-ui underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-primary">{quoteLabel}</button></article>)}
+      {section.type === 'metrics' && section.items.map(metric => <figure><p class="font-secondary text-5xl text-primary">{metric.value}</p><figcaption class="mt-3">{metric.label}</figcaption><p class="mt-2 text-sm text-on-surface-variant">{metric.source}</p></figure>)}
+    </div>
+  </div>
+  {section.type === 'media' && <div class="mt-10">{section.presentation.type === 'video' ? <ServiceMedia media={section.presentation} /> : <ServiceMediaCollection type={section.presentation.type} items={section.presentation.items} />}</div>}
+</section>

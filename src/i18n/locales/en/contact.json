@@ -1,0 +1,144 @@
+{
+  "seo": {
+    "title": "Contact | VoidCube",
+    "description": "Tell VoidCube about your project and prepare a quote request through WhatsApp."
+  },
+  "eyebrow": "Contact",
+  "headlines": [
+    "Let's give your idea another dimension.",
+    "Turn your idea into something real.",
+    "Bring every part of your solution together.",
+    "Let's build your next step."
+  ],
+  "description": "Tell us what you want to build. Together, we can find the right digital solution for your next step.",
+  "channelsTitle": "Start a conversation",
+  "channelsEmpty": "Our direct contact channels will be available here soon.",
+  "channels": {
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "linkedin": "LinkedIn"
+  },
+  "labels": {
+    "name": "Name",
+    "company": "Company",
+    "service": "Product or service",
+    "description": "Project description",
+    "budget": "Budget",
+    "deadline": "Timeline"
+  },
+  "placeholders": {
+    "name": "Your name",
+    "company": "Company or organization (optional)",
+    "service": "Choose a product or service",
+    "description": "What do you need, who is it for, and what would you like to achieve?",
+    "budget": "Choose a budget range",
+    "deadline": "Choose a timeline"
+  },
+  "budgetOptions": {
+    "discuss": "I'd like guidance",
+    "under5": "Under R$5,000",
+    "5to15": "R$5,000–R$15,000",
+    "15to50": "R$15,000–R$50,000",
+    "over50": "Over R$50,000"
+  },
+  "deadlineOptions": {
+    "flexible": "Flexible / let's discuss",
+    "month": "Within a month",
+    "quarter": "Within three months",
+    "later": "More than three months"
+  },
+  "budgetHint": "Your available investment range, separate from the solution estimate.",
+  "descriptionHint": "Between 20 and 2,000 characters.",
+  "submit": "Continue on WhatsApp",
+  "privacyHint": "Your details become a WhatsApp message. Nothing is saved on this site.",
+  "unavailable": "WhatsApp is not configured yet. You can prepare your request, but sending is currently unavailable.",
+  "noScript": "Enable JavaScript to validate your request and continue on WhatsApp.",
+  "errors": {
+    "required": "Complete this field.",
+    "name": "Enter a name between 2 and 100 characters.",
+    "company": "Use no more than 150 characters.",
+    "description": "Describe your project in 20 to 2,000 characters.",
+    "option": "Choose one of the available options.",
+    "summary": "Review the highlighted fields."
+  },
+  "flow": {
+    "title": "Quote request: VoidCube",
+    "value": "Value",
+    "emptyCompany": "Not provided",
+    "opened": "WhatsApp opened with your request. Your details remain here.",
+    "blocked": "WhatsApp could not open. Use the link below to continue.",
+    "retry": "Open prepared message",
+    "context": "Project context"
+  },
+  "wizard": {
+    "progress": "{current} of {total}",
+    "steps": {
+      "about": "Your details",
+      "solution": "Solutions",
+      "review": "Review"
+    },
+    "continue": "Continue",
+    "back": "Back",
+    "editAbout": "Edit your details",
+    "editSolution": "Edit solution",
+    "choose": "Choose a solution",
+    "change": "Change solution",
+    "dialogTitle": "Find the right solution",
+    "dialogDescription": "Explore a category, choose a project, then select available modules.",
+    "custom": "Custom project",
+    "customHint": "A solution built around your specific needs.",
+    "customDescription": "What do you need to build?",
+    "customPlaceholder": "Tell us what you need, who will use it, your main objective and the result you expect.",
+    "moduleTitle": "Choose your modules",
+    "requiredModule": "Required",
+    "optionalModule": "Optional",
+    "included": "Included in the base price",
+    "modules": "Modules",
+    "noModulesSelected": "No additional modules selected",
+    "cancel": "Cancel",
+    "confirm": "Confirm solution",
+    "backToProjects": "Back to solutions",
+    "selectionTitle": "Your selection",
+    "selectError": "Add at least one valid solution to your request.",
+    "estimate": "Estimated total",
+    "onRequest": "Price on request",
+    "partialEstimate": "{amount} + items priced on request",
+    "basePrice": "Base price",
+    "estimateHint": "This is an initial estimate, not a final price. Scope, budget and timeline will be negotiated.",
+    "budgetLabel": "Your investment range",
+    "emptyDescription": "To be discussed",
+    "noSelection": "No solution selected",
+    "close": "Close selection",
+    "addModules": "Add modules",
+    "editModules": "Edit modules",
+    "removeModule": "Remove module: {name}",
+    "customHelp": "Explain what you want to build and the result you expect.",
+    "addSolution": "Add solution",
+    "selectedSolutions": "Selected solutions",
+    "edit": "Edit",
+    "remove": "Remove",
+    "editSolutionLabel": "Edit solution: {name}",
+    "removeSolutionLabel": "Remove solution: {name}",
+    "editSolutions": "Edit solutions",
+    "solutionEstimate": "Solution estimate",
+    "consultationHint": "Items priced on request have no published price and will be assessed before the final quote."
+  },
+  "pricing": {
+    "initial": "Initial charge",
+    "recurring": "Recurring charge",
+    "intervals": {
+      "month": "{amount}/month",
+      "year": "{amount}/year"
+    },
+    "periodLabels": {
+      "month": "Monthly charge",
+      "year": "Annual charge"
+    }
+  },
+  "contextual": {
+    "title": "Quote for {name}",
+    "close": "Close quote"
+  }
+}

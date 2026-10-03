@@ -1,0 +1,20 @@
+---
+import { defaultLocale, locales, type Locale } from '../../i18n/config';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getLocalizedPath } from '../navigation/routing/localePath';
+import { servicePath } from '../catalog/products';
+import { resolveServicePageConfig } from './resolveServicePageConfig';
+import ServicePage from './ServicePage.astro';
+interface Props { tag: string; locale: Locale }
+const { tag, locale } = Astro.props;
+const service = resolveServicePageConfig(tag, locale);
+if (!service) return new Response(null, { status: 404 });
+const path = servicePath(tag);
+const alternates = Astro.site ? [
+  ...locales.map(language => ({ hreflang: language, href: new URL(getLocalizedPath(path, language), Astro.site) })),
+  { hreflang: 'x-default', href: new URL(getLocalizedPath(path, defaultLocale), Astro.site) },
+] : [];
+---
+<SiteLayout lang={locale} {...service.content.seo} alternates={alternates} robots="index, follow, max-image-preview:large" socialLocale={locale === 'pt-BR' ? 'pt_BR' : 'en_US'}>
+  <ServicePage service={service} />
+</SiteLayout>

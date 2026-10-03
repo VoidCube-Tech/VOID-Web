@@ -1,0 +1,21 @@
+---
+import type { ResolvedSection } from '../resolveServicePageConfig';
+import ServiceSection from './ServiceSection.astro';
+import ServiceConceptScene from './ServiceConceptScene.astro';
+import ServiceProcess from './ServiceProcess.astro';
+import ServiceMessageBand from './ServiceMessageBand.astro';
+import GuidedServiceDemo from './GuidedServiceDemo';
+import ServiceInsightPanel from './ServiceInsightPanel.astro';
+import '../storytelling.css';
+interface Props { section: ResolvedSection; quoteLabel: string }
+const { section, quoteLabel } = Astro.props;
+---
+{section.type === 'message-band' && <ServiceMessageBand section={section} />}
+{section.type === 'guided-demo' && <section id={section.id} aria-labelledby={`${section.id}-title`} class="min-w-0 py-16 sm:py-28">
+  <header class="mb-8 w-full max-w-3xl sm:mb-12" data-reveal><h2 id={`${section.id}-title`} class="font-secondary text-3xl leading-tight sm:text-6xl">{section.content.title}</h2>{section.content.description && <p class="hidden mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant lg:block">{section.content.description}</p>}</header>
+  <GuidedServiceDemo client:visible content={section.demo} priceLabel={section.priceLabel} id={section.id} />
+</section>}
+{section.type === 'insight-panel' && <ServiceInsightPanel section={section} />}
+{section.type === 'concept' && <ServiceConceptScene section={section} />}
+{section.type === 'process' && <ServiceProcess section={section} />}
+{(section.type === 'editorial' || section.type === 'modules' || section.type === 'metrics' || section.type === 'media') && <ServiceSection section={section} quoteLabel={quoteLabel} />}

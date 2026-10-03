@@ -1,17 +1,39 @@
 ---
-import type { Locale } from "../../i18n/config";
+import { defaultLocale, locales, type Locale } from "../../i18n/config";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import HomePage from "./HomePage.astro";
-
+import { homeContent } from "./content/homeContent";
+import { getLocalizedPath } from "../navigation/routing/localePath";
 
 interface Props {
 	readonly locale: Locale;
 }
 
 const { locale } = Astro.props;
+const content = homeContent[locale];
+const site = Astro.site;
+const alternates = site
+	? [
+		...locales.map((language) => ({
+			hreflang: language,
+			href: new URL(getLocalizedPath("/", language), site),
+		})),
+		{
+			hreflang: "x-default",
+			href: new URL(getLocalizedPath("/", defaultLocale), site),
+		},
+	]
+	: [];
 ---
 
-<SiteLayout lang={locale} title="Astro">
+<SiteLayout
+	lang={locale}
+	title={`VoidCube | ${content.hero.title}`}
+	description={content.hero.description}
+	robots="index, follow, max-image-preview:large"
+	alternates={alternates}
+	socialLocale={locale === "pt-BR" ? "pt_BR" : undefined}
+>
 	<div class="home-shell">
 		<div class="home-content">
 			<HomePage locale={locale} />
@@ -31,4 +53,3 @@ const { locale } = Astro.props;
 		z-index: 1;
 	}
 </style>
-

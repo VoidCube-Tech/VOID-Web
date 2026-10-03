@@ -1,36 +1,76 @@
 ---
+import "../../styles/global.css";
 import type { Locale } from "../../i18n/config";
+import { getLocalizedPath } from "../navigation/routing/localePath";
 import { authContent } from "./content";
+import { LogoIcon } from "../navigation/components/LogoIcon";
 import { LoginForm } from "./components/LoginForm";
-import AuthBrandVisual from "./components/AuthBrandVisual.astro";
-import { liquidGlassAuthStyle } from "../../shared/effects/liquid-glass/liquidGlass";
-import "../../shared/effects/liquid-glass/liquidGlass.css";
-interface Props { readonly locale: Locale; }
+import SpaceBackground from "../../shared/effects/SpaceBackground.astro";
+import DefaultHead from "../../shared/metadata/DefaultHead.astro";
+interface Props {
+  readonly locale: Locale;
+}
 const { locale } = Astro.props;
 const content = authContent[locale];
 ---
-<div class="relative isolate overflow-hidden pt-16">
-  <main class="relative z-10 mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl items-center gap-10 px-6 py-10 sm:px-10 lg:grid-cols-5 lg:gap-20 lg:py-16">
-    <div class="relative order-2 mx-auto w-full max-w-md lg:order-1 lg:col-span-2">
-      <div aria-hidden="true" class="pointer-events-none absolute inset-0">
-        <div style={liquidGlassAuthStyle} class="navigation-glass absolute! inset-0 rounded-ui lg:hidden"></div>
-        <div style={liquidGlassAuthStyle} class="navigation-glass absolute! inset-y-0 left-0 hidden w-[150%] border-0! [mask-image:url('/assets/masks/auth-glass-warp.svg')] [mask-size:100%_100%] [mask-repeat:no-repeat] lg:block">
-          <div class="absolute inset-0 bg-linear-to-br from-on-surface/5 via-transparent to-primary/5"></div>
+
+<html lang={locale}>
+  <DefaultHead
+    title={`${content.title} | VoidCube`}
+    description={content.description}
+    robots="noindex, follow"
+    generator={null}
+    socialLocale={locale === "pt-BR" ? "pt_BR" : undefined}
+  />
+  <body class="bg-background font-primary text-on-surface">
+    <SpaceBackground
+      variant="auth"
+      stars={{ density: 3, movement: true, speed: .35, directionX: .8, directionY: -.35, rotationSpeed: .08 }}
+      nebula={{ movement: true, speed: .85 }}
+      shootingStars={{ enabled: true, count: 1, speed: 1, mobileCount: 1, continuous: true }}
+      asteroids={{ enabled: true, minCount: 1, maxCount: 8, spawnIntervalMin: 2500, spawnIntervalMax: 5000, lifetimeMin: 20000, lifetimeMax: 36000, sizeMin: 16, sizeMax: 96 }}
+    />
+    <div
+      class="relative isolate flex min-h-svh flex-col lg:h-svh lg:overflow-hidden"
+    >
+      <main class="relative grid flex-1 lg:min-h-0 lg:grid-cols-2">
+        <div
+          aria-hidden="true"
+          class="auth-void-transition pointer-events-none absolute inset-y-0 left-1/2 hidden w-1/6 bg-[radial-gradient(ellipse_85%_62%_at_0%_26%,color-mix(in_srgb,var(--color-surface-container-lowest)_85%,var(--color-surface-container-low))_0%,color-mix(in_srgb,var(--color-surface-container-lowest)_35%,transparent)_25%,color-mix(in_srgb,var(--color-surface-container-lowest)_8%,transparent)_58%,transparent_100%),radial-gradient(ellipse_68%_80%_at_0%_88%,color-mix(in_srgb,var(--color-surface-container-lowest)_58%,transparent)_0%,color-mix(in_srgb,var(--color-surface-container-lowest)_20%,transparent)_34%,transparent_100%),linear-gradient(to_right,color-mix(in_srgb,var(--color-surface-container-lowest)_85%,var(--color-surface-container-low))_0%_5%,color-mix(in_srgb,var(--color-surface-container-lowest)_35%,transparent)_16%,color-mix(in_srgb,var(--color-surface-container-lowest)_12%,transparent)_35%,transparent_72%)] lg:block"
+        >
         </div>
-        <svg viewBox="0 0 1500 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false" class="absolute inset-y-0 left-0 hidden h-full w-[150%] fill-none lg:block">
-          <defs>
-            <linearGradient id="auth-glass-contour" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" class="[stop-color:var(--color-on-surface)] [stop-opacity:.18]" />
-              <stop offset=".64" class="[stop-color:var(--color-on-surface)] [stop-opacity:.2]" />
-              <stop offset=".74" class="[stop-color:var(--color-primary)] [stop-opacity:.38]" />
-              <stop offset="1" class="[stop-color:var(--color-primary)] [stop-opacity:0]" />
-            </linearGradient>
-          </defs>
-          <path d="M24 0 H976 C1010 0 1000 68 1032 145 C1080 270 1148 368 1250 416 C1328 452 1400 452 1500 474 C1380 496 1308 531 1234 587 C1120 672 1065 775 1028 885 C1005 951 1010 1000 976 1000 H24 Q0 1000 0 976 V24 Q0 0 24 0 Z" stroke="url(#auth-glass-contour)" stroke-width="1.25" vector-effect="non-scaling-stroke" />
-        </svg>
-      </div>
-      <LoginForm client:load content={content} />
+        <div
+          class="relative isolate flex items-center justify-center px-6 py-8 sm:px-10 lg:min-h-0 lg:overflow-y-auto lg:px-12"
+        >
+          <div
+            aria-hidden="true"
+            class="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_85%_90%_at_35%_50%,color-mix(in_srgb,var(--color-surface-container-lowest)_85%,var(--color-surface-container-low))_0%,color-mix(in_srgb,var(--color-surface-container-lowest)_82%,transparent)_42%,color-mix(in_srgb,var(--color-surface-container-lowest)_24%,transparent)_72%,transparent_100%),linear-gradient(to_right,color-mix(in_srgb,var(--color-surface-container-lowest)_45%,transparent),transparent)] lg:bg-none lg:bg-[color-mix(in_srgb,var(--color-surface-container-lowest)_85%,var(--color-surface-container-low))]"
+          >
+          </div>
+          <div class="relative z-10 my-auto w-full max-w-md">
+            <a
+              href={getLocalizedPath("/", locale)}
+              class="inline-flex min-h-10 items-center gap-2 rounded-ui text-sm text-on-surface-variant transition-colors duration-ui ease-ui hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                  focusable="false"
+                  class="size-4 fill-none stroke-current"
+                  stroke-width="1.5"
+                  ><path d="m14 6-6 6 6 6M8 12h12"></path></svg
+                >
+                {content.back}
+              </a>
+            <div class="mb-4 flex flex-col items-center gap-2">
+              
+              <div class="h-20"><LogoIcon /></div>
+            </div>
+            <LoginForm client:load content={content} contactHref={getLocalizedPath("/contact", locale)} />
+          </div>
+        </div>
+        <div aria-hidden="true" class="hidden lg:block"></div>
+      </main>
     </div>
-    <AuthBrandVisual />
-  </main>
-</div>
+  </body>
+</html>

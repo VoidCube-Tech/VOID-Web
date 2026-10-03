@@ -1,0 +1,28 @@
+@reference '../../styles/global.css';
+
+.bottom-sheet {
+  position: fixed !important;
+  inset: auto 0 0;
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  border-radius: var(--radius-ui) var(--radius-ui) 0 0;
+  background-color: color-mix(in srgb, var(--color-surface) 90%, transparent);
+  overflow: visible;
+}
+.bottom-sheet[open] { animation: bottom-sheet-in var(--duration-ui) var(--ease-ui) both; }
+.bottom-sheet[data-closing] { animation: bottom-sheet-out var(--duration-ui) var(--ease-ui) both; }
+.bottom-sheet::backdrop { background: color-mix(in srgb, var(--color-scrim) 40%, transparent); }
+.bottom-sheet-content {
+  display: flex;
+  flex-direction: column;
+  max-height: min(calc(var(--spacing) * 160), calc(100dvh - env(safe-area-inset-top) - var(--spacing) * 8));
+}
+.bottom-sheet-options { padding-bottom: max(calc(var(--spacing) * 4), env(safe-area-inset-bottom)); }
+.bottom-sheet-content > header { padding-left: max(calc(var(--spacing) * 5), env(safe-area-inset-left)); padding-right: max(calc(var(--spacing) * 5), env(safe-area-inset-right)); }
+.bottom-sheet-options { padding-left: max(calc(var(--spacing) * 4), env(safe-area-inset-left)); padding-right: max(calc(var(--spacing) * 4), env(safe-area-inset-right)); }
+@keyframes bottom-sheet-in { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes bottom-sheet-out { from { transform: translateY(0); } to { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) { .bottom-sheet[open], .bottom-sheet[data-closing] { animation: none; } }
+

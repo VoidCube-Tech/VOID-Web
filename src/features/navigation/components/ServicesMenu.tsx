@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "../../../i18n/config";
-import { serviceCategories } from "../data/services";
+import { serviceCategories, serviceName } from "../data/services";
 import { getLocalizedPath, removeLocalePrefix } from "../routing/localePath";
 import {
 	liquidGlassControlStyle,
@@ -92,7 +92,7 @@ export function ServicesMenu({ content, currentPath, locale, mode, onNavigate }:
 												style={liquidGlassControlStyle}
 												className={`${navigationGlassControlClass} flex min-h-10 items-center rounded-ui px-3 text-sm text-on-surface`}
 											>
-												{content[service.labelKey]}
+												{serviceName(service.tag, locale)}
 											</a>
 										);
 									})}

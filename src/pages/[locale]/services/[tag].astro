@@ -1,0 +1,10 @@
+---
+import { commercialProducts } from '../../../features/catalog/products';
+import { localizedLocales } from '../../../i18n/config';
+import ServiceRoute from '../../../features/services/ServiceRoute.astro';
+export function getStaticPaths() {
+  return localizedLocales.flatMap(locale => commercialProducts.map(product => ({ params: { locale, tag: product.tag }, props: { locale, tag: product.tag } })));
+}
+const { tag, locale } = Astro.props;
+---
+<ServiceRoute tag={tag} locale={locale} />

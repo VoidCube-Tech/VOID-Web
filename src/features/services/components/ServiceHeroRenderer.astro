@@ -1,0 +1,11 @@
+---
+import type { ResolvedServiceHero } from '../types';
+import ServiceConceptFrame from './ServiceConceptFrame.astro';
+import ServiceMedia from './ServiceMedia.astro';
+import ServiceMediaCollection from './ServiceMediaCollection.astro';
+interface Props { hero: ResolvedServiceHero }
+const { hero } = Astro.props;
+---
+{hero.type === 'concept' && <figure class="concept-hero-frame"><ServiceConceptFrame demo={hero.demo} /><figcaption class="mt-6 text-center text-sm text-on-surface-variant">{hero.demo.label}</figcaption></figure>}
+{hero.type === 'carousel' && <ServiceMediaCollection type="carousel" items={hero.items} eager />}
+{(hero.type === 'image' || hero.type === 'video') && <ServiceMedia media={hero} eager />}

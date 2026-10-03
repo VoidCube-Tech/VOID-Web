@@ -1,0 +1,21 @@
+---
+import type { ContactContent } from "../content";
+import { TypingText } from "../../../shared/components/TypingText";
+import { contactLinks } from "../../../shared/config/contacts";
+import { MaterialIcon } from "../../navigation";
+interface Props { content: ContactContent }
+const { content } = Astro.props;
+---
+<section aria-labelledby="contact-channels" data-reveal data-reveal-delay="3" class="mt-12 hidden md:block">
+  <h2 id="contact-channels" class="font-secondary text-2xl"><TypingText client:load messages={[content.channelsTitle]} loop={false} cursor={false} typeSpeed={6} startDelay={650} /></h2>
+  {contactLinks.length ? <ul class="mt-6 grid gap-3">
+    {contactLinks.map(contact => <li>
+      <a href={contact.href} target={contact.kind === "email" ? undefined : "_blank"} rel={contact.kind === "email" ? undefined : "noopener noreferrer"} class="flex min-h-12 w-fit max-w-full items-center gap-4 rounded-ui py-2 text-on-surface-variant transition-colors duration-ui ease-ui hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary motion-reduce:transition-none">
+        <MaterialIcon name={contact.icon} className="size-6 shrink-0 text-primary" />
+        <span class="min-w-0"><span class="block text-sm font-bold text-on-surface">{content.channels[contact.kind]}</span><span class="break-words text-sm">{contact.value}</span></span>
+      </a>
+    </li>)}
+  </ul> : <p class="mt-4 leading-relaxed text-on-surface-variant"><TypingText client:load messages={[content.channelsEmpty]} loop={false} cursor={false} typeSpeed={6} startDelay={750} /></p>}
+</section>
+
+

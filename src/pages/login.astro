@@ -1,10 +1,5 @@
 ---
-import SiteLayout from "../layouts/SiteLayout.astro";
-import { authContent } from "../features/auth/content";
 import LoginPage from "../features/auth/LoginPage.astro";
 import { defaultLocale } from "../i18n/config";
 ---
-<SiteLayout lang={defaultLocale} title={`${authContent[defaultLocale].title} | VoidCube`}>
-  <Fragment slot="head"><meta name="description" content={authContent[defaultLocale].description} /><meta name="robots" content="noindex, follow" /></Fragment>
-  <LoginPage locale={defaultLocale} />
-</SiteLayout>
+<LoginPage locale={defaultLocale} />

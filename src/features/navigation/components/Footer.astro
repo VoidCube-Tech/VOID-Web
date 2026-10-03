@@ -1,7 +1,7 @@
 ---
 import { localeNames, locales, type Locale } from "../../../i18n/config";
 import { navigationContent } from "../content";
-import { serviceCategories } from "../data/services";
+import { serviceCategories, serviceName } from "../data/services";
 import { footerContent } from "../footerContent";
 import { getLocalizedPath, isLandingPage, removeLocalePrefix } from "../routing/localePath";
 import { LogoIcon } from "./LogoIcon";
@@ -53,7 +53,7 @@ const linkClass = "w-fit text-sm text-on-surface-variant transition-colors durat
 				<p class="font-secondary text-lg text-on-surface">{content.services}</p>
 				<ul class="mt-4 grid gap-3">
 					{services.map((service) => (
-						<li><a href={getLocalizedPath(service.path, locale)} aria-current={currentRoute === service.path ? "page" : undefined} class={linkClass}>{content[service.labelKey]}</a></li>
+						<li><a href={getLocalizedPath(service.path, locale)} aria-current={currentRoute === service.path ? "page" : undefined} class={linkClass}>{serviceName(service.tag, locale)}</a></li>
 					))}
 				</ul>
 			</nav>

@@ -1,0 +1,31 @@
+---
+import type { ResolvedSection } from '../resolveServicePageConfig';
+import ServiceConceptFrame from './ServiceConceptFrame.astro';
+interface Props { section: Extract<ResolvedSection, { type: 'concept' }> }
+const { section } = Astro.props;
+const { id, content, scene, demo } = section;
+const deviceOptions = ['desktop', 'tablet', 'mobile'] as const;
+---
+<section id={id} aria-labelledby={`${id}-title`} class="concept-scene py-20 sm:py-32" data-scene={scene}>
+  <header class="mx-auto mb-12 max-w-3xl text-center sm:mb-20" data-reveal>
+    <h2 id={`${id}-title`} class="font-secondary text-4xl leading-tight sm:text-6xl">{content.title}</h2>
+    {content.description && <p class="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>}
+  </header>
+  {scene === 'responsive' ? (
+    <fieldset class="concept-devices">
+      <legend class="sr-only">{demo.devices.label}</legend>
+      {deviceOptions.map(device => <input id={`${id}-${device}`} class="concept-device-input sr-only" type="radio" name={`${id}-device`} value={device} checked={device === 'desktop'} />)}
+      <div class="mb-10 flex flex-wrap justify-center gap-2">{deviceOptions.map(device => <label for={`${id}-${device}`} data-device={device} class="concept-device-label cursor-pointer rounded-ui border border-outline-variant px-4 py-3 text-sm text-on-surface-variant">{demo.devices[device]}</label>)}</div>
+      <figure>
+        <div class="concept-device-stage"><ServiceConceptFrame demo={demo} scene={scene} /></div>
+        <figcaption class="mx-auto mt-8 max-w-lg text-center text-sm leading-relaxed text-on-surface-variant">{demo.responsiveCaption}</figcaption>
+      </figure>
+    </fieldset>
+  ) : (
+    <figure>
+      <div class="concept-story-frame"><ServiceConceptFrame demo={demo} scene={scene} /></div>
+      {scene === 'build' && <ol class="mx-auto mt-8 grid max-w-4xl grid-cols-2 gap-x-6 gap-y-4 text-sm text-on-surface-variant sm:grid-cols-3 lg:grid-cols-6">{demo.buildStages.map(stage => <li class="border-t border-primary/30 pt-3">{stage}</li>)}</ol>}
+      <figcaption class="mx-auto mt-8 max-w-lg text-center text-sm leading-relaxed text-on-surface-variant">{scene === 'focus' ? demo.focusCaption : demo.buildCaption}</figcaption>
+    </figure>
+  )}
+</section>

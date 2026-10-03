@@ -1,0 +1,24 @@
+---
+import type { ResolvedSection } from '../resolveServicePageConfig';
+import { liquidGlassHeaderStyle, liquidGlassControlStyle, navigationGlassControlClass } from '../../../shared/effects/liquid-glass/liquidGlass';
+interface Props { section: Extract<ResolvedSection, { type: 'message-band' }> }
+const { section } = Astro.props;
+const { band, content, id } = section;
+---
+<section id={id} aria-labelledby={`${id}-title`} class="message-band min-w-0 py-16 sm:py-24">
+  <div class="navigation-glass navigation-glass-header w-full min-w-0 overflow-visible rounded-ui px-4 py-8 sm:px-10 sm:py-14 lg:px-12 lg:py-16" style={{ ...liquidGlassHeaderStyle, backdropFilter: 'blur(var(--blur-sm))' }}>
+    <header class="mx-auto mb-8 max-w-3xl text-center sm:mb-10" data-reveal>
+      <h2 id={`${id}-title`} class="font-secondary text-3xl leading-tight sm:text-4xl lg:text-5xl">{content.title}</h2>
+    </header>
+    <input id={`${id}-pause`} class="message-band-pause peer sr-only" type="checkbox" aria-controls={`${id}-messages`} />
+    <label for={`${id}-pause`} class={`${navigationGlassControlClass} message-band-control mx-auto mb-6 flex min-h-10 w-fit cursor-pointer items-center gap-2 rounded-ui px-3 py-2 text-sm text-on-surface-variant peer-checked:text-primary`} style={liquidGlassControlStyle}>
+      <span class="message-band-running">{band.pauseLabel}</span><span class="message-band-paused">{band.resumeLabel}</span>
+    </label>
+    <div id={`${id}-messages`} class="message-band-window min-w-0 rounded-ui focus-visible:outline-2 focus-visible:outline-primary" tabindex="0" role="region" aria-labelledby={`${id}-title`}>
+      <div class="message-band-track">
+        {[false, true].map(duplicate => <ul class="message-band-group" aria-hidden={duplicate ? 'true' : undefined}>{band.messages.map(message => <li class="message-band-card rounded-ui bg-surface-container-low/40 px-6 py-8 text-lg leading-snug text-on-surface sm:text-xl">{message}</li>)}</ul>)}
+      </div>
+    </div>
+    <p class="mx-auto mt-12 w-full max-w-2xl text-center font-secondary text-2xl leading-snug text-primary sm:mt-20 sm:text-3xl lg:text-4xl" data-reveal>{band.resolution}</p>
+  </div>
+</section>

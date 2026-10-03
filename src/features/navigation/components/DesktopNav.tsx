@@ -47,7 +47,7 @@ export function DesktopNav({ content, currentPath, locale }: Props) {
 					{content.login}
 				</a>
 				<a
-					href={getLocalizedPath("/#contact", locale)}
+					href={getLocalizedPath("/contact", locale)}
 					style={liquidGlassPrimaryControlStyle}
 					className={`${navigationGlassControlClass} flex min-h-10 items-center rounded-ui px-4 text-sm font-bold text-primary-fixed`}
 				>

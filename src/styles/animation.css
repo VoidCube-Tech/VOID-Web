@@ -9,3 +9,41 @@
 		transform: rotate(12deg);
 	}
 }
+@keyframes typing-cursor-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.typing-text { display: grid; }
+.typing-text-reserve,
+.typing-text-animated,
+.typing-text-static { grid-area: 1 / 1; min-width: 0; overflow-wrap: anywhere; }
+.typing-text-reserve { visibility: hidden; pointer-events: none; }
+.typing-text-static { display: none; }
+.typing-text-cursor { animation: typing-cursor-blink var(--typing-cursor-duration) step-end infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .typing-text-animated { display: none; }
+  .typing-text-static { display: block; }
+  .typing-text-cursor { animation: none; }
+}
+
+@keyframes quote-step-out {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(var(--quote-exit)); }
+}
+@keyframes quote-step-in {
+  from { opacity: 0; transform: translateX(var(--quote-entry)); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.quote-step[data-direction="forward"] {
+  --quote-exit: calc(var(--spacing) * -8);
+  --quote-entry: calc(var(--spacing) * 8);
+}
+.quote-step[data-direction="back"] {
+  --quote-exit: calc(var(--spacing) * 8);
+  --quote-entry: calc(var(--spacing) * -8);
+}
+.quote-step[data-phase="out"] { animation: quote-step-out var(--duration-ui) var(--ease-ui) both; pointer-events: none; }
+.quote-step[data-phase="in"] { animation: quote-step-in var(--duration-ui) var(--ease-ui) both; pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .quote-step[data-phase] { animation: none; transform: none; opacity: 1; }
+}

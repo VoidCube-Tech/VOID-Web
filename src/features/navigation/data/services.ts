@@ -1,29 +1,14 @@
-export interface Service {
-	readonly id: string;
-	readonly labelKey: "websitesService" | "voidEventsService" | "voidErpService";
-	readonly path: string;
+import { commercialCategories, commercialProducts, servicePath } from '../../catalog/products';
+import { servicesContent } from '../../services/content';
+import type { Locale } from '../../../i18n/config';
+export function serviceName(tag: string, locale: Locale) {
+  const service = servicesContent[locale].services[tag];
+  if (!service) throw new Error(`Missing localized service: ${locale}/${tag}`);
+  return service.name;
 }
-
-export interface ServiceCategory {
-	readonly id: string;
-	readonly labelKey: "digitalPresence" | "businessPlatforms";
-	readonly services: readonly Service[];
-}
-
-export const serviceCategories: readonly ServiceCategory[] = [
-	{
-		id: "digital-presence",
-		labelKey: "digitalPresence",
-		services: [
-			{ id: "websites", labelKey: "websitesService", path: "/services/websites" },
-		],
-	},
-	{
-		id: "business-platforms",
-		labelKey: "businessPlatforms",
-		services: [
-			{ id: "void-events", labelKey: "voidEventsService", path: "/services/void-events" },
-			{ id: "void-erp", labelKey: "voidErpService", path: "/services/void-erp" },
-		],
-	},
-];
+export const serviceCategories = commercialCategories.map(category => ({
+  ...category,
+  services: commercialProducts.filter(product => product.categoryId === category.id).map(product => ({
+    id: product.id, tag: product.tag, path: servicePath(product.tag),
+  })),
+}));

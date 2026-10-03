@@ -1,0 +1,144 @@
+{
+  "seo": {
+    "title": "Contato | VoidCube",
+    "description": "Conte à VoidCube sobre seu projeto e prepare um pedido de orçamento pelo WhatsApp."
+  },
+  "eyebrow": "Contato",
+  "headlines": [
+    "Vamos dar outra dimensão à sua ideia.",
+    "Sua ideia pode ganhar vida.",
+    "Conecte as partes da sua solução.",
+    "Vamos construir seu próximo passo."
+  ],
+  "description": "Conte o que você quer construir. Juntos, encontramos a solução digital para o seu próximo passo.",
+  "channelsTitle": "Comece uma conversa",
+  "channelsEmpty": "Nossos canais de contato direto estarão disponíveis aqui em breve.",
+  "channels": {
+    "whatsapp": "WhatsApp",
+    "email": "Email",
+    "instagram": "Instagram",
+    "youtube": "YouTube",
+    "linkedin": "LinkedIn"
+  },
+  "labels": {
+    "name": "Nome",
+    "company": "Empresa",
+    "service": "Produto ou serviço",
+    "description": "Descrição do projeto",
+    "budget": "Orçamento",
+    "deadline": "Prazo"
+  },
+  "placeholders": {
+    "name": "Seu nome",
+    "company": "Empresa ou organização (opcional)",
+    "service": "Selecione um produto ou serviço",
+    "description": "O que você precisa, para quem e quais resultados deseja alcançar?",
+    "budget": "Selecione uma faixa de orçamento",
+    "deadline": "Selecione um prazo"
+  },
+  "budgetOptions": {
+    "discuss": "Preciso de orientação",
+    "under5": "Até R$5.000",
+    "5to15": "R$5.000 a R$15.000",
+    "15to50": "R$15.000 a R$50.000",
+    "over50": "Acima de R$50.000"
+  },
+  "deadlineOptions": {
+    "flexible": "Flexível / vamos conversar",
+    "month": "Em até um mês",
+    "quarter": "Em até três meses",
+    "later": "Mais de três meses"
+  },
+  "budgetHint": "Faixa de investimento disponível, diferente da estimativa da solução.",
+  "descriptionHint": "Entre 20 e 2.000 caracteres.",
+  "submit": "Continuar no WhatsApp",
+  "privacyHint": "Os detalhes viram uma mensagem no WhatsApp. Nada é salvo neste site.",
+  "unavailable": "O WhatsApp ainda não está configurado. Você pode preparar seu pedido, mas o envio está indisponível.",
+  "noScript": "Ative o JavaScript para validar seu pedido e continuar no WhatsApp.",
+  "errors": {
+    "required": "Preencha este campo.",
+    "name": "Informe um nome entre 2 e 100 caracteres.",
+    "company": "Use no máximo 150 caracteres.",
+    "description": "Descreva seu projeto em 20 a 2.000 caracteres.",
+    "option": "Selecione uma das opções disponíveis.",
+    "summary": "Revise os campos destacados."
+  },
+  "flow": {
+    "title": "Pedido de orçamento: VoidCube",
+    "value": "Valor",
+    "emptyCompany": "Não informada",
+    "opened": "WhatsApp aberto com seu pedido. Os detalhes continuam aqui.",
+    "blocked": "Não foi possível abrir o WhatsApp. Use o link abaixo para continuar.",
+    "retry": "Abrir mensagem preparada",
+    "context": "Contexto do projeto"
+  },
+  "wizard": {
+    "progress": "{current} de {total}",
+    "steps": {
+      "about": "Seus dados",
+      "solution": "Soluções",
+      "review": "Revisão"
+    },
+    "continue": "Continuar",
+    "back": "Voltar",
+    "editAbout": "Editar seus dados",
+    "editSolution": "Editar solução",
+    "choose": "Escolher uma solução",
+    "change": "Alterar solução",
+    "dialogTitle": "Encontre sua solução",
+    "dialogDescription": "Explore uma categoria, escolha um projeto e selecione os módulos disponíveis.",
+    "custom": "Projeto personalizado",
+    "customHint": "Uma solução construída para sua necessidade.",
+    "customDescription": "O que você precisa construir?",
+    "customPlaceholder": "Conte o que precisa, quem vai usar, o objetivo principal e o resultado esperado.",
+    "moduleTitle": "Escolha seus módulos",
+    "requiredModule": "Obrigatório",
+    "optionalModule": "Opcional",
+    "included": "Incluído no preço base",
+    "modules": "Módulos",
+    "noModulesSelected": "Nenhum módulo adicional selecionado",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar solução",
+    "backToProjects": "Voltar às soluções",
+    "selectionTitle": "Sua seleção",
+    "selectError": "Adicione pelo menos uma solução válida ao pedido.",
+    "estimate": "Total estimado",
+    "onRequest": "Sob consulta",
+    "partialEstimate": "{amount} + itens sob consulta",
+    "basePrice": "Preço base",
+    "estimateHint": "Esta é uma estimativa inicial, não um preço definitivo. Escopo, orçamento e prazo serão negociados.",
+    "budgetLabel": "Quanto pretende investir",
+    "emptyDescription": "A conversar",
+    "noSelection": "Nenhuma solução selecionada",
+    "close": "Fechar seleção",
+    "addModules": "Adicionar módulos",
+    "editModules": "Editar módulos",
+    "removeModule": "Remover módulo: {name}",
+    "customHelp": "Explique o que deseja construir e o resultado que espera.",
+    "addSolution": "Adicionar solução",
+    "selectedSolutions": "Soluções selecionadas",
+    "edit": "Editar",
+    "remove": "Remover",
+    "editSolutionLabel": "Editar solução: {name}",
+    "removeSolutionLabel": "Remover solução: {name}",
+    "editSolutions": "Editar soluções",
+    "solutionEstimate": "Estimativa da solução",
+    "consultationHint": "Os itens sob consulta não têm preço definido e serão avaliados antes do orçamento final."
+  },
+  "pricing": {
+    "initial": "Valor inicial",
+    "recurring": "Recorrência",
+    "intervals": {
+      "month": "{amount}/mês",
+      "year": "{amount}/ano"
+    },
+    "periodLabels": {
+      "month": "Mensalidade",
+      "year": "Anuidade"
+    }
+  },
+  "contextual": {
+    "title": "Orçamento para {name}",
+    "close": "Fechar orçamento"
+  }
+}

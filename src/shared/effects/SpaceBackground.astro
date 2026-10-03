@@ -1,9 +1,20 @@
 ---
-interface Props { readonly variant?: "default" | "auth"; }
-const { variant = "default" } = Astro.props;
+import "./spaceBackground.css";
+import type { SpaceBackgroundProps } from "./spaceBackgroundTypes";
+import { resolveSpaceBackground, shootingStarAt, spaceBackgroundStyle } from "./spaceBackgroundConfig";
+interface Props extends SpaceBackgroundProps {}
+const config = resolveSpaceBackground(Astro.props);
+const prefix = `space-${crypto.randomUUID()}`;
+const asteroidId = `${prefix}-asteroid`;
+const shootingStars = config.shootingStars.enabled && !config.shootingStars.continuous ? Array.from({ length: config.shootingStars.count }, (_, index) => shootingStarAt(index)) : [];
 ---
 <svg
-	class:list={["home-space-background", variant === "auth" && "[&_.nebula]:!animate-none [&_.shooting-star]:hidden [&_.star-field-small]:opacity-60 [&_.nebula]:opacity-80 md:[&_.nebula]:opacity-100"]}
+  class="home-space-background"
+  style={spaceBackgroundStyle(config)}
+  data-space-config={(config.asteroids.enabled || (config.shootingStars.enabled && config.shootingStars.continuous)) ? JSON.stringify(config) : undefined}
+  data-space-asteroid-id={asteroidId}
+  data-star-motion={String(config.stars.movement)}
+  data-nebula-motion={String(config.nebula.movement && config.nebula.speed > 0)}
 	viewBox="0 0 1600 1000"
 	preserveAspectRatio="xMidYMid slice"
 	aria-hidden="true"
@@ -11,35 +22,35 @@ const { variant = "default" } = Astro.props;
 >
 	<defs>
 		<!-- Fundo espacial -->
-		<radialGradient id="space-base" cx="50%" cy="28%" r="85%">
+		<radialGradient id={`${prefix}-space-base`} cx="50%" cy="28%" r="85%">
 			<stop offset="0%" class="space-base-start" />
 			<stop offset="55%" class="space-base-middle" />
 			<stop offset="100%" class="space-base-end" />
 		</radialGradient>
 
 		<!-- Nebulosa principal -->
-		<radialGradient id="nebula-primary" cx="50%" cy="50%" r="50%">
+		<radialGradient id={`${prefix}-nebula-primary`} cx="50%" cy="50%" r="50%">
 			<stop offset="0%" class="nebula-primary-core" />
 			<stop offset="45%" class="nebula-primary-middle" />
 			<stop offset="100%" class="nebula-transparent" />
 		</radialGradient>
 
 		<!-- Nebulosa secundária -->
-		<radialGradient id="nebula-tertiary" cx="50%" cy="50%" r="50%">
+		<radialGradient id={`${prefix}-nebula-tertiary`} cx="50%" cy="50%" r="50%">
 			<stop offset="0%" class="nebula-tertiary-core" />
 			<stop offset="45%" class="nebula-tertiary-middle" />
 			<stop offset="100%" class="nebula-transparent" />
 		</radialGradient>
 
 		<!-- Cauda da estrela cadente -->
-		<linearGradient id="shooting-star-tail" x1="0%" y1="50%" x2="100%" y2="50%">
+		<linearGradient id={`${prefix}-shooting-star-tail`} x1="0%" y1="50%" x2="100%" y2="50%">
 			<stop offset="0%" class="shooting-tail-start" />
 			<stop offset="75%" class="shooting-tail-middle" />
 			<stop offset="100%" class="shooting-tail-end" />
 		</linearGradient>
 
 		<!-- Campos repetidos aumentam densidade sem centenas de nós SVG. -->
-		<pattern id="star-field-small" width="360" height="280" patternUnits="userSpaceOnUse">
+		<pattern id={`${prefix}-star-field-small`} width="360" height="280" patternUnits="userSpaceOnUse" patternTransform={`scale(${1 / Math.sqrt(config.stars.density)})`}>
 			<g class="star-field-small">
 				<circle cx="18" cy="34" r="0.55" /><circle cx="74" cy="126" r="0.7" />
 				<circle cx="118" cy="52" r="0.45" /><circle cx="166" cy="214" r="0.65" />
@@ -51,19 +62,27 @@ const { variant = "default" } = Astro.props;
 			</g>
 		</pattern>
 
-		<pattern id="star-field-bright" width="620" height="460" patternUnits="userSpaceOnUse">
+		<pattern id={`${prefix}-star-field-bright`} width="620" height="460" patternUnits="userSpaceOnUse" patternTransform={`scale(${1 / Math.sqrt(config.stars.density)})`}>
 			<g class="star-field-bright">
 				<circle cx="52" cy="82" r="0.9" /><circle cx="174" cy="344" r="1.05" />
 				<circle cx="286" cy="168" r="0.8" /><circle cx="402" cy="418" r="0.95" />
 				<circle cx="508" cy="112" r="1.1" /><circle cx="594" cy="292" r="0.85" />
 			</g>
 		</pattern>
-	</defs>
+	    {config.asteroids.enabled && (
+      <symbol id={asteroidId} viewBox="0 0 120 100">
+        <path d="M14 28 41 8 80 14 108 42 96 79 65 94 27 81 6 55Z" class="fill-surface-container-low stroke-outline-variant" />
+        <path d="M14 28 41 8 61 35 36 58 6 55Z" class="fill-surface-variant/60" />
+        <path d="M61 35 80 14 108 42 81 57Z" class="fill-outline-variant/40" />
+        <path d="M36 58 61 35 81 57 65 94 27 81Z" class="fill-surface-container-high" />
+      </symbol>
+    )}
+  </defs>
 
 	<!-- Fundo -->
-	<rect width="1600" height="1000" fill="url(#space-base)" />
-	<rect width="1600" height="1000" fill="url(#star-field-small)" />
-	<rect width="1600" height="1000" fill="url(#star-field-bright)" />
+	<rect width="1600" height="1000" fill={`url(#${prefix}-space-base)`} />
+	<g class="space-star-layer space-star-layer-small"><rect x="-240" y="-240" width="2080" height="1480" fill={`url(#${prefix}-star-field-small)`} /></g>
+	<g class="space-star-layer space-star-layer-bright"><rect x="-240" y="-240" width="2080" height="1480" fill={`url(#${prefix}-star-field-bright)`} /></g>
 
 	<!-- Nebulosas -->
 	<g class="nebula nebula-primary">
@@ -72,17 +91,17 @@ const { variant = "default" } = Astro.props;
 			cy="260"
 			rx="430"
 			ry="240"
-			fill="url(#nebula-primary)"
+			fill={`url(#${prefix}-nebula-primary)`}
 		/>
 		<ellipse
 			cx="500"
 			cy="190"
 			rx="280"
 			ry="150"
-			fill="url(#nebula-primary)"
+			fill={`url(#${prefix}-nebula-primary)`}
 			opacity="0.45"
 		/>
-		<ellipse cx="760" cy="390" rx="350" ry="110" fill="url(#nebula-primary)" opacity="0.24" />
+		<ellipse cx="760" cy="390" rx="350" ry="110" fill={`url(#${prefix}-nebula-primary)`} opacity="0.24" />
 	</g>
 
 	<g class="nebula nebula-tertiary">
@@ -91,21 +110,21 @@ const { variant = "default" } = Astro.props;
 			cy="730"
 			rx="480"
 			ry="280"
-			fill="url(#nebula-tertiary)"
+			fill={`url(#${prefix}-nebula-tertiary)`}
 		/>
 		<ellipse
 			cx="1170"
 			cy="820"
 			rx="300"
 			ry="170"
-			fill="url(#nebula-tertiary)"
+			fill={`url(#${prefix}-nebula-tertiary)`}
 			opacity="0.4"
 		/>
-		<ellipse cx="920" cy="670" rx="380" ry="125" fill="url(#nebula-tertiary)" opacity="0.2" />
+		<ellipse cx="920" cy="670" rx="380" ry="125" fill={`url(#${prefix}-nebula-tertiary)`} opacity="0.2" />
 	</g>
 
 	<!-- Estrelas -->
-	<g class="stars">
+	<g class="stars space-star-layer space-star-layer-large">
 		<circle cx="92" cy="118" r="1.5" />
 		<circle cx="184" cy="430" r="1" opacity="0.52" />
 		<circle cx="278" cy="78" r="1" opacity="0.66" />
@@ -132,281 +151,24 @@ const { variant = "default" } = Astro.props;
 		<circle cx="820" cy="440" r="0.6" opacity="0.38" />
 	</g>
 
-	<!-- Estrelas cadentes -->
-	<g class="shooting-star shooting-star-a">
-		<line
-			x1="90"
-			y1="220"
-			x2="250"
-			y2="130"
-			stroke="url(#shooting-star-tail)"
-			stroke-width="2"
-			stroke-linecap="round"
-		/>
-		<circle cx="250" cy="130" r="1.8" class="shooting-head" />
-	</g>
-
-	<g class="shooting-star shooting-star-b">
-		<line
-			x1="1020"
-			y1="350"
-			x2="1140"
-			y2="282"
-			stroke="url(#shooting-star-tail)"
-			stroke-width="1.5"
-			stroke-linecap="round"
-		/>
-		<circle cx="1140" cy="282" r="1.5" class="shooting-head" />
-	</g>
-
-	<g class="shooting-star shooting-star-c">
-		<line
-			x1="560"
-			y1="850"
-			x2="650"
-			y2="798"
-			stroke="url(#shooting-star-tail)"
-			stroke-width="1.5"
-			stroke-linecap="round"
-		/>
-		<circle cx="650" cy="798" r="1.4" class="shooting-head" />
-	</g>
+  <!-- One renderer and one keyframe serve every configured shooting star. -->
+  {shootingStars.map((star, index) => (
+    <g class="shooting-star" data-space-shooting-index={index} data-space-continuous={config.shootingStars.continuous} data-space-mobile-hidden={index >= config.shootingStars.mobileCount} style={{ "--space-shoot-duration": `${star.duration / config.shootingStars.speed}s`, "--space-shoot-delay": `${star.delay / config.shootingStars.speed}s`, "--space-shoot-x": `${star.travelX}px`, "--space-shoot-y": `${star.travelY}px` }}>
+      <line x1={star.x} y1={star.y} x2={star.x + star.dx} y2={star.y + star.dy} stroke={`url(#${prefix}-shooting-star-tail)`} stroke-width={star.width} stroke-linecap="round" />
+      <circle cx={star.x + star.dx} cy={star.y + star.dy} r={star.radius} class="shooting-head" />
+    </g>
+  ))}
+    {config.shootingStars.enabled && config.shootingStars.continuous && (
+    <g data-space-shooting-layer>
+      <g data-space-shooting-template visibility="hidden">
+        <line stroke={`url(#${prefix}-shooting-star-tail)`} stroke-width="1.5" stroke-linecap="round" />
+        <circle r="1.5" class="shooting-head" />
+      </g>
+    </g>
+  )}
+  {config.asteroids.enabled && <g data-space-asteroids />}
 </svg>
-
-<style>
-	.home-space-background {
-		position: fixed;
-		inset: 0;
-		z-index: 0;
-
-		width: 100%;
-		height: 100%;
-
-		pointer-events: none;
-		user-select: none;
-
-		background: var(--color-background);
-	}
-
-	/*
-	 * Background
-	 */
-
-	.space-base-start {
-		stop-color: var(--color-surface-container-low);
-	}
-
-	.space-base-middle {
-		stop-color: var(--color-background);
-	}
-
-	.space-base-end {
-		stop-color: var(--color-surface-container-lowest);
-	}
-
-	/*
-	 * Nebulosa primary
-	 */
-
-	.nebula-primary-core {
-		stop-color: var(--color-primary);
-		stop-opacity: 0.11;
-	}
-
-	.nebula-primary-middle {
-		stop-color: var(--color-primary-container);
-		stop-opacity: 0.055;
-	}
-
-	/*
-	 * Nebulosa tertiary
-	 */
-
-	.nebula-tertiary-core {
-		stop-color: var(--color-tertiary);
-		stop-opacity: 0.09;
-	}
-
-	.nebula-tertiary-middle {
-		stop-color: var(--color-tertiary-container);
-		stop-opacity: 0.045;
-	}
-
-	.nebula-transparent {
-		stop-color: var(--color-background);
-		stop-opacity: 0;
-	}
-
-	/*
-	 * Estrelas
-	 */
-
-	.stars {
-		fill: var(--color-on-background);
-	}
-
-	.star-field-small {
-		fill: var(--color-on-surface-variant);
-		opacity: 0.42;
-	}
-
-	.star-field-bright {
-		fill: var(--color-on-background);
-		opacity: 0.58;
-	}
-
-	/*
-	 * Shooting stars
-	 */
-
-	.shooting-tail-start {
-		stop-color: var(--color-primary-fixed);
-		stop-opacity: 0;
-	}
-
-	.shooting-tail-middle {
-		stop-color: var(--color-primary-fixed);
-		stop-opacity: 0.24;
-	}
-
-	.shooting-tail-end {
-		stop-color: var(--color-on-background);
-		stop-opacity: 0.85;
-	}
-
-	.shooting-head {
-		fill: var(--color-on-background);
-	}
-
-	/*
-	 * Movimento
-	 */
-
-	.nebula,
-	.shooting-star {
-		transform-box: fill-box;
-		transform-origin: center;
-	}
-
-	.nebula-primary {
-		animation: nebula-primary-drift 32s ease-in-out infinite alternate;
-	}
-
-	.nebula-tertiary {
-		animation: nebula-tertiary-drift 38s ease-in-out infinite alternate;
-	}
-
-	.shooting-star {
-		opacity: 0;
-	}
-
-	.shooting-star-a {
-		animation: shooting-star-a 11s ease-out 2s infinite;
-	}
-
-	.shooting-star-b {
-		animation: shooting-star-b 17s ease-out 8s infinite;
-	}
-
-	.shooting-star-c {
-		animation: shooting-star-c 23s ease-out 14s infinite;
-	}
-
-	@keyframes nebula-primary-drift {
-		to {
-			transform: translate3d(55px, 24px, 0) scale(1.04);
-			opacity: 0.82;
-		}
-	}
-
-	@keyframes nebula-tertiary-drift {
-		to {
-			transform: translate3d(-48px, -28px, 0) scale(1.05);
-			opacity: 0.8;
-		}
-	}
-
-	@keyframes shooting-star-a {
-		0%,
-		78%,
-		100% {
-			transform: translate3d(0, 0, 0);
-			opacity: 0;
-		}
-
-		80% {
-			opacity: 0.85;
-		}
-
-		91% {
-			transform: translate3d(180px, -105px, 0);
-			opacity: 0;
-		}
-	}
-
-	@keyframes shooting-star-b {
-		0%,
-		82%,
-		100% {
-			transform: translate3d(0, 0, 0);
-			opacity: 0;
-		}
-
-		84% {
-			opacity: 0.7;
-		}
-
-		93% {
-			transform: translate3d(155px, -90px, 0);
-			opacity: 0;
-		}
-	}
-
-	@keyframes shooting-star-c {
-		0%,
-		85%,
-		100% {
-			transform: translate3d(0, 0, 0);
-			opacity: 0;
-		}
-
-		87% {
-			opacity: 0.65;
-		}
-
-		95% {
-			transform: translate3d(135px, -78px, 0);
-			opacity: 0;
-		}
-	}
-
-	@media (max-width: 767px) {
-		/*
-		 * Mobile mantém as nebulosas, mas reduz animações decorativas.
-		 */
-		.shooting-star-b,
-		.shooting-star-c {
-			display: none;
-		}
-
-		.nebula-primary {
-			animation-duration: 42s;
-		}
-
-		.nebula-tertiary {
-			animation-duration: 48s;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.nebula,
-		.shooting-star {
-			animation: none;
-		}
-
-		.shooting-star {
-			display: none;
-		}
-	}
-</style>
-
+<script>
+  import { initSpaceBackgrounds } from "./spaceBackgroundRuntime";
+  initSpaceBackgrounds();
+</script>

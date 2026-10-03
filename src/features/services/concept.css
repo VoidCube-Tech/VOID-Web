@@ -1,0 +1,88 @@
+@reference '../../styles/global.css';
+
+/* The frame is an original HTML demonstration, not a portfolio screenshot. */
+.concept-frame {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  container-type: inline-size;
+  border: 1px solid color-mix(in srgb, var(--color-outline) 28%, transparent);
+  border-radius: var(--radius-ui);
+  background: var(--color-surface-container-lowest);
+  box-shadow: 0 calc(var(--spacing) * 12) calc(var(--spacing) * 24) calc(var(--spacing) * -12) color-mix(in srgb, var(--color-shadow) 60%, transparent);
+}
+.concept-screen { position: relative; padding: calc(var(--spacing) * 7); }
+.concept-composition { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: calc(var(--spacing) * 8); min-height: calc(var(--spacing) * 80); padding-block: calc(var(--spacing) * 8); }
+.concept-headline { font-size: clamp(var(--text-3xl), 6cqi, var(--text-6xl)); max-width: 10ch; }
+.concept-description { font-size: clamp(var(--text-sm), 1.8cqi, var(--text-base)); }
+.concept-art { aspect-ratio: 1; max-width: calc(var(--spacing) * 80); width: 100%; justify-self: center; }
+.concept-wireframe { display: none; padding: calc(var(--spacing) * 7); background: var(--color-surface-container-lowest); }
+.concept-distractions { opacity: 0; visibility: hidden; }
+[data-concept-scene='hero'] .concept-distractions { opacity: 0.6; visibility: visible; }
+.concept-story-frame { max-width: var(--container-5xl); margin-inline: auto; }
+.concept-device-stage { display: flex; justify-content: center; min-height: calc(var(--spacing) * 145); }
+.concept-device-stage .concept-frame { align-self: start; transition: width var(--duration-ui-slow) var(--ease-ui); }
+.concept-devices:has(input[value='desktop']:checked) .concept-frame { width: 100%; }
+.concept-devices:has(input[value='tablet']:checked) .concept-frame { width: min(100%, calc(var(--spacing) * 160)); }
+.concept-devices:has(input[value='mobile']:checked) .concept-frame { width: min(100%, calc(var(--spacing) * 82)); }
+.concept-devices:has(input[value='desktop']:checked) [data-device='desktop'],
+.concept-devices:has(input[value='tablet']:checked) [data-device='tablet'],
+.concept-devices:has(input[value='mobile']:checked) [data-device='mobile'] { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-container); }
+.concept-devices:has(input[value='desktop']:focus-visible) [data-device='desktop'],
+.concept-devices:has(input[value='tablet']:focus-visible) [data-device='tablet'],
+.concept-devices:has(input[value='mobile']:focus-visible) [data-device='mobile'] { outline: 2px solid var(--color-primary); outline-offset: var(--spacing); }
+@container (width < theme(--breakpoint-md)) {
+  .concept-screen { padding: calc(var(--spacing) * 5); }
+  .concept-composition { gap: calc(var(--spacing) * 4); min-height: calc(var(--spacing) * 70); }
+  .concept-distractions { display: none; }
+}
+@container (width < theme(--breakpoint-sm)) {
+  .concept-composition { grid-template-columns: 1fr; padding-block: calc(var(--spacing) * 6); }
+  .concept-headline { font-size: var(--text-3xl); max-width: 12ch; }
+  .concept-art { width: 60%; max-width: calc(var(--spacing) * 42); }
+  .concept-description { font-size: var(--text-sm); }
+}
+/* Short scroll sequences, with a complete final composition as the fallback. */
+@media (width >= theme(--breakpoint-md)) and (prefers-reduced-motion: no-preference) {
+  .service-cinematic .concept-hero-frame { transform: perspective(calc(var(--spacing) * 300)) rotateX(4deg); transform-origin: center top; }
+  @supports (animation-timeline: view()) {
+    .concept-scene { view-timeline-name: --concept-story; view-timeline-axis: block; }
+    .concept-scene[data-scene='focus'] .concept-distractions {
+      visibility: visible;
+      animation: concept-clear var(--duration-ui-slow) var(--ease-ui) both;
+      animation-timeline: --concept-story;
+      animation-range: entry 25% cover 45%;
+    }
+    .concept-scene[data-scene='focus'] .concept-art {
+      animation: concept-quiet var(--duration-ui-slow) var(--ease-ui) both;
+      animation-timeline: --concept-story;
+      animation-range: entry 25% cover 45%;
+    }
+    .concept-scene[data-scene='build'] .concept-wireframe {
+      display: block;
+      animation: concept-clear var(--duration-ui-slow) var(--ease-ui) both;
+      animation-timeline: --concept-story;
+      animation-range: entry 20% cover 25%;
+    }
+    .concept-scene[data-scene='build'] .concept-headline,
+    .concept-scene[data-scene='build'] .concept-description,
+    .concept-scene[data-scene='build'] .concept-art,
+    .concept-scene[data-scene='build'] .concept-action {
+      animation: concept-form var(--duration-ui-slow) var(--ease-ui) both;
+      animation-timeline: --concept-story;
+      animation-range: entry 50% cover 35%;
+    }
+    .concept-scene[data-scene='build'] .concept-art { animation-range: cover 20% cover 40%; }
+    .concept-scene[data-scene='build'] .concept-action { animation-range: cover 30% cover 45%; }
+  }
+}
+@keyframes concept-clear { from { opacity: 1; } to { opacity: 0; } }
+@keyframes concept-quiet { from { opacity: 1; transform: scale(1); } to { opacity: 0.15; transform: scale(0.9); } }
+@keyframes concept-form { from { opacity: 0; transform: translateY(calc(var(--spacing) * 3)); } to { opacity: 1; transform: translateY(0); } }
+@media (width < theme(--breakpoint-md)) {
+  .concept-device-stage { min-height: calc(var(--spacing) * 150); }
+  .service-cinematic .concept-hero-frame { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .concept-frame, .concept-frame * { animation: none !important; transition: none !important; transform: none !important; }
+}

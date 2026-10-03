@@ -1,0 +1,40 @@
+---
+import { defaultLocale, locales, type Locale } from "../../i18n/config";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import RevealOnView from "../../shared/motion/RevealOnView.astro";
+import { TypingText } from "../../shared/components/TypingText";
+import { getLocalizedPath } from "../navigation";
+import { getQuoteCatalog } from "../catalog";
+import { contactContent } from "./content";
+import ContactInfo from "./components/ContactInfo.astro";
+import { QuoteForm } from "./components/QuoteForm";
+import "../../shared/effects/liquid-glass/liquidGlass.css";
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const content = contactContent[locale];
+const catalog = getQuoteCatalog(locale);
+const alternates = Astro.site ? [...locales.map(language => ({ hreflang: language, href: new URL(getLocalizedPath("/contact", language), Astro.site) })), { hreflang: "x-default", href: new URL(getLocalizedPath("/contact", defaultLocale), Astro.site) }] : [];
+---
+<SiteLayout lang={locale} title={content.seo.title} description={content.seo.description} alternates={alternates} robots="index, follow, max-image-preview:large" socialLocale={locale === "pt-BR" ? "pt_BR" : "en_US"}>
+  <main class="relative z-10 mx-auto min-h-screen max-w-6xl px-6 pt-36 pb-28 text-on-surface sm:px-10 sm:pt-40 sm:pb-40">
+    <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="min-w-0 lg:pt-8">
+        <p data-reveal class="hidden text-sm font-bold text-primary md:block">{content.eyebrow}</p>
+        <h1 data-reveal data-reveal-delay="1" class="font-secondary text-5xl leading-tight sm:text-6xl md:mt-5"><TypingText client:load messages={content.headlines} accessibleText={content.headlines[0]} typeSpeed={75} deleteSpeed={40} pauseAfterType={2200} pauseAfterDelete={350} startDelay={400} loop={true} cursor={true} cursorCharacter="|" cursorBlinkSpeed={650} /></h1>
+        <p data-reveal data-reveal-delay="2" class="mt-6 hidden max-w-lg text-lg leading-relaxed text-on-surface-variant md:block"><TypingText client:load messages={[content.description]} loop={false} cursor={false} typeSpeed={6} startDelay={550} /></p>
+        <ContactInfo content={content} />
+      </div>
+      <div data-reveal data-reveal-delay="2" class="min-w-0">
+        <QuoteForm client:load content={content} catalog={catalog} locale={locale} />
+        <noscript><p class="mt-4 text-on-surface-variant">{content.noScript}</p></noscript>
+      </div>
+    </div>
+  </main>
+  <RevealOnView />
+</SiteLayout>
+
+
+
+
+
+

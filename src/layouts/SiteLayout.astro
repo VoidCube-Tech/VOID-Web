@@ -6,29 +6,24 @@ import { Header } from "../features/navigation/components/Header";
 import { navigationContent } from "../features/navigation/content";
 import SpaceBackground from "../shared/effects/SpaceBackground.astro";
 
-interface Props {
+import DefaultHead, { type Props as HeadProps } from "../shared/metadata/DefaultHead.astro";
+
+interface Props extends HeadProps {
 	readonly lang: Locale;
-	readonly title: string;
+	readonly showFooter?: boolean;
 }
 
-const { lang, title } = Astro.props;
+const { lang, showFooter = true, ...headProps } = Astro.props;
 ---
 
 <html lang={lang}>
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
+	<DefaultHead {...headProps}>
 		<slot name="head" />
-	</head>
+	</DefaultHead>
 	<body>
 		<Header client:load content={navigationContent[lang]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={lang} />
 		<SpaceBackground />
 		<slot />
-		<Footer locale={lang} currentPath={`${Astro.url.pathname}${Astro.url.search}`} />
+		{showFooter && <Footer locale={lang} currentPath={`${Astro.url.pathname}${Astro.url.search}`} />}
 	</body>
 </html>
-
-
