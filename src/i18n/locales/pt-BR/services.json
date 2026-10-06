@@ -1,38 +1,38 @@
 {
   "labels": {
     "modules": "Monte sua solução",
-    "pricing": "Um escopo que acompanha seu negócio",
-    "consultation": "Preço sob consulta",
+    "pricing": "Um investimento para o próximo passo",
+    "consultation": "Valor sob consulta",
     "from": "A partir de",
     "included": "Incluído",
-    "media": "Veja a experiência"
+    "media": "Veja como funciona"
   },
   "services": {
     "sites": {
       "name": "Landing Page",
-      "description": "Uma presença digital para sua marca, serviços e ideias.",
+      "description": "Uma presença digital clara para apresentar sua oferta, fortalecer sua marca e transformar interesse em oportunidade.",
       "seo": {
-        "title": "Landing Page | VoidCube",
-        "description": "Uma presença digital para sua marca, serviços e ideias."
+        "title": "Landing Page",
+        "description": "Crie uma presença digital clara para apresentar sua marca, seus serviços e transformar interesse em oportunidade."
       },
       "hero": {
-        "title": "Dê ao seu negócio um lugar para crescer.",
-        "description": "Uma presença digital para sua marca, serviços e ideias."
+        "title": "Dê ao seu negócio um lugar para ser entendido.",
+        "description": "Apresente sua marca, sua oferta e o próximo passo em uma experiência criada para transformar atenção em oportunidade."
       },
       "problem": {
-        "title": "Quando sua presença está espalhada, entender seu negócio exige esforço."
+        "title": "Quando sua presença está espalhada, entender o valor do seu negócio exige esforço."
       },
       "solution": {
-        "title": "Seu negócio, cada vez mais claro.",
-        "description": "Veja como uma presença organizada ganha novas camadas. Escolha um ponto para explorar."
+        "title": "Tudo o que importa, no lugar certo.",
+        "description": "Veja como uma presença bem organizada deixa sua oferta mais clara e cria um caminho natural até o contato."
       },
       "results": {
-        "title": "Encontrar. Entender. Dar o próximo passo.",
-        "description": "Um site dá à sua marca um lugar para explicar, orientar e abrir uma conversa."
+        "title": "Encontrar. Entender. Agir.",
+        "description": "Uma Landing Page reúne contexto, oferta e contato em uma experiência feita para conduzir o visitante ao próximo passo."
       },
       "cta": {
-        "title": "Vamos dar forma à sua solução.",
-        "description": "Conte o que seu negócio precisa. Definimos o escopo juntos.",
+        "title": "Vamos transformar sua oferta em uma presença que trabalha por você.",
+        "description": "Conte o que seu negócio precisa comunicar. Construímos juntos uma experiência clara, objetiva e preparada para crescer.",
         "label": "Solicitar orçamento"
       },
       "messageBand": {
@@ -41,43 +41,46 @@
           "Serviços difíceis de encontrar.",
           "Contato fora de vista.",
           "Sua marca sem contexto.",
-          "Informação que não se conecta.",
+          "Informações que não se conectam.",
           "Nenhum próximo passo claro."
         ],
-        "resolution": "Um site reúne sua marca, serviços e ideias em uma experiência clara.",
+        "resolution": "Uma Landing Page reúne sua marca, sua oferta e o próximo passo em uma experiência fácil de entender.",
         "pauseLabel": "Pausar movimento",
         "resumeLabel": "Retomar movimento"
       },
       "guidedDemo": {
-        "label": "Demonstração conceitual. Cada escolha acrescenta uma camada; não representa um projeto de cliente.",
-        "selectionLabel": "Explore o que um site pode organizar",
-        "controls": { "open": "Personalizar demonstração", "close": "Fechar controles" },
+        "label": "Demonstração conceitual. Cada escolha acrescenta uma camada e não representa um projeto de cliente.",
+        "selectionLabel": "Veja o que sua presença pode organizar",
+        "controls": {
+          "open": "Personalizar demonstração",
+          "close": "Fechar controles"
+        },
         "steps": [
           {
-            "title": "Apresente o que importa",
-            "description": "Sua marca, sua oferta e a forma de começar uma conversa.",
-            "outcome": "A base: uma mensagem objetiva, seus serviços e um contato visível."
+            "title": "Mostre o que realmente importa",
+            "description": "Sua marca, sua oferta e uma forma clara de começar uma conversa.",
+            "outcome": "Uma mensagem direta, uma oferta compreensível e um contato fácil de encontrar."
           },
           {
-            "title": "Um caminho mais claro até seu negócio",
-            "description": "Organize a navegação e destaque o próximo passo.",
-            "outcome": "A experiência ganha direção: a pessoa sabe onde está e como continuar."
+            "title": "Crie um caminho até a decisão",
+            "description": "Organize a experiência e deixe evidente o que a pessoa pode fazer em seguida.",
+            "outcome": "O visitante entende onde está, o que você oferece e como continuar."
           },
           {
-            "title": "Feito para seu contexto",
-            "description": "Identidade, atendimento e conexões alinhados à sua operação.",
-            "outcome": "A base se adapta ao negócio. Conteúdo e conexões são definidos com você."
+            "title": "Faça a experiência parecer sua",
+            "description": "Identidade, atendimento e conexões alinhados ao jeito que seu negócio funciona.",
+            "outcome": "A estrutura se adapta ao seu contexto em vez de obrigar seu negócio a se adaptar a ela."
           },
           {
-            "title": "Um escopo que acompanha seu negócio",
-            "description": "Abra espaço para novas páginas, ofertas e possibilidades.",
-            "outcome": "Sua presença pode evoluir sem perder clareza. Definimos as próximas capacidades no escopo."
+            "title": "Deixe espaço para o próximo passo",
+            "description": "Expanda sua presença conforme novas ofertas, páginas e possibilidades surgirem.",
+            "outcome": "Sua presença evolui sem perder clareza nem exigir um novo começo."
           }
         ],
         "preview": {
           "brand": "Sua marca",
-          "headline": "Seu negócio. Bem apresentado.",
-          "description": "O que você faz, para quem faz e como pode ajudar.",
+          "headline": "Seu negócio. Fácil de entender.",
+          "description": "O que você faz, para quem faz e por que vale a pena conversar.",
           "action": "Fale com a gente",
           "navigation": [
             "Sobre",
@@ -90,13 +93,13 @@
             "Seu público",
             "Como começar"
           ],
-          "contextTitle": "Adaptado à sua operação",
+          "contextTitle": "Feito para o seu contexto",
           "contextItems": [
             "Sua identidade",
             "Seu atendimento",
             "Suas conexões"
           ],
-          "expansionTitle": "Espaço para o próximo capítulo",
+          "expansionTitle": "Pronto para o próximo capítulo",
           "expansionItems": [
             "Novas páginas",
             "Novas ofertas",
@@ -105,48 +108,48 @@
         }
       },
       "insightPanel": {
-        "label": "Clareza para quem chega. Uma base para quem cresce.",
+        "label": "Clareza para quem chega. Estrutura para quem cresce.",
         "research": {
           "value": "79%",
-          "statement": "dos compradores online entrevistados dizem sentir mais confiança quando fazem a pesquisa necessária.",
-          "relevance": "Informações fáceis de encontrar ajudam a orientar a decisão. Seu site pode reunir as respostas sobre seu negócio nesse momento.",
+          "statement": "dos compradores online entrevistados dizem sentir mais confiança quando conseguem fazer a pesquisa necessária.",
+          "relevance": "Quando as respostas são fáceis de encontrar, decidir fica mais simples. Sua presença digital pode reunir o que a pessoa precisa saber antes de conversar com você.",
           "source": {
             "label": "Ler pesquisa Google/Ipsos",
             "shortAttribution": "Google/Ipsos, The Relevance Factor, 2024",
             "href": "https://business.google.com/uk/think/consumer-insights/build-confident-consumers-to-improve-metrics/",
-            "context": "Google/Ipsos, The Relevance Factor. Março de 2024. 18.003 compradores online de 18 anos ou mais, em 18 mercados, incluindo o Brasil. Estudo sobre compras; não mede resultados de sites da VoidCube."
+            "context": "Google/Ipsos, The Relevance Factor. Março de 2024. 18.003 compradores online de 18 anos ou mais, em 18 mercados, incluindo o Brasil. Estudo sobre compras e não sobre resultados de sites da VoidCube."
           }
         },
         "items": [
           {
-            "title": "Sua marca faz sentido.",
-            "description": "Apresentação, serviços e contexto reunidos em um lugar fácil de seguir.",
+            "title": "Sua marca passa a fazer sentido.",
+            "description": "Apresentação, oferta e contexto reunidos em uma experiência fácil de acompanhar.",
             "symbol": "clarity",
             "mobile": {
               "title": "Sua marca faz sentido.",
-              "description": "Marca, serviços e contexto em um lugar."
+              "description": "Marca, oferta e contexto em um só lugar."
             }
           },
           {
-            "title": "O contato encontra um caminho.",
-            "description": "Canais visíveis e uma ação clara ajudam quem quer conversar a encontrar você.",
+            "title": "O interesse encontra um próximo passo.",
+            "description": "Contato visível e uma ação clara ajudam quem já tem interesse a chegar até você.",
             "symbol": "contact",
             "mobile": {
-              "title": "Um contato mais fácil.",
-              "description": "Canais visíveis. Próximo passo claro."
+              "title": "Um caminho até o contato.",
+              "description": "Menos procura. Próximo passo claro."
             }
           },
           {
-            "title": "Seu próximo capítulo tem uma base.",
-            "description": "Novos conteúdos e possibilidades entram em uma estrutura pensada para seu negócio.",
+            "title": "Sua presença fica pronta para crescer.",
+            "description": "Novos conteúdos, ofertas e conexões entram em uma estrutura preparada para evoluir.",
             "symbol": "growth",
             "mobile": {
               "title": "Uma base para crescer.",
-              "description": "Espaço para novos conteúdos e possibilidades."
+              "description": "Espaço para novas ofertas e possibilidades."
             }
           }
         ],
-        "bridge": "Da primeira descoberta à próxima conversa. Vamos organizar esse caminho?"
+        "bridge": "Da primeira impressão até a próxima conversa. Vamos organizar esse caminho?"
       },
       "page": {
         "preset": "default",
@@ -170,71 +173,71 @@
     },
     "void-events": {
       "name": "Organizador de Eventos",
-      "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada.",
+      "description": "Organize eventos, vagas e confirmações em uma experiência simples para sua equipe e para quem participa.",
       "hero": {
-        "title": "Cada evento. Cada vaga. Todo mundo no lugar certo.",
-        "description": "Organize eventos com capacidade limitada e saiba quem realmente confirmou presença.",
+        "title": "Cada evento. Cada vaga. Tudo sob controle.",
+        "description": "Organize eventos com capacidade limitada, acompanhe confirmações e saiba exatamente quem vai participar.",
         "actionLabel": "Organizar meus eventos"
       },
       "problem": {
-        "title": "Quando as confirmações ficam espalhadas, organizar vira conferir tudo duas vezes."
+        "title": "Se você precisa perguntar quem confirmou, ainda existe algo para organizar."
       },
       "solution": {
-        "title": "Uma aula especial também é um evento. Uma sessão também. Uma experiência também.",
+        "title": "Uma aula também é um evento. Uma sessão também. Uma experiência também.",
         "items": [
           {
             "title": "Academias e estúdios",
-            "description": "Aulas especiais, workshops, treinos e turmas limitadas."
+            "description": "Organize aulas especiais, workshops, treinos e turmas com vagas limitadas."
           },
           {
             "title": "Espaços e locais",
-            "description": "Sessões, encontros e experiências com capacidade controlada."
+            "description": "Controle sessões, encontros e experiências sem perder de vista a capacidade."
           },
           {
             "title": "Empresas",
-            "description": "Treinamentos, workshops e encontros internos."
+            "description": "Centralize treinamentos, workshops e encontros internos em uma experiência organizada."
           },
           {
             "title": "Comunidades",
-            "description": "Encontros recorrentes onde saber quem vai faz a diferença."
+            "description": "Saiba quem realmente vai participar de encontros e experiências recorrentes."
           }
         ]
       },
       "features": {
-        "title": "Da abertura das vagas à lista confirmada.",
-        "description": "Experimente uma confirmação. Conecte uma página. O evento continua no centro."
+        "title": "Da primeira vaga à lista confirmada.",
+        "description": "Crie o evento, acompanhe as confirmações e conecte a experiência ao seu espaço digital."
       },
       "results": {
-        "title": "Você organiza o evento. A plataforma organiza as confirmações.",
+        "title": "Você cuida do evento. A plataforma mantém tudo organizado.",
         "items": [
           {
             "title": "Menos conferência manual",
-            "description": "Uma visão clara de quem confirmou."
+            "description": "Veja quem confirmou sem precisar procurar em mensagens, listas ou planilhas."
           },
           {
-            "title": "Capacidade sob controle",
-            "description": "Saiba quantas vagas ainda existem."
+            "title": "Capacidade sempre visível",
+            "description": "Saiba quantas vagas foram preenchidas e quantas ainda estão disponíveis."
           },
           {
-            "title": "Mais clareza para sua operação",
-            "description": "Evento, horário e participantes no mesmo lugar."
+            "title": "Mais clareza na operação",
+            "description": "Evento, horário, capacidade e participantes reunidos no mesmo lugar."
           },
           {
-            "title": "Estrutura para repetir",
-            "description": "Organize eventos recorrentes sem recomeçar do zero."
+            "title": "Pronto para repetir",
+            "description": "Organize novos eventos sem reconstruir o processo a cada edição."
           }
         ]
       },
       "process": {
-        "title": "Lotado é diferente de desorganizado.",
-        "description": "Chegar à capacidade é bom quando você sabe quem confirmou — e quando não cabe mais ninguém."
+        "title": "Lotado pode ser ótimo. Desorganizado, não.",
+        "description": "Chegar à capacidade é muito melhor quando você sabe exatamente quem confirmou e quando as vagas acabaram."
       },
       "integrations": {
-        "title": "Você olha e sabe."
+        "title": "Você abre. Olha. E sabe."
       },
       "cta": {
         "title": "Seu próximo evento pode começar organizado.",
-        "description": "Conte como sua operação funciona e montamos o fluxo certo para ela.",
+        "description": "Conte como seus eventos funcionam. Vamos estruturar uma experiência mais simples para sua equipe e para quem participa.",
         "label": "Solicitar orçamento"
       },
       "messageBand": {
@@ -246,14 +249,14 @@
           "Essa turma já lotou?",
           "Quem está nesse horário?"
         ],
-        "resolution": "Um lugar para saber o que vai acontecer — e quem realmente vai estar lá.",
+        "resolution": "Um único lugar para saber o que vai acontecer, quantas vagas restam e quem realmente vai estar lá.",
         "pauseLabel": "Pausar movimento",
         "resumeLabel": "Retomar movimento"
       },
       "modules": {
         "event-page": {
           "title": "Criar Site / Página do evento",
-          "description": "Uma nova presença digital para sua empresa ou uma página dedicada aos seus eventos.",
+          "description": "Crie uma presença digital para apresentar seus eventos e transformar interesse em confirmação.",
           "pricing": {
             "initialLabel": "Criação",
             "recurringLabel": "Suporte e manutenção",
@@ -261,33 +264,33 @@
           }
         },
         "existing-site": {
-          "title": "Importar / integrar site existente",
-          "description": "Conecte a plataforma ao site que sua empresa já possui. A importação é gratuita; a mensalidade cobre o acompanhamento posterior.",
+          "title": "Integrar site existente",
+          "description": "Conecte o Organizador de Eventos ao site que sua empresa já utiliza. A integração inicial é gratuita e a mensalidade mantém tudo funcionando e acompanhado.",
           "pricing": {
-            "initialLabel": "Importação",
+            "initialLabel": "Integração",
             "freeInitialLabel": "Gratuita",
             "recurringLabel": "Suporte e manutenção",
-            "recurringDescription": "Inclui suporte, correções e manutenção contínua da integração/site."
+            "recurringDescription": "Inclui suporte, correções e manutenção contínua da integração com o site."
           }
         },
         "order-landing-page": {
           "title": "Usar Landing Page deste orçamento",
-          "description": "Conecte o Organizador de Eventos à Landing Page já adicionada ao pedido, sem nova cobrança de criação ou mensalidade.",
-          "associationDescription": "Usa a Landing Page adicionada neste orçamento"
+          "description": "Conecte o Organizador de Eventos à Landing Page já adicionada ao pedido sem pagar novamente pela criação ou mensalidade.",
+          "associationDescription": "Conectado à Landing Page deste orçamento"
         },
         "online-payment": {
           "title": "Pagamento online",
-          "description": "Receba pagamentos diretamente no fluxo do evento."
+          "description": "Permita que inscrições e pagamentos façam parte da mesma experiência do evento."
         }
       },
       "eventDemo": {
-        "label": "Demonstração conceitual. Pessoas e números ilustrativos; não representam clientes nem resultados reais.",
+        "label": "Demonstração conceitual. Pessoas e números são ilustrativos e não representam clientes ou resultados reais.",
         "problemLabel": "Problema:",
         "problems": [
           "Confirmações espalhadas.",
           "Vagas sem controle.",
           "Presença incerta.",
-          "Lista manual demais.",
+          "Listas atualizadas à mão.",
           "Quem realmente vai?",
           "Esse horário já lotou?"
         ],
@@ -328,7 +331,7 @@
           "type": "payment",
           "title": "Pagamento online",
           "status": "Em breve",
-          "description": "Possibilidade futura. Ainda não disponível para contratação."
+          "description": "Integração planejada para levar pagamentos diretamente ao fluxo do evento."
         },
         "summary": {
           "weekEventsLabel": "Eventos nesta semana",
@@ -356,8 +359,8 @@
         }
       },
       "seo": {
-        "title": "Organizador de Eventos — Organização de eventos | VoidCube",
-        "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada."
+        "title": "Organizador de Eventos",
+        "description": "Organize eventos, vagas e confirmações em uma plataforma criada para tornar sua operação mais simples e a experiência de participação mais clara."
       },
       "page": {
         "preset": "live-platform",
@@ -386,12 +389,12 @@
       "pricing": {
         "initialLabel": "Licença inicial",
         "recurringLabel": "Mensalidade da plataforma",
-        "recurringDescription": "A mensalidade inclui suporte, correções e manutenção contínua da plataforma."
+        "recurringDescription": "Inclui suporte, correções e manutenção contínua para manter a plataforma funcionando e evoluindo."
       },
       "moduleGroups": {
         "event-presence": {
-          "label": "Como seu evento será disponibilizado?",
-          "requiredMessage": "Escolha como disponibilizar o evento: crie uma nova página ou integre um site existente."
+          "label": "Como as pessoas acessarão seus eventos?",
+          "requiredMessage": "Escolha uma opção para disponibilizar seus eventos: crie uma nova página, integre um site existente ou use uma Landing Page já adicionada ao orçamento."
         }
       }
     }

@@ -1,50 +1,80 @@
 {
   "seo": {
     "title": "Sobre a VoidCube",
-    "description": "Criamos sites, produtos e sistemas que transformam complexidade em clareza. Conheça a forma de pensar e construir da VoidCube."
+    "description": "Criamos sites, produtos e sistemas que conectam o que hoje funciona separado e transformam complexidade em clareza, controle e espaço para evoluir."
   },
   "opening": {
     "label": "Sobre a VoidCube",
-    "title": ["Complexidade.", "Com sentido."],
-    "intro": "Criamos sites, produtos e sistemas que fazem as partes do seu negócio trabalharem juntas.",
-    "purpose": "Existimos para dar forma ao que parece disperso. E abrir espaço para o que vem depois.",
+    "title": ["Complexidade.", "Com direção."],
+    "intro": "Criamos sites, produtos e sistemas que conectam as partes do seu negócio e transformam complexidade em experiências mais claras, úteis e preparadas para crescer.",
+    "purpose": "Existimos para organizar o que parece disperso, revelar o que realmente importa e criar espaço para o próximo passo.",
     "input": "Muitas partes.",
     "output": "Uma direção."
   },
   "possibilities": {
-    "title": ["Um núcleo.", "Várias possibilidades."],
-    "description": "Pensamos cada produto como parte de uma estrutura. O que resolve uma necessidade hoje pode se conectar a outras amanhã."
+    "title": ["Uma base.", "Muitas possibilidades."],
+    "description": "Construímos cada produto pensando além da necessidade de hoje. Uma boa base resolve o presente e deixa espaço para novas conexões, serviços e possibilidades amanhã."
   },
   "principles": {
     "title": "O que orienta cada escolha.",
     "items": {
-      "clarity": { "title": "Clareza", "description": "Fazer o essencial aparecer. Tornar o próximo passo compreensível." },
-      "evolution": { "title": "Evolução", "description": "Construir uma base que aceite novas possibilidades, sem pedir um novo começo." },
-      "context": { "title": "Contexto", "description": "Entender o negócio antes de definir a solução. Cada operação tem sua própria lógica." },
-      "utility": { "title": "Utilidade", "description": "Tecnologia precisa servir à operação. Toda escolha deve ajudar alguém a fazer algo melhor." }
+      "clarity": {
+        "title": "Clareza",
+        "description": "Eliminar o ruído, destacar o que importa e tornar cada próximo passo mais fácil de entender."
+      },
+      "evolution": {
+        "title": "Evolução",
+        "description": "Construir uma base capaz de receber novas ideias sem obrigar o negócio a começar tudo de novo."
+      },
+      "context": {
+        "title": "Contexto",
+        "description": "Entender como o negócio realmente funciona antes de decidir o que deve ser construído."
+      },
+      "utility": {
+        "title": "Utilidade",
+        "description": "Tecnologia só faz sentido quando simplifica uma tarefa, conecta uma operação ou cria uma possibilidade real."
+      }
     }
   },
   "method": {
     "title": ["Antes da forma,", "o contexto."],
-    "description": "Entendemos as partes. Encontramos a estrutura. Construímos as conexões. A solução cresce a partir daí.",
-    "controlLabel": "Explore nossa forma de trabalhar",
-    "hint": "Selecione uma etapa para ver a estrutura tomar forma.",
+    "description": "Primeiro entendemos o que existe. Depois encontramos a lógica entre as partes e construímos uma solução preparada para funcionar hoje e evoluir amanhã.",
+    "controlLabel": "Explore como construímos",
+    "hint": "Selecione uma etapa e veja a estrutura ganhar forma.",
     "steps": {
-      "understand": { "title": "Entender", "description": "Escutar, observar e reconhecer o que o negócio realmente precisa." },
-      "structure": { "title": "Estruturar", "description": "Dar uma lógica às partes. Definir o que é essencial e como tudo se relaciona." },
-      "build": { "title": "Construir", "description": "Transformar a estrutura em uma experiência que funciona no dia a dia." },
-      "connect": { "title": "Conectar", "description": "Fazer informações, serviços e processos trabalharem em conjunto." },
-      "evolve": { "title": "Evoluir", "description": "Abrir novas possibilidades sobre a base que já faz sentido." }
+      "understand": {
+        "title": "Entender",
+        "description": "Descobrir o que realmente precisa mudar, o que já funciona e onde estão as oportunidades."
+      },
+      "structure": {
+        "title": "Estruturar",
+        "description": "Transformar necessidades dispersas em uma direção clara, definindo prioridades e conexões."
+      },
+      "build": {
+        "title": "Construir",
+        "description": "Transformar essa direção em uma experiência funcional, clara e preparada para o uso real."
+      },
+      "connect": {
+        "title": "Conectar",
+        "description": "Fazer serviços, informações e processos trabalharem juntos em vez de crescerem separados."
+      },
+      "evolve": {
+        "title": "Evoluir",
+        "description": "Expandir o que já funciona sem perder a clareza, a estrutura ou o trabalho construído até aqui."
+      }
     }
   },
   "closing": {
-    "title": ["O futuro precisa", "de uma boa base."],
-    "description": "Seu negócio muda. A estrutura deve ter espaço para acompanhar.",
+    "title": ["O futuro precisa", "de uma base que acompanhe."],
+    "description": "Seu negócio vai mudar. A estrutura por trás dele precisa estar pronta para mudar junto.",
     "cta": {
       "eyebrow": "Vamos construir o próximo passo",
-      "title": "Crescer sem começar de novo.",
-      "description": "Conte o contexto do seu negócio. Vamos encontrar uma base que faça sentido agora e possa continuar evoluindo.",
-      "cta": { "label": "Vamos conversar", "href": "/contact" }
+      "title": "Crescer sem reconstruir tudo.",
+      "description": "Conte onde seu negócio está hoje e onde você quer chegar. Vamos construir uma base que resolva o presente e continue fazendo sentido no próximo passo.",
+      "cta": {
+        "label": "Vamos conversar",
+        "href": "/contact"
+      }
     }
   }
 }

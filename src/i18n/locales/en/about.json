@@ -1,50 +1,80 @@
 {
   "seo": {
     "title": "About VoidCube",
-    "description": "We create websites, products, and systems that turn complexity into clarity. Discover how VoidCube thinks and builds."
+    "description": "We create websites, products, and systems that connect what currently works separately and turn complexity into clarity, control, and room to evolve."
   },
   "opening": {
     "label": "About VoidCube",
-    "title": ["Complexity.", "Made clear."],
-    "intro": "We create websites, products, and systems that make the parts of your business work together.",
-    "purpose": "We exist to give shape to what feels scattered. And make room for what comes next.",
+    "title": ["Complexity.", "With direction."],
+    "intro": "We create websites, products, and systems that connect the different parts of your business and turn complexity into clearer, more useful experiences built to grow.",
+    "purpose": "We exist to organize what feels scattered, reveal what truly matters, and create room for the next step.",
     "input": "Many parts.",
     "output": "One direction."
   },
   "possibilities": {
-    "title": ["One core.", "Many possibilities."],
-    "description": "We see each product as part of a structure. What meets a need today can connect to new possibilities tomorrow."
+    "title": ["One foundation.", "Many possibilities."],
+    "description": "We build every product with more than today's need in mind. A strong foundation solves the present while leaving room for new connections, services, and possibilities tomorrow."
   },
   "principles": {
-    "title": "What guides every choice.",
+    "title": "What guides every decision.",
     "items": {
-      "clarity": { "title": "Clarity", "description": "Bring the essentials into focus. Make the next step understandable." },
-      "evolution": { "title": "Evolution", "description": "Build a foundation that welcomes new possibilities without asking for a fresh start." },
-      "context": { "title": "Context", "description": "Understand the business before defining the solution. Every operation has its own logic." },
-      "utility": { "title": "Utility", "description": "Technology should serve daily operations. Every choice should help someone do something better." }
+      "clarity": {
+        "title": "Clarity",
+        "description": "Remove the noise, highlight what matters, and make every next step easier to understand."
+      },
+      "evolution": {
+        "title": "Evolution",
+        "description": "Build a foundation that can support new ideas without forcing the business to start over."
+      },
+      "context": {
+        "title": "Context",
+        "description": "Understand how the business actually works before deciding what should be built."
+      },
+      "utility": {
+        "title": "Utility",
+        "description": "Technology only matters when it simplifies a task, connects an operation, or creates a real opportunity."
+      }
     }
   },
   "method": {
-    "title": ["Before the shape,", "the context."],
-    "description": "Understand the parts. Find the structure. Build the connections. The solution grows from there.",
-    "controlLabel": "Explore how we work",
-    "hint": "Select a stage to see the structure take shape.",
+    "title": ["Before the form,", "the context."],
+    "description": "First we understand what already exists. Then we find the logic between the parts and build a solution ready to work today and evolve tomorrow.",
+    "controlLabel": "Explore how we build",
+    "hint": "Select a step and watch the structure take shape.",
     "steps": {
-      "understand": { "title": "Understand", "description": "Listen, observe, and discover what the business really needs." },
-      "structure": { "title": "Structure", "description": "Give the parts a shared logic. Define what matters and how it all relates." },
-      "build": { "title": "Build", "description": "Turn the structure into an experience that works every day." },
-      "connect": { "title": "Connect", "description": "Make information, services, and processes work together." },
-      "evolve": { "title": "Evolve", "description": "Open new possibilities on a foundation that already makes sense." }
+      "understand": {
+        "title": "Understand",
+        "description": "Discover what truly needs to change, what already works, and where the opportunities are."
+      },
+      "structure": {
+        "title": "Structure",
+        "description": "Turn scattered needs into a clear direction by defining priorities and connections."
+      },
+      "build": {
+        "title": "Build",
+        "description": "Turn that direction into a functional, clear experience designed for real use."
+      },
+      "connect": {
+        "title": "Connect",
+        "description": "Make services, information, and processes work together instead of growing separately."
+      },
+      "evolve": {
+        "title": "Evolve",
+        "description": "Expand what already works without losing clarity, structure, or the work built so far."
+      }
     }
   },
   "closing": {
-    "title": ["The future needs", "a good foundation."],
-    "description": "Your business changes. Its structure should have room to keep up.",
+    "title": ["The future needs", "a foundation that keeps up."],
+    "description": "Your business will change. The structure behind it should be ready to change with it.",
     "cta": {
       "eyebrow": "Let's build the next step",
-      "title": "Grow without starting over.",
-      "description": "Tell us about your business. Let's find a foundation that makes sense today and can keep evolving.",
-      "cta": { "label": "Let's talk", "href": "/contact" }
+      "title": "Grow without rebuilding everything.",
+      "description": "Tell us where your business is today and where you want to go. We will build a foundation that solves the present and keeps making sense as you move forward.",
+      "cta": {
+        "label": "Let's talk",
+        "href": "/contact"
+      }
     }
   }
 }

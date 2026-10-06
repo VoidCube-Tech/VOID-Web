@@ -1,84 +1,87 @@
 {
   "labels": {
-    "modules": "Shape your solution",
-    "pricing": "A scope that fits your business",
-    "consultation": "Price on consultation",
+    "modules": "Build your solution",
+    "pricing": "An investment in your next step",
+    "consultation": "Price on request",
     "from": "Starting at",
     "included": "Included",
-    "media": "See the experience"
+    "media": "See how it works"
   },
   "services": {
     "sites": {
       "name": "Landing Page",
-      "description": "A digital presence for your brand, services and ideas.",
+      "description": "A clear digital presence to showcase your offer, strengthen your brand, and turn interest into opportunity.",
       "seo": {
-        "title": "Landing Page | VoidCube",
-        "description": "A digital presence for your brand, services and ideas."
+        "title": "Landing Page",
+        "description": "Create a clear digital presence to showcase your brand, present your services, and turn interest into opportunity."
       },
       "hero": {
-        "title": "Give your business a place to grow.",
-        "description": "A digital presence for your brand, services and ideas."
+        "title": "Give your business a place to be understood.",
+        "description": "Present your brand, your offer, and the next step through an experience designed to turn attention into opportunity."
       },
       "problem": {
-        "title": "When your presence is scattered, understanding your business takes effort."
+        "title": "When your presence is scattered, understanding the value of your business takes more effort."
       },
       "solution": {
-        "title": "Your business, clearer at every step.",
-        "description": "See how an organized presence gains new layers. Choose a point to explore."
+        "title": "Everything that matters, in the right place.",
+        "description": "See how an organized digital presence makes your offer clearer and creates a natural path toward contact."
       },
       "results": {
-        "title": "Find. Understand. Take the next step.",
-        "description": "A website gives your brand a place to explain, guide and start a conversation."
+        "title": "Find. Understand. Act.",
+        "description": "A Landing Page brings context, offer, and contact together in an experience designed to guide visitors toward the next step."
       },
       "cta": {
-        "title": "Let’s shape your solution.",
-        "description": "Tell us what your business needs. We’ll define the scope together.",
+        "title": "Let's turn your offer into a presence that works for you.",
+        "description": "Tell us what your business needs to communicate. Together, we'll build a clear, focused experience designed to grow.",
         "label": "Request a quote"
       },
       "messageBand": {
         "messages": [
           "Your offer in pieces.",
-          "Services hard to find.",
+          "Services that are hard to find.",
           "Contact out of sight.",
           "Your brand without context.",
-          "Information that never connects.",
+          "Information that does not connect.",
           "No clear next step."
         ],
-        "resolution": "A website brings your brand, services and ideas into one clear experience.",
-        "pauseLabel": "Pause motion",
-        "resumeLabel": "Resume motion"
+        "resolution": "A Landing Page brings your brand, your offer, and the next step together in an experience that is easy to understand.",
+        "pauseLabel": "Pause movement",
+        "resumeLabel": "Resume movement"
       },
       "guidedDemo": {
-        "label": "Conceptual demonstration. Each choice adds a layer; this is not a client project.",
-        "selectionLabel": "Explore what a website can organize",
-        "controls": { "open": "Customize demonstration", "close": "Close controls" },
+        "label": "Conceptual demonstration. Each choice adds a layer and does not represent a client project.",
+        "selectionLabel": "See what your digital presence can organize",
+        "controls": {
+          "open": "Customize demonstration",
+          "close": "Close controls"
+        },
         "steps": [
           {
-            "title": "Present what matters",
-            "description": "Your brand, your offer and a way to start a conversation.",
-            "outcome": "The foundation: a clear message, your services and a visible contact path."
+            "title": "Show what truly matters",
+            "description": "Your brand, your offer, and a clear way to start a conversation.",
+            "outcome": "A direct message, an understandable offer, and an easy way to get in touch."
           },
           {
-            "title": "A clearer path to your business",
-            "description": "Organize navigation and highlight the next step.",
-            "outcome": "The experience gains direction: visitors know where they are and how to continue."
+            "title": "Create a path toward action",
+            "description": "Organize the experience and make the next step obvious.",
+            "outcome": "Visitors understand where they are, what you offer, and how to continue."
           },
           {
-            "title": "Built around your context",
-            "description": "Identity, customer contact and connections aligned with your operations.",
-            "outcome": "The foundation adapts to your business. We define content and connections with you."
+            "title": "Make the experience feel like yours",
+            "description": "Identity, service, and connections aligned with the way your business operates.",
+            "outcome": "The structure adapts to your context instead of forcing your business to adapt to it."
           },
           {
-            "title": "A scope that fits your business",
-            "description": "Make room for new pages, offers and possibilities.",
-            "outcome": "Your presence can evolve without losing clarity. We define new capabilities in the scope."
+            "title": "Leave room for what comes next",
+            "description": "Expand your presence as new offers, pages, and possibilities emerge.",
+            "outcome": "Your digital presence evolves without losing clarity or requiring a fresh start."
           }
         ],
         "preview": {
           "brand": "Your brand",
-          "headline": "Your business. Clearly presented.",
-          "description": "What you do, who it’s for and how you can help.",
-          "action": "Let’s talk",
+          "headline": "Your business. Easy to understand.",
+          "description": "What you do, who you do it for, and why it is worth starting a conversation.",
+          "action": "Talk to us",
           "navigation": [
             "About",
             "Solutions",
@@ -88,15 +91,15 @@
           "services": [
             "Your offer",
             "Your audience",
-            "How to start"
+            "How to get started"
           ],
-          "contextTitle": "Adapted to your operations",
+          "contextTitle": "Built for your context",
           "contextItems": [
             "Your identity",
-            "Your customer contact",
+            "Your service",
             "Your connections"
           ],
-          "expansionTitle": "Room for the next chapter",
+          "expansionTitle": "Ready for the next chapter",
           "expansionItems": [
             "New pages",
             "New offers",
@@ -105,48 +108,48 @@
         }
       },
       "insightPanel": {
-        "label": "Clarity for new visitors. A foundation for growth.",
+        "label": "Clarity for those who arrive. Structure for those who grow.",
         "research": {
           "value": "79%",
-          "statement": "of surveyed online shoppers say they feel more confident when they have done the necessary research.",
-          "relevance": "Easy-to-find information helps guide a decision. Your website can bring answers about your business together at that moment.",
+          "statement": "of surveyed online shoppers say they feel more confident when they can do the research they need.",
+          "relevance": "When answers are easy to find, decisions become easier. Your digital presence can bring together what people need to know before they talk to you.",
           "source": {
             "label": "Read the Google/Ipsos research",
             "shortAttribution": "Google/Ipsos, The Relevance Factor, 2024",
             "href": "https://business.google.com/uk/think/consumer-insights/build-confident-consumers-to-improve-metrics/",
-            "context": "Google/Ipsos, The Relevance Factor. March 2024. 18,003 online shoppers aged 18+, across 18 markets including Brazil. A shopping study; it does not measure results from VoidCube websites."
+            "context": "Google/Ipsos, The Relevance Factor. March 2024. 18,003 online shoppers aged 18 or older across 18 markets, including Brazil. The study focuses on shopping behavior and does not measure results from VoidCube websites."
           }
         },
         "items": [
           {
-            "title": "Your brand makes sense.",
-            "description": "Your presentation, services and context brought together in one place people can follow.",
+            "title": "Your brand starts making sense.",
+            "description": "Presentation, offer, and context brought together in an experience that is easy to follow.",
             "symbol": "clarity",
             "mobile": {
               "title": "Your brand makes sense.",
-              "description": "Brand, services and context in one place."
+              "description": "Brand, offer, and context in one place."
             }
           },
           {
-            "title": "Contact has a clear path.",
-            "description": "Visible channels and a clear action help people who want to talk find you.",
+            "title": "Interest finds a next step.",
+            "description": "Visible contact options and a clear action help interested visitors reach you.",
             "symbol": "contact",
             "mobile": {
-              "title": "An easier way to connect.",
-              "description": "Visible channels. A clear next step."
+              "title": "A path to contact.",
+              "description": "Less searching. A clear next step."
             }
           },
           {
-            "title": "Your next chapter has a foundation.",
-            "description": "New content and possibilities join a structure shaped around your business.",
+            "title": "Your presence is ready to grow.",
+            "description": "New content, offers, and connections fit into a structure designed to evolve.",
             "symbol": "growth",
             "mobile": {
               "title": "A foundation for growth.",
-              "description": "Room for new content and possibilities."
+              "description": "Room for new offers and possibilities."
             }
           }
         ],
-        "bridge": "From the first discovery to the next conversation. Let’s connect that path?"
+        "bridge": "From the first impression to the next conversation. Shall we organize that path?"
       },
       "page": {
         "preset": "default",
@@ -170,126 +173,126 @@
     },
     "void-events": {
       "name": "Event Organizer",
-      "description": "An event management platform for capacity, RSVPs and participants at classes, sessions and experiences with limited places.",
+      "description": "Organize events, availability, and confirmations in a simple experience for your team and your attendees.",
       "hero": {
-        "title": "Every event. Every place. Everyone where they belong.",
-        "description": "Organize events with limited capacity and know who has actually confirmed.",
+        "title": "Every event. Every spot. Everything under control.",
+        "description": "Organize capacity limited events, track confirmations, and know exactly who is attending.",
         "actionLabel": "Organize my events"
       },
       "problem": {
-        "title": "When confirmations are scattered, organizing means checking everything twice."
+        "title": "If you still need to ask who confirmed, there is something left to organize."
       },
       "solution": {
-        "title": "A special class is an event, too. So is a session. So is an experience.",
+        "title": "A class is an event too. So is a session. So is an experience.",
         "items": [
           {
             "title": "Gyms and studios",
-            "description": "Special classes, workshops, training and small groups."
+            "description": "Organize special classes, workshops, training sessions, and limited capacity groups."
           },
           {
-            "title": "Spaces and venues",
-            "description": "Sessions, meetups and experiences with controlled capacity."
+            "title": "Venues and spaces",
+            "description": "Manage sessions, gatherings, and experiences without losing sight of capacity."
           },
           {
-            "title": "Businesses",
-            "description": "Training, workshops and internal gatherings."
+            "title": "Companies",
+            "description": "Centralize training, workshops, and internal events in one organized experience."
           },
           {
             "title": "Communities",
-            "description": "Recurring meetups where knowing who is coming matters."
+            "description": "Know who is actually attending recurring gatherings and experiences."
           }
         ]
       },
       "features": {
-        "title": "From opening places to a confirmed guest list.",
-        "description": "Try a confirmation. Connect a page. The event stays at the center."
+        "title": "From the first available spot to the confirmed list.",
+        "description": "Create the event, track confirmations, and connect the experience to your digital presence."
       },
       "results": {
-        "title": "You organize the event. The platform organizes confirmations.",
+        "title": "You run the event. The platform keeps everything organized.",
         "items": [
           {
             "title": "Less manual checking",
-            "description": "A clear view of who has confirmed."
+            "description": "See who confirmed without searching through messages, lists, or spreadsheets."
           },
           {
-            "title": "Capacity under control",
-            "description": "Know how many places are still available."
+            "title": "Capacity always visible",
+            "description": "Know how many spots are filled and how many are still available."
           },
           {
             "title": "A clearer operation",
-            "description": "Event, time and participants together in one place."
+            "description": "Event, schedule, capacity, and attendees brought together in one place."
           },
           {
-            "title": "A structure you can repeat",
-            "description": "Organize recurring events without starting from scratch."
+            "title": "Ready to repeat",
+            "description": "Organize new events without rebuilding the process every time."
           }
         ]
       },
       "process": {
-        "title": "Full does not mean disorganized.",
-        "description": "Reaching capacity is good when you know who has confirmed — and when there is no room for anyone else."
+        "title": "Sold out can be great. Disorganized cannot.",
+        "description": "Reaching capacity feels much better when you know exactly who confirmed and when there are no spots left."
       },
       "integrations": {
-        "title": "One look. You know."
+        "title": "Open it. Look. Know."
       },
       "cta": {
         "title": "Your next event can start organized.",
-        "description": "Tell us how your operation works. We will shape the right flow for it.",
+        "description": "Tell us how your events work. We'll structure a simpler experience for your team and your attendees.",
         "label": "Request a quote"
       },
       "messageBand": {
         "messages": [
           "Who confirmed?",
-          "Any places left?",
-          "Someone dropped out.",
-          "Room for one more?",
-          "Is this class full?",
-          "Who is in this session?"
+          "Are there spots left?",
+          "Someone cancelled.",
+          "Can one more person join?",
+          "Is this session already full?",
+          "Who is attending this time?"
         ],
-        "resolution": "One place to know what is happening — and who will actually be there.",
+        "resolution": "One place to know what is happening, how many spots remain, and who is actually going to be there.",
         "pauseLabel": "Pause movement",
         "resumeLabel": "Resume movement"
       },
       "modules": {
         "event-page": {
-          "title": "Create website / Event page",
-          "description": "A new digital presence for your business or a dedicated page for your events.",
+          "title": "Create Website / Event Page",
+          "description": "Create a digital presence to showcase your events and turn interest into confirmations.",
           "pricing": {
             "initialLabel": "Creation",
             "recurringLabel": "Support and maintenance",
-            "recurringDescription": "Includes support, fixes and ongoing website maintenance."
+            "recurringDescription": "Includes ongoing support, fixes, and website maintenance."
           }
         },
         "existing-site": {
-          "title": "Import / integrate an existing website",
-          "description": "Connect the platform to your existing website. Import is free; the monthly fee covers ongoing care.",
+          "title": "Integrate an existing website",
+          "description": "Connect Event Organizer to the website your company already uses. Initial integration is free and the monthly fee keeps everything supported and running.",
           "pricing": {
-            "initialLabel": "Import",
+            "initialLabel": "Integration",
             "freeInitialLabel": "Free",
             "recurringLabel": "Support and maintenance",
-            "recurringDescription": "Includes support, fixes and ongoing integration/website maintenance."
+            "recurringDescription": "Includes ongoing support, fixes, and maintenance of the website integration."
           }
         },
         "order-landing-page": {
           "title": "Use the Landing Page in this quote",
-          "description": "Connect Event Organizer to the Landing Page already added to your request, without another creation charge or monthly fee.",
-          "associationDescription": "Uses the Landing Page added to this quote"
+          "description": "Connect Event Organizer to the Landing Page already included in this request without paying another creation fee or monthly charge.",
+          "associationDescription": "Connected to the Landing Page in this quote"
         },
         "online-payment": {
-          "title": "Online payment",
-          "description": "Receive payments directly in the event flow."
+          "title": "Online payments",
+          "description": "Bring registrations and payments into the same event experience."
         }
       },
       "eventDemo": {
-        "label": "Conceptual demonstration. Illustrative people and figures; these are not clients or real results.",
+        "label": "Conceptual demonstration. People and numbers are illustrative and do not represent real clients or results.",
         "problemLabel": "Problem:",
         "problems": [
-          "Scattered confirmations.",
-          "Capacity out of control.",
-          "Uncertain attendance.",
-          "Too much manual tracking.",
-          "Who is really coming?",
-          "Is this session full?"
+          "Confirmations everywhere.",
+          "No clear capacity control.",
+          "Attendance is uncertain.",
+          "Lists updated manually.",
+          "Who is actually coming?",
+          "Is this time already full?"
         ],
         "event": {
           "name": "Special training",
@@ -297,20 +300,20 @@
           "time": "09:00"
         },
         "labels": {
-          "seats": "Places",
+          "seats": "Spots",
           "remaining": "Available",
-          "participants": "Confirmed participants",
-          "participant": "Participant",
+          "participants": "Confirmed attendees",
+          "participant": "Attendee",
           "core": "Included in the platform",
           "connections": "Additional connections",
           "open": "Open",
           "available": "Available",
           "almostFull": "Almost full",
           "full": "Full",
-          "pause": "Pause demo",
-          "resume": "Resume demo",
+          "pause": "Pause demonstration",
+          "resume": "Resume demonstration",
           "confirm": "Simulate confirmation",
-          "reset": "Start again",
+          "reset": "Restart",
           "previewPage": "Preview connection",
           "pageConnected": "Page connected to the event",
           "pageAction": "Confirm attendance"
@@ -318,21 +321,21 @@
         "coreItems": [
           "Event creation",
           "Date and time",
-          "Capacity and places",
+          "Capacity and availability",
           "Attendance confirmation",
-          "Participant list",
+          "Attendee list",
           "Event status",
           "Recurring events"
         ],
         "futureConnection": {
           "type": "payment",
-          "title": "Online payment",
+          "title": "Online payments",
           "status": "Coming soon",
-          "description": "A future possibility. Not yet available to purchase."
+          "description": "Planned integration to bring payments directly into the event flow."
         },
         "summary": {
           "weekEventsLabel": "Events this week",
-          "weekConfirmationsLabel": "Confirmed attendance this week",
+          "weekConfirmationsLabel": "Confirmed attendees this week",
           "capacity": 20,
           "confirmed": 18,
           "weekEvents": 3,
@@ -356,8 +359,8 @@
         }
       },
       "seo": {
-        "title": "Event Organizer — Event management | VoidCube",
-        "description": "An event management platform for capacity, RSVPs and participants at classes, sessions and experiences with limited places."
+        "title": "Event Organizer",
+        "description": "Organize events, availability, and confirmations in a platform designed to simplify your operation and create a clearer attendee experience."
       },
       "page": {
         "preset": "live-platform",
@@ -386,12 +389,12 @@
       "pricing": {
         "initialLabel": "Initial license",
         "recurringLabel": "Platform monthly fee",
-        "recurringDescription": "The monthly fee includes support, fixes and ongoing platform maintenance."
+        "recurringDescription": "Includes ongoing support, fixes, and maintenance to keep the platform running and evolving."
       },
       "moduleGroups": {
         "event-presence": {
-          "label": "How will your event be available?",
-          "requiredMessage": "Choose how to make your event available: create a new page or integrate an existing website."
+          "label": "How will people access your events?",
+          "requiredMessage": "Choose how your events will be available: create a new page, integrate an existing website, or use a Landing Page already included in the quote."
         }
       }
     }
