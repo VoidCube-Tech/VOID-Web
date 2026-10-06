@@ -1,0 +1,57 @@
+{
+  "seo": {
+    "title": "About VoidCube",
+    "description": "We create websites, products, and systems that turn complexity into clarity. Discover how VoidCube thinks and builds."
+  },
+  "opening": {
+    "label": "About VoidCube",
+    "title": ["Complexity.", "Made clear."],
+    "intro": "We create websites, products, and systems that make the parts of your business work together.",
+    "purpose": "We exist to give shape to what feels scattered. And make room for what comes next.",
+    "input": "Many parts.",
+    "output": "One direction.",
+    "caption": "Transformation means finding a clear way through complexity."
+  },
+  "possibilities": {
+    "title": ["One core.", "Many possibilities."],
+    "description": "We see each product as part of a structure. What meets a need today can connect to new possibilities tomorrow.",
+    "caption": "A coherent foundation. Room for new connections.",
+    "servicesLabel": "This idea is already taking shape in",
+    "products": {
+      "websites": "A presence that communicates.",
+      "void-events": "An operation that connects."
+    }
+  },
+  "principles": {
+    "title": "What guides every choice.",
+    "items": {
+      "clarity": { "title": "Clarity", "description": "Bring the essentials into focus. Make the next step understandable." },
+      "evolution": { "title": "Evolution", "description": "Build a foundation that welcomes new possibilities without asking for a fresh start." },
+      "context": { "title": "Context", "description": "Understand the business before defining the solution. Every operation has its own logic." },
+      "utility": { "title": "Utility", "description": "Technology should serve daily operations. Every choice should help someone do something better." }
+    }
+  },
+  "method": {
+    "title": ["Before the shape,", "the context."],
+    "description": "Understand the parts. Find the structure. Build the connections. The solution grows from there.",
+    "controlLabel": "Explore how we work",
+    "hint": "Select a stage to see the structure take shape.",
+    "steps": {
+      "understand": { "title": "Understand", "description": "Listen, observe, and discover what the business really needs." },
+      "structure": { "title": "Structure", "description": "Give the parts a shared logic. Define what matters and how it all relates." },
+      "build": { "title": "Build", "description": "Turn the structure into an experience that works every day." },
+      "connect": { "title": "Connect", "description": "Make information, services, and processes work together." },
+      "evolve": { "title": "Evolve", "description": "Open new possibilities on a foundation that already makes sense." }
+    }
+  },
+  "closing": {
+    "title": ["The future needs", "a good foundation."],
+    "description": "Your business changes. Its structure should have room to keep up.",
+    "cta": {
+      "eyebrow": "Let's build the next step",
+      "title": "Grow without starting over.",
+      "description": "Tell us about your business. Let's find a foundation that makes sense today and can keep evolving.",
+      "cta": { "label": "Let's talk", "href": "/contact" }
+    }
+  }
+}

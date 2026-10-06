@@ -1,0 +1,399 @@
+/* Page composition uses the existing theme; no global layout overrides. */
+.about-page {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+.about-page .about-wrap {
+  width: min(100%, 88rem);
+  margin-inline: auto;
+  padding-inline: clamp(1.5rem, 4vw, 4rem);
+}
+
+.about-page .about-opening {
+  padding-top: clamp(8rem, 12vw, 12rem);
+}
+
+.about-page .about-opening-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 2rem;
+}
+
+.about-page .about-page-label {
+  font-size: .875rem;
+  color: var(--color-primary);
+}
+
+.about-page .about-opening-definition {
+  max-width: 24rem;
+  justify-self: end;
+  font-size: 1.125rem;
+  line-height: 1.65;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-display {
+  position: relative;
+  z-index: 2;
+  margin-top: clamp(3.5rem, 7vw, 7rem);
+  font-size: clamp(4rem, 11.6vw, 10.6rem);
+  font-weight: 400;
+  line-height: 1.04;
+  letter-spacing: -.055em;
+}
+
+.about-page .about-display span,
+.about-page .about-section-title span,
+.about-page .about-future-title span {
+  display: block;
+}
+
+.about-page .about-display span:last-child {
+  margin-left: 9%;
+  font-size: 1.09em;
+}
+
+.about-page .about-optical-scene {
+  position: relative;
+  margin-top: clamp(-10rem, -11vw, -4rem);
+}
+
+.about-page .about-refraction {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1400 / 820;
+}
+
+.about-page .about-optical-labels {
+  position: absolute;
+  inset: 52% 0 auto;
+  display: flex;
+  justify-content: space-between;
+  font-size: .75rem;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-optical-labels span:last-child {
+  padding-right: 4%;
+}
+
+.about-page .about-optical-caption {
+  max-width: 19rem;
+  margin: -2.5rem 4% 0 auto;
+  font-size: .875rem;
+  line-height: 1.65;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-opening-purpose {
+  max-width: 42rem;
+  margin: 5rem 0 0 9%;
+  font-size: clamp(2rem, 3.5vw, 3.25rem);
+  line-height: 1.22;
+  letter-spacing: -.025em;
+  text-wrap: pretty;
+}
+
+.about-page .about-possibilities {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 3rem 2rem;
+  padding-block: clamp(8rem, 15vw, 14rem) 7rem;
+}
+
+.about-page .about-core-copy {
+  grid-column: 1 / 7;
+  position: relative;
+  z-index: 1;
+}
+
+.about-page .about-section-title {
+  font-size: clamp(3rem, 5.6vw, 5.25rem);
+  font-weight: 400;
+  line-height: 1.08;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+
+.about-page .about-body-copy {
+  max-width: 25rem;
+  margin-top: 2rem;
+  font-size: 1.125rem;
+  line-height: 1.75;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-core-scene {
+  grid-column: 7 / -1;
+  align-self: center;
+  margin-top: -3rem;
+}
+
+.about-page .about-structure {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 700 / 560;
+}
+
+.about-page .about-core-scene .about-structure {
+  width: calc(100% + 6rem);
+  max-width: none;
+  margin-left: -6rem;
+}
+
+.about-page .about-small-copy {
+  font-size: .875rem;
+  line-height: 1.65;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-core-scene figcaption {
+  max-width: 18rem;
+  margin: 1rem auto 0;
+  text-align: center;
+}
+
+.about-page .about-services-note {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: start;
+  gap: 2rem;
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-outline-variant) 65%, transparent);
+}
+
+.about-page .about-service-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.about-page .about-service-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 1.5rem;
+  min-height: 2.75rem;
+  font-size: 1.25rem;
+  color: var(--color-on-surface);
+  transition: color var(--duration-ui) var(--ease-ui);
+}
+
+.about-page .about-service-links a:hover { color: var(--color-primary); }
+.about-page .about-service-links a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 6px; }
+.about-page .about-service-links svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
+.about-page .about-service-links p { margin-top: .5rem; font-size: .875rem; line-height: 1.65; color: var(--color-on-surface-variant); }
+
+.about-page .about-principles { padding-block: 5rem 9rem; }
+.about-page .about-principles-heading { margin-bottom: 5rem; font-size: 1rem; font-weight: 400; color: var(--color-on-surface-variant); }
+.about-page .about-principles-list { display: grid; gap: 4.5rem; }
+
+.about-page .about-principle {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 17rem);
+  align-items: center;
+  gap: 2rem;
+  width: 90%;
+}
+
+.about-page .about-principle-evolution { margin-left: 10%; }
+.about-page .about-principle-context { margin-left: 3%; width: 87%; }
+.about-page .about-principle-utility { margin-left: 13%; width: 87%; }
+.about-page .about-principle dt { display: flex; align-items: center; gap: 1.75rem; font-size: clamp(3rem, 6.2vw, 5.5rem); line-height: 1.1; letter-spacing: -.055em; }
+.about-page .about-principle dd { font-size: 1rem; line-height: 1.7; color: var(--color-on-surface-variant); }
+.about-page .about-principle-mark { width: 3.5rem; height: 3.5rem; flex-shrink: 0; color: var(--color-primary); }
+
+.about-page .about-method { padding-block: 6rem 8rem; }
+.about-page .about-method-header { display: grid; grid-template-columns: 1.35fr 1fr; gap: 5rem; align-items: end; }
+.about-page .about-method-header .about-body-copy { margin: 0 0 .5rem; }
+
+.about-page .about-workbench {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+  gap: 0 4rem;
+  min-width: 0;
+  margin-top: 4rem;
+  border: 0;
+}
+
+.about-page .about-method-controls { grid-column: 1; grid-row: 1; align-self: center; min-width: 0; }
+.about-page .about-method-visual { grid-column: 2; grid-row: 1; align-self: center; min-width: 0; }
+.about-page .about-method-step { position: relative; }
+
+.about-page .about-method-option {
+  display: grid;
+  grid-template-columns: 2rem minmax(0, 1fr) .75rem;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4rem;
+  padding-block: .5rem;
+  border-radius: var(--radius-ui);
+  cursor: pointer;
+  color: var(--color-on-surface-variant);
+  transition: color var(--duration-ui) var(--ease-ui);
+}
+
+.about-page .about-step-index { font-family: var(--font-mono); font-size: .75rem; color: var(--color-outline); letter-spacing: 0; }
+.about-page .about-step-title { font-size: clamp(1.75rem, 3.2vw, 2.75rem); letter-spacing: -.035em; line-height: 1.2; }
+.about-page .about-step-indicator { width: .5rem; height: .5rem; border: 1px solid var(--color-outline); border-radius: 50%; }
+.about-page .about-method-option:hover { color: var(--color-on-surface); }
+.about-page .about-method-input:checked + .about-method-option { color: var(--color-primary); }
+.about-page .about-method-input:checked + label .about-step-indicator { background: var(--color-primary); border-color: var(--color-primary); }
+.about-page .about-method-input:focus-visible + label { outline: 2px solid var(--color-primary); outline-offset: 6px; }
+
+.about-page .about-step-description {
+  display: none;
+  max-width: 22rem;
+  margin: .5rem 1.5rem 1.5rem 3rem;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--color-on-surface-variant);
+}
+
+.about-page .about-method-input:checked ~ .about-step-description { display: block; }
+.about-page .about-method-hint { grid-column: 2; margin-top: 1rem; font-size: .75rem; line-height: 1.6; text-align: center; color: var(--color-on-surface-variant); }
+
+/* Native radio controls drive the drawing. Without :has(), it stays complete. */
+@supports selector(:has(*)) {
+  .about-page .about-workbench .structure-node {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: transform var(--duration-ui-slow) var(--ease-ui), opacity var(--duration-ui-slow) var(--ease-ui);
+  }
+  .about-page .about-workbench .structure-connections,
+  .about-page .about-workbench .structure-future,
+  .about-page .about-workbench .structure-depth,
+  .about-page .about-workbench .structure-face,
+  .about-page .about-workbench .structure-inset { transition: opacity var(--duration-ui-slow) var(--ease-ui); }
+  .about-page .about-workbench .structure-connections,
+  .about-page .about-workbench .structure-future { opacity: 0; }
+  .about-page .about-workbench:has([value="connect"]:checked) .structure-connections,
+  .about-page .about-workbench:has([value="evolve"]:checked) .structure-connections,
+  .about-page .about-workbench:has([value="evolve"]:checked) .structure-future { opacity: 1; }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-node[data-position="top"] { transform: translate(-28px, -30px) rotate(-14deg); }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-node[data-position="left"] { transform: translate(-18px, 18px) rotate(17deg); }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-node[data-position="right"] { transform: translate(24px, -18px) rotate(-12deg); }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-node[data-position="bottom"] { transform: translate(30px, 24px) rotate(11deg); }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-node[data-position="core"] { opacity: .45; }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-depth,
+  .about-page .about-workbench:has([value="structure"]:checked) .structure-depth,
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-inset,
+  .about-page .about-workbench:has([value="structure"]:checked) .structure-inset { opacity: 0; }
+  .about-page .about-workbench:has([value="understand"]:checked) .structure-face,
+  .about-page .about-workbench:has([value="structure"]:checked) .structure-face { fill-opacity: .15; }
+}
+
+.about-page .about-closing {
+  position: relative;
+  isolation: isolate;
+  padding-block: 7rem 3rem;
+}
+
+.about-page .about-future-title {
+  position: relative;
+  max-width: 18ch;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -.045em;
+  text-wrap: balance;
+}
+
+.about-page .about-closing .about-body-copy { max-width: 22rem; margin-left: 42%; }
+.about-page .about-open-frame { position: absolute; z-index: -1; top: 0; right: 12%; width: 45%; aspect-ratio: 1; transform: rotate(-18deg); pointer-events: none; }
+.about-page .about-open-frame span { position: absolute; inset: 0; border: 1px solid color-mix(in srgb, var(--color-primary) 15%, transparent); border-bottom-color: transparent; border-right-color: transparent; border-radius: var(--radius-ui); }
+.about-page .about-open-frame span:nth-child(2) { inset: 1.75rem; opacity: .65; }
+.about-page .about-open-frame span:nth-child(3) { inset: 3.5rem; opacity: .35; }
+
+@media (min-width: 1024px) {
+  .about-page[data-locale="en"] .about-display { font-size: clamp(4rem, 12.6vw, 11.5rem); }
+}
+
+@media (max-width: 1023px) {
+  .about-page .about-optical-caption { margin-top: 0; }
+  .about-page .about-possibilities { gap: 3rem 1.5rem; }
+  .about-page .about-core-scene .about-structure { width: calc(100% + 3rem); margin-left: -3rem; }
+  .about-page .about-principle { width: 100%; margin-left: 0; grid-template-columns: minmax(0, 1fr) 15rem; }
+  .about-page .about-principle dt { font-size: 3.5rem; gap: 1.25rem; }
+  .about-page .about-principle-mark { width: 2.75rem; height: 2.75rem; }
+  .about-page .about-method-header { gap: 2rem; }
+  .about-page .about-workbench { gap: 0 2rem; }
+  .about-page .about-step-title { font-size: 2rem; }
+}
+
+@media (max-width: 767px) {
+  .about-page .about-opening { padding-top: 8rem; }
+  .about-page .about-opening-intro { grid-template-columns: 1fr; gap: 1.5rem; }
+  .about-page .about-opening-definition { max-width: 22rem; justify-self: start; font-size: 1rem; }
+  .about-page .about-display { margin-top: 3rem; font-size: 11.7vw; line-height: 1.1; }
+  .about-page .about-display span:last-child { margin-left: 0; font-size: 1.08em; }
+  .about-page .about-optical-scene { margin-top: -1.5rem; }
+  .about-page .about-refraction {
+    width: 100vw;
+    /* Account for a visible scrollbar without clipping the page. */
+    max-width: calc(100% + 2 * clamp(1.5rem, 4vw, 4rem));
+    margin-inline: calc(-1 * clamp(1.5rem, 4vw, 4rem));
+    height: clamp(18rem, 75vw, 28rem);
+    aspect-ratio: auto;
+  }
+  .about-page .about-optical-labels { top: auto; bottom: 5rem; font-size: .6875rem; }
+  .about-page .about-optical-labels span:last-child { padding-right: 0; }
+  .about-page .about-optical-caption { max-width: 17rem; margin: 2rem 0 0 auto; font-size: .8125rem; }
+  .about-page .about-opening-purpose { margin: 4.5rem 0 0; max-width: 23rem; font-size: clamp(1.875rem, 5.5vw, 2.75rem); }
+  .about-page .about-possibilities { grid-template-columns: 1fr; gap: 2rem; padding-block: 7rem 4rem; }
+  .about-page .about-core-copy,
+  .about-page .about-core-scene,
+  .about-page .about-services-note { grid-column: 1; }
+  .about-page .about-section-title { font-size: clamp(2.5rem, 8.5vw, 4rem); }
+  .about-page .about-body-copy { margin-top: 1.5rem; font-size: 1rem; }
+  .about-page .about-core-scene { width: min(100%, 30rem); margin: 0 auto; }
+  .about-page .about-core-scene .about-structure { width: 100%; margin: 0; }
+  .about-page .about-core-scene figcaption { margin-top: .5rem; }
+  .about-page .about-services-note { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; }
+  .about-page .about-service-links { gap: 1.5rem; }
+  .about-page .about-service-links a { font-size: 1.0625rem; gap: .75rem; }
+  .about-page .about-service-links p { max-width: 12rem; font-size: .8125rem; }
+  .about-page .about-principles { padding-block: 4rem 5rem; }
+  .about-page .about-principles-heading { margin-bottom: 3.5rem; }
+  .about-page .about-principles-list { gap: 3.5rem; }
+  .about-page .about-principle { grid-template-columns: 1fr; gap: 1rem; }
+  .about-page .about-principle dt { font-size: clamp(2.5rem, 8vw, 4rem); gap: 1rem; }
+  .about-page .about-principle-mark { width: 2.5rem; height: 2.5rem; }
+  .about-page .about-principle dd { max-width: 23rem; margin-left: 3.5rem; font-size: .9375rem; }
+  .about-page .about-method { padding-block: 4rem 5rem; }
+  .about-page .about-method-header { grid-template-columns: 1fr; gap: 1.5rem; }
+  .about-page .about-workbench { grid-template-columns: 1fr; margin-top: 2rem; }
+  .about-page .about-method-visual { grid-column: 1; grid-row: 1; width: min(100%, 29rem); margin-inline: auto; }
+  .about-page .about-method-controls { grid-column: 1; grid-row: 3; width: min(100%, 29rem); margin: 2rem auto 0; }
+  .about-page .about-method-hint { grid-column: 1; grid-row: 2; margin-top: .5rem; }
+  .about-page .about-method-option { min-height: 3.75rem; }
+  .about-page .about-step-title { font-size: 2rem; }
+  .about-page .about-step-description { margin-bottom: 1rem; font-size: .9375rem; }
+  .about-page .about-closing { padding-block: 5rem 1rem; }
+  .about-page .about-future-title { font-size: clamp(2.75rem, 9vw, 4.5rem); }
+  .about-page .about-closing .about-body-copy { margin-left: 0; }
+  .about-page .about-open-frame { width: 70%; right: 15%; top: 3rem; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-page .about-workbench .structure-node,
+  .about-page .about-workbench .structure-connections,
+  .about-page .about-workbench .structure-future,
+  .about-page .about-workbench .structure-depth,
+  .about-page .about-workbench .structure-face,
+  .about-page .about-workbench .structure-inset,
+  .about-page .about-service-links a,
+  .about-page .about-method-option { transition: none; }
+}
+
+@media (max-width: 359px) {
+  .about-page .about-service-links { grid-template-columns: 1fr; gap: 1rem; }
+  .about-page .about-service-links p { max-width: none; margin-top: 0; }
+}

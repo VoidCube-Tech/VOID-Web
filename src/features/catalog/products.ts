@@ -2,12 +2,19 @@ import type { CatalogPrice, CatalogRecurringPrice } from './index';
 
 export interface CommercialModule {
   readonly id: string;
+  readonly enabled?: boolean;
+  readonly groupId?: string;
   readonly required?: boolean;
   readonly includedInBase?: boolean;
   readonly price?: CatalogPrice;
   readonly recurringPrice?: CatalogRecurringPrice;
   readonly requires?: readonly string[];
   readonly conflictsWith?: readonly string[];
+}
+export interface CommercialModuleGroup {
+  readonly id: string;
+  readonly required: boolean;
+  readonly exclusive: boolean;
 }
 export interface CommercialProduct {
   readonly id: string;
@@ -16,13 +23,22 @@ export interface CommercialProduct {
   readonly pricingMode: 'consultation' | 'fixed';
   readonly basePrice?: CatalogPrice;
   readonly recurringPrice?: CatalogRecurringPrice;
+  readonly moduleGroups?: readonly CommercialModuleGroup[];
   readonly modules: readonly CommercialModule[];
 }
 export const commercialProducts: readonly CommercialProduct[] = [
-  { id: 'landing-page', tag: 'landing-page', categoryId: 'digital-presence', pricingMode: 'fixed', basePrice: { amountMinor: 80000, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, modules: [] },
   { id: 'websites', tag: 'sites', categoryId: 'digital-presence', pricingMode: 'fixed', basePrice: { amountMinor: 80000, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, modules: [] },
-  { id: 'void-events', tag: 'void-events', categoryId: 'business-platforms', pricingMode: 'consultation', modules: [] },
-  { id: 'void-erp', tag: 'void-erp', categoryId: 'business-platforms', pricingMode: 'consultation', modules: [] },
+  {
+    id: 'void-events', tag: 'void-events', categoryId: 'business-platforms', pricingMode: 'fixed',
+    basePrice: { amountMinor: 100000, currency: 'BRL' },
+    recurringPrice: { amountMinor: 5000, currency: 'BRL', interval: 'month' },
+    moduleGroups: [{ id: 'event-presence', required: true, exclusive: true }],
+    modules: [
+      { id: 'event-page', groupId: 'event-presence', price: { amountMinor: 80000, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, conflictsWith: ['existing-site'] },
+      { id: 'existing-site', groupId: 'event-presence', price: { amountMinor: 0, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, conflictsWith: ['event-page'] },
+      { id: 'online-payment', enabled: false },
+    ],
+  },
 ];
 export const commercialCategories = [
   { id: 'digital-presence', labelKey: 'digitalPresence' },

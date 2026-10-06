@@ -63,6 +63,15 @@ export const liquidGlassPanelStyle = createLiquidGlassStyle({
 	shadow: 32, hoverShadow: 32, highlight: 16, reflection: 30,
 });
 
+export const liquidGlassPopupStyle = createLiquidGlassStyle({
+	blur: "40px", tint: "var(--color-on-surface)",
+	backgroundTint: "color-mix(in srgb, var(--color-surface-container-low) 65%, var(--color-surface-container-lowest))",
+	saturation: 125, brightness: 100,
+	edge: 32, center: 38, hoverEdge: 32, hoverCenter: 38,
+	border: 24, hoverBorder: 24,
+	shadow: 40, hoverShadow: 40, highlight: 22, reflection: 44,
+});
+
 export const navigationGlassControlClass = "navigation-glass navigation-glass-control";
 export const liquidGlassSurfaceStyle = createLiquidGlassStyle({
 	blur: "4px", tint: "var(--color-on-surface)",

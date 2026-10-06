@@ -9,7 +9,23 @@ export interface CatalogPrice { readonly amountMinor: number; readonly currency:
 export type BillingInterval = 'month' | 'year';
 export interface CatalogRecurringPrice extends CatalogPrice { readonly interval: BillingInterval }
 export type BillingIntervalLabels = Readonly<Record<BillingInterval, string>>;
+export interface CatalogPricingCopy {
+  readonly initialLabel?: string;
+  readonly freeInitialLabel?: string;
+  readonly recurringLabel?: string;
+  readonly recurringDescription?: string;
+}
+export interface CatalogModuleGroup {
+  readonly id: string;
+  readonly required: boolean;
+  readonly exclusive: boolean;
+  readonly label: string;
+  readonly requiredMessage: string;
+}
 export interface CatalogModule {
+  readonly enabled?: boolean;
+  readonly groupId?: string;
+  readonly pricingCopy?: CatalogPricingCopy;
   readonly id: string;
   readonly name: string;
   readonly description?: string;
@@ -21,11 +37,13 @@ export interface CatalogModule {
   readonly conflictsWith?: readonly string[];
 }
 export interface CatalogProduct {
+  readonly pricingCopy?: CatalogPricingCopy;
   readonly id: string;
   readonly name: string;
   readonly description?: string;
   readonly basePrice?: CatalogPrice;
   readonly recurringPrice?: CatalogRecurringPrice;
+  readonly moduleGroups?: readonly CatalogModuleGroup[];
   readonly modules: readonly CatalogModule[];
   readonly tag: string;
   readonly pricingMode: 'consultation' | 'fixed';
@@ -47,11 +65,16 @@ export function getQuoteCatalog(locale: Locale): QuoteCatalog {
     products: commercialProducts.filter(product => product.categoryId === category.id).map(product => {
       const localized = copy[product.tag];
       if (!localized) throw new Error(`Missing localized service: ${locale}/${product.tag}`);
-      return { ...product, name: localized.name, description: localized.description,
+      return { ...product, name: localized.name, description: localized.description, pricingCopy: localized.pricing,
+        moduleGroups: product.moduleGroups?.map(group => {
+          const text = localized.moduleGroups?.[group.id];
+          if (!text) throw new Error(`Missing localized module group: ${locale}/${product.tag}/${group.id}`);
+          return { ...group, ...text };
+        }),
         modules: product.modules.map(module => {
           const text = localized.modules?.[module.id];
           if (!text) throw new Error(`Missing localized module: ${locale}/${product.tag}/${module.id}`);
-          return { ...module, name: text.title, description: text.description };
+          return { ...module, name: text.title, description: text.description, pricingCopy: text.pricing };
         }),
       };
     }),
@@ -61,8 +84,25 @@ export function catalogProducts(catalog: QuoteCatalog) {
   return catalog.categories.flatMap(category => category.products);
 }
 export function selectedModules(product: CatalogProduct, ids: readonly string[]) {
-  const selected = new Set(ids);
-  return product.modules.filter(module => module.required || selected.has(module.id));
+  const requested = new Set(ids);
+  const candidates = product.modules.filter(module => module.enabled !== false && (module.required || requested.has(module.id)));
+  const selected: CatalogModule[] = [];
+  for (const module of [...candidates.filter(item => item.required), ...candidates.filter(item => !item.required)]) {
+    if (!selected.some(item => modulesConflict(item, module) || (module.groupId && item.groupId === module.groupId && product.moduleGroups?.some(group => group.id === module.groupId && group.exclusive)))) selected.push(module);
+  }
+  return selected;
+}
+export function modulesConflict(left: CatalogModule, right: CatalogModule) {
+  return !!left.conflictsWith?.includes(right.id) || !!right.conflictsWith?.includes(left.id);
+}
+export function missingRequiredModuleGroup(product: CatalogProduct, ids: readonly string[]) {
+  return product.moduleGroups?.find(group => group.required && !product.modules.some(module => module.enabled !== false && module.groupId === group.id && ids.includes(module.id)));
+}
+export function validModuleRelations(product: CatalogProduct, ids: readonly string[]) {
+  const modules = product.modules.filter(module => ids.includes(module.id));
+  const groupsValid = !missingRequiredModuleGroup(product, ids) && (product.moduleGroups ?? []).every(group => !group.exclusive || modules.filter(module => module.groupId === group.id).length <= 1);
+  return groupsValid && modules.every(module => module.enabled !== false && !modules.some(other => other.id !== module.id && modulesConflict(module, other)) &&
+    (module.requires ?? []).every(id => ids.includes(id)));
 }
 export interface QuoteEstimate {
   readonly amountMinor?: number;
@@ -106,9 +146,18 @@ export function calculateQuoteEstimate(product: CatalogProduct | undefined, ids:
   return { amountMinor: known ? total : undefined, currency, underConsultation, recurringPrices: recurring.prices };
 }
 export function formatCatalogPrice(price: CatalogPrice, locale: Locale): string {
-  const formatter = new Intl.NumberFormat(locale, { style: "currency", currency: price.currency });
-  const digits = formatter.resolvedOptions().maximumFractionDigits ?? 2;
+  // Temporary commercial presentation policy: BRL amounts retain their numeric
+  // value in English and are displayed as USD; this is not an exchange rate.
+  const presentationCurrencies: Record<Locale, string> = { en: 'USD', 'pt-BR': 'BRL' };
+  const currency = price.currency === 'BRL' ? presentationCurrencies[locale] : price.currency;
+  const source = new Intl.NumberFormat(locale, { style: 'currency', currency: price.currency });
+  const formatter = new Intl.NumberFormat(locale, { style: "currency", currency });
+  const digits = source.resolvedOptions().maximumFractionDigits ?? 2;
   return formatter.format(price.amountMinor / 10 ** digits);
+}
+export function formatInitialPrice(price: CatalogPrice | undefined, locale: Locale, consultation: string, freeLabel?: string): string {
+  if (!validCatalogPrice(price)) return consultation;
+  return price.amountMinor === 0 && freeLabel ? freeLabel : formatCatalogPrice(price, locale);
 }
 export function formatRecurringPrice(price: CatalogRecurringPrice, locale: Locale, intervals: BillingIntervalLabels): string {
   return intervals[price.interval].replace('{amount}', formatCatalogPrice(price, locale));

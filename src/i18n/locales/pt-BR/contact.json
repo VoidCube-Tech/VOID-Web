@@ -135,7 +135,16 @@
     "periodLabels": {
       "month": "Mensalidade",
       "year": "Anuidade"
-    }
+    },
+    "free": "Gratuito",
+    "totalInitialKnown": "Total inicial conhecido",
+    "totalPeriods": {
+      "month": "Total mensal conhecido",
+      "year": "Total anual conhecido"
+    },
+    "conflictHint": "Escolha apenas um destes caminhos para o site.",
+    "requiredChoice": "Escolha uma alternativa",
+    "comingSoon": "Em breve"
   },
   "contextual": {
     "title": "Orçamento para {name}",

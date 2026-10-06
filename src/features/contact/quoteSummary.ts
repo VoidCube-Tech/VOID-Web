@@ -1,6 +1,6 @@
 import type { Locale } from "../../i18n/config";
 import type { ContactContent } from "./content";
-import { catalogProducts, calculateQuoteEstimate, selectedModules, formatCatalogPrice, formatRecurringPrice, combineRecurringPrices, type QuoteCatalog, type QuoteEstimate, type CatalogPrice, type CatalogRecurringPrice } from "../catalog";
+import { catalogProducts, calculateQuoteEstimate, selectedModules, formatCatalogPrice, formatInitialPrice, validCatalogPrice, formatRecurringPrice, combineRecurringPrices, type QuoteCatalog, type QuoteEstimate, type CatalogPrice, type CatalogRecurringPrice, type CatalogPricingCopy } from "../catalog";
 import type { QuoteState, SolutionSelection } from "./quoteModel";
 
 export function solutionEstimate(solution: SolutionSelection, catalog: QuoteCatalog): QuoteEstimate {
@@ -36,7 +36,21 @@ export function solutionSummary(solution: SolutionSelection, catalog: QuoteCatal
   const modules = product && solution.mode === "catalog" ? selectedModules(product, solution.moduleIds) : [];
   const estimate = solutionEstimate(solution, catalog);
   const amount = estimate.amountMinor !== undefined && estimate.currency ? formatCatalogPrice({ amountMinor: estimate.amountMinor, currency: estimate.currency }, locale) : undefined;
-  const recurringValues = (estimate.recurringPrices ?? []).map(price => ({ label: c.pricing.periodLabels[price.interval], value: formatRecurringPrice(price, locale, c.pricing.intervals) }));
+  const recurringValues = (estimate.recurringPrices ?? []).map(price => ({ interval: price.interval, label: c.pricing.periodLabels[price.interval], value: formatRecurringPrice(price, locale, c.pricing.intervals) }));
+  function pricingItem(name: string, type: 'product' | 'module', price: CatalogPrice | undefined, recurrence: CatalogRecurringPrice | undefined, copy?: CatalogPricingCopy, included = false) {
+    return {
+      name, type,
+      initialLabel: copy?.initialLabel ?? c.pricing.initial,
+      initialValue: included ? c.wizard.included : formatInitialPrice(price, locale, c.wizard.onRequest, copy?.freeInitialLabel ?? c.pricing.free),
+      underConsultation: !included && !validCatalogPrice(price),
+      recurringValues: !included && recurrence ? [{ label: copy?.recurringLabel ?? c.pricing.periodLabels[recurrence.interval], value: formatRecurringPrice(recurrence, locale, c.pricing.intervals), description: copy?.recurringDescription }] : [],
+    };
+  }
+  const itemized = !!product?.pricingCopy || modules.some(module => !!module.pricingCopy);
+  const pricingItems = product && itemized ? [
+    pricingItem(product.name, 'product', product.pricingMode === 'fixed' ? product.basePrice : undefined, product.recurringPrice, product.pricingCopy),
+    ...modules.map(module => pricingItem(module.name, 'module', module.price, module.recurringPrice, module.pricingCopy, module.includedInBase)),
+  ] : [];
   return {
     id: solution.id,
     mode: solution.mode,
@@ -45,6 +59,7 @@ export function solutionSummary(solution: SolutionSelection, catalog: QuoteCatal
     baseValue: product?.basePrice ? formatCatalogPrice(product.basePrice, locale) : c.wizard.onRequest,
     initialValue: estimateText(amount, estimate.underConsultation, c),
     recurringValues,
+    pricingItems,
     description: solution.mode === "custom" ? solution.description.trim() : "",
     estimate: [estimateText(amount, estimate.underConsultation, c), ...recurringValues.map(price => price.value)].join(' + '),
     hasPrice: amount !== undefined || recurringValues.length > 0,
@@ -53,12 +68,13 @@ export function solutionSummary(solution: SolutionSelection, catalog: QuoteCatal
 export function quoteSummary(state: QuoteState, catalog: QuoteCatalog, c: ContactContent, locale: Locale) {
   const total = calculateOrderEstimate(state.selectedSolutions, catalog);
   const amount = total.totals.length ? total.totals.map(price => formatCatalogPrice(price, locale)).join(" + ") : undefined;
-  const recurringValues = total.recurringPrices.map(price => ({ label: c.pricing.periodLabels[price.interval], value: formatRecurringPrice(price, locale, c.pricing.intervals) }));
+  const recurringValues = total.recurringPrices.map(price => ({ interval: price.interval, label: c.pricing.periodLabels[price.interval], value: formatRecurringPrice(price, locale, c.pricing.intervals) }));
   return {
     solutions: state.selectedSolutions.map(solution => solutionSummary(solution, catalog, c, locale)),
     budget: Object.entries(c.budgetOptions).find(([id]) => id === state.budgetRange)?.[1] ?? "",
     deadline: Object.entries(c.deadlineOptions).find(([id]) => id === state.deadline)?.[1] ?? "",
     initialEstimate: estimateText(amount, total.underConsultation, c),
+    knownInitialEstimate: amount,
     recurringValues,
     estimate: [estimateText(amount, total.underConsultation, c), ...recurringValues.map(price => price.value)].join(' + '),
     underConsultation: total.underConsultation,
@@ -74,6 +90,11 @@ function customerMessage(state: QuoteState, c: ContactContent) {
   ].join("\n");
 }
 function solutionMessage(solution: SolutionSummary, c: ContactContent) {
+  if (solution.pricingItems.length) return solution.pricingItems.map(item => [
+    `[${item.name}]`,
+    `${item.initialLabel}: ${item.initialValue}`,
+    ...item.recurringValues.flatMap(price => [`${price.label}: ${price.value}`, ...(price.description ? [price.description] : [])]),
+  ].join('\n')).join('\n\n');
   return [
     `[${solution.name}]`,
     ...(solution.recurringValues.length ? [
@@ -99,7 +120,11 @@ function finalNotices(summary: MessageSummary, c: ContactContent) {
 }
 export function buildQuoteMessage(state: QuoteState, catalog: QuoteCatalog, c: ContactContent, locale: Locale) {
   const summary = quoteSummary(state, catalog, c, locale);
-  return [customerMessage(state, c), solutionsMessage(summary, c), negotiationMessage(summary, c), finalNotices(summary, c)].filter(Boolean).join("\n\n");
+  const totals = [
+    ...(summary.knownInitialEstimate ? [`${c.pricing.totalInitialKnown}: ${summary.knownInitialEstimate}`] : []),
+    ...summary.recurringValues.map(price => `${c.pricing.totalPeriods[price.interval]}: ${price.value}`),
+  ].join('\n');
+  return [customerMessage(state, c), solutionsMessage(summary, c), totals, negotiationMessage(summary, c), finalNotices(summary, c)].filter(Boolean).join("\n\n");
 }
 export type SolutionSummary = ReturnType<typeof solutionSummary>;
 

@@ -5,6 +5,7 @@ import { getLocalizedPath, removeLocalePrefix } from "../routing/localePath";
 import {
 	liquidGlassControlStyle,
 	liquidGlassPanelStyle,
+	liquidGlassPopupStyle,
 	navigationGlassControlClass,
 	navigationGlassPanelClass,
 } from "../../../shared/effects/liquid-glass/liquidGlass";
@@ -23,6 +24,7 @@ export function ServicesMenu({ content, currentPath, locale, mode, onNavigate }:
 	const [open, setOpen] = useState(false);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
 	const panelId = `${mode}-services-menu`;
 	const currentRoute = removeLocalePrefix(currentPath).split(/[?#]/, 1)[0];
 	const active = currentRoute.startsWith("/services/");
@@ -41,13 +43,27 @@ export function ServicesMenu({ content, currentPath, locale, mode, onNavigate }:
 			triggerRef.current?.focus();
 		};
 
+		const positionPanel = () => {
+			if (mode !== "desktop" || !panelRef.current) return;
+			const panel = panelRef.current;
+			panel.style.marginLeft = "0px";
+			const rect = panel.getBoundingClientRect();
+			const inset = 16;
+			const shift = rect.left < inset
+				? inset - rect.left
+				: Math.min(0, document.documentElement.clientWidth - inset - rect.right);
+			panel.style.marginLeft = `${shift}px`;
+		};
+		positionPanel();
+		window.addEventListener("resize", positionPanel);
 		document.addEventListener("pointerdown", handlePointerDown);
 		document.addEventListener("keydown", handleKeyDown);
 		return () => {
+			window.removeEventListener("resize", positionPanel);
 			document.removeEventListener("pointerdown", handlePointerDown);
 			document.removeEventListener("keydown", handleKeyDown);
 		};
-	}, [open]);
+	}, [open, mode]);
 
 	return (
 		<div ref={rootRef} className={mode === "desktop" ? "relative inline-flex shrink-0 items-center self-center" : "w-full"}>
@@ -70,15 +86,16 @@ export function ServicesMenu({ content, currentPath, locale, mode, onNavigate }:
 
 			{open && (
 				<div
+					ref={panelRef}
 					id={panelId}
-					style={mode === "desktop" ? { ...liquidGlassPanelStyle, position: "absolute" } : liquidGlassPanelStyle}
+					style={mode === "desktop" ? { ...liquidGlassPopupStyle, position: "absolute" } : liquidGlassPanelStyle}
 					className={`${navigationGlassPanelClass} ${mode === "desktop"
-						? "absolute left-1/2 top-full z-10 mt-2 w-max max-w-[calc(100vw-2rem)] -translate-x-1/2 overflow-x-auto rounded-ui p-2"
+						? "absolute left-1/2 top-full z-10 mt-2 w-[26rem] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-ui p-2"
 						: "mt-2 rounded-ui p-2"}`}
 				>
-					<div className={mode === "desktop" ? "grid grid-flow-col auto-cols-max gap-2" : undefined}>
+					<div className={mode === "desktop" ? "grid grid-cols-2 gap-2" : undefined}>
 						{serviceCategories.map((category) => (
-							<div key={category.id} className={mode === "desktop" ? "min-w-48" : "mb-2 last:mb-0"}>
+							<div key={category.id} className={mode === "desktop" ? "min-w-0 break-words" : "mb-2 last:mb-0"}>
 								<p className="px-3 py-2 text-xs font-bold uppercase tracking-[0.12em] text-on-surface-variant">{content[category.labelKey]}</p>
 								<div className="grid gap-1">
 									{category.services.map((service) => {

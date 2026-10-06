@@ -1,0 +1,30 @@
+@reference '../../styles/global.css';
+
+.event-slots { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: calc(var(--spacing) * 2); }
+.event-slot { display: flex; justify-content: center; align-items: center; min-height: calc(var(--spacing) * 8); border-radius: var(--radius-ui); background: color-mix(in srgb, var(--color-surface-container-high) 45%, transparent); color: var(--color-on-surface-variant); opacity: 0.35; transform: scale(0.9); transition: opacity var(--duration-ui-slow) var(--ease-ui), transform var(--duration-ui-slow) var(--ease-ui); }
+.event-slot[data-filled='true'] { opacity: 1; transform: scale(1); color: var(--color-primary); background: color-mix(in srgb, var(--color-primary-container) 50%, transparent); }
+.event-count, .event-page-preview { animation: event-arrival var(--duration-ui-slow) var(--ease-ui) both; }
+.event-person { animation: event-arrival var(--duration-ui-slow) var(--ease-ui) both; }
+.event-connections button:disabled { opacity: 0.55; }
+.event-connection { position: relative; }
+.message-band-conversation .message-band-card { width: calc(var(--spacing) * 52); min-height: calc(var(--spacing) * 20); font-size: var(--text-lg); border-inline-start: var(--spacing) solid color-mix(in srgb, var(--color-primary) 35%, transparent); }
+.message-band-conversation .message-band-card:nth-child(even) { transform: translateY(calc(var(--spacing) * 3)); }
+.message-band-conversation .message-band-window { padding-block: calc(var(--spacing) * 3); }
+.message-band-conversation .message-band-group { gap: calc(var(--spacing) * 4); padding-right: calc(var(--spacing) * 4); }
+@media (width >= theme(--breakpoint-lg)) {
+  .service-live-product .service-hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto auto 1fr; column-gap: calc(var(--spacing) * 12); row-gap: calc(var(--spacing) * 6); align-items: start; text-align: left; }
+  .service-live-product .service-hero > p { grid-column: 1; margin: 0; }
+  .service-live-product .service-hero h1 { grid-column: 1; grid-row: 2; font-size: var(--text-6xl); line-height: var(--text-6xl--line-height); }
+  .service-live-product .service-hero-action { grid-column: 1; grid-row: 4; margin-top: calc(var(--spacing) * 2); }
+  .service-live-product .service-hero-visual { grid-column: 2; grid-row: 1 / span 4; margin-top: 0; }
+  .event-connection::before { content: ''; position: absolute; width: calc(var(--spacing) * 8); height: 1px; top: calc(var(--spacing) * 9); left: calc(var(--spacing) * -8); background: linear-gradient(to right, transparent, var(--color-primary)); pointer-events: none; }
+}
+@media (width < theme(--breakpoint-sm)) {
+  .event-slots { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
+@keyframes event-arrival { from { opacity: 0; transform: translateY(calc(var(--spacing) * 2)); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  .event-slot { transition: none; transform: none; }
+  .event-count, .event-person, .event-page-preview { animation: none; }
+  .message-band-conversation .message-band-card:nth-child(even) { transform: none; }
+}

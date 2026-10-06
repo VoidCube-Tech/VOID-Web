@@ -1,0 +1,25 @@
+---
+import type { PrincipleId } from '../content';
+interface Props { readonly kind: PrincipleId }
+const { kind } = Astro.props;
+---
+
+<svg class="about-principle-mark" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+  {kind === 'clarity' && <>
+    <path d="M8 13 31 24M6 32H30M8 51 31 40M34 32H58" />
+    <circle cx="34" cy="32" r="8" />
+  </>}
+  {kind === 'evolution' && <>
+    <path d="M8 43V56H21M8 30V8H56V56H34M21 43V21H43V43H21Z" />
+    <path d="M32 43V32H43" />
+  </>}
+  {kind === 'context' && <>
+    <path d="M7 21V7H21M43 7H57V21M57 43V57H43M21 57H7V43" />
+    <path d="M18 26 32 18 46 26V42L32 50 18 42Z" />
+    <path d="M18 26 32 34 46 26M32 34V50" />
+  </>}
+  {kind === 'utility' && <>
+    <path d="M9 9H55V55H9Z" />
+    <path d="M20 33 29 42 45 23" />
+  </>}
+</svg>

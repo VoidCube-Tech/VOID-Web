@@ -1,0 +1,40 @@
+---
+const prefix = `about-structure-${crypto.randomUUID()}`;
+const nodes = [
+  { position: 'top', x: 350, y: 112 },
+  { position: 'left', x: 164, y: 238 },
+  { position: 'right', x: 536, y: 238 },
+  { position: 'bottom', x: 350, y: 416 },
+  { position: 'core', x: 350, y: 270 },
+] as const;
+---
+
+<svg class="about-structure" viewBox="0 0 700 560" fill="none" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id={`${prefix}-face`} x1="-95" y1="-55" x2="95" y2="45" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--color-primary)" stop-opacity=".22" />
+      <stop offset="1" stop-color="var(--color-primary-container)" stop-opacity=".08" />
+    </linearGradient>
+    <linearGradient id={`${prefix}-core`} x1="-95" y1="-50" x2="95" y2="50" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--color-primary-fixed)" stop-opacity=".68" />
+      <stop offset="1" stop-color="var(--color-primary-container)" stop-opacity=".35" />
+    </linearGradient>
+  </defs>
+  <g class="structure-future" stroke="var(--color-primary)" stroke-opacity=".2" stroke-dasharray="3 9">
+    <path d="M350 24 646 219 350 520 54 219Z" />
+    <path d="M350 24V69M646 219H602M350 520V474M54 219H98" stroke-dasharray="none" />
+  </g>
+  <g class="structure-connections" stroke="var(--color-primary)" stroke-opacity=".65" stroke-width="1.5">
+    <path d="M350 158V229M247 252 293 276M453 252 407 276M350 328V371" />
+  </g>
+  {nodes.map(({ position, x, y }) => (
+    <g transform={`translate(${x} ${y})`}>
+      <g class="structure-node" data-position={position}>
+        <path class="structure-depth" d="M-86 0 0 46 86 0V19L0 65-86 19Z" fill="var(--color-primary-container)" fill-opacity=".28" stroke="var(--color-primary)" stroke-opacity=".25" />
+        <path class="structure-face" d="M0-46 86 0 0 46-86 0Z" fill={`url(#${prefix}-${position === 'core' ? 'core' : 'face'})`} stroke="var(--color-primary)" stroke-opacity={position === 'core' ? '.85' : '.4'} />
+        <path class="structure-inset" d="M0-29 54 0 0 29-54 0Z" stroke="var(--color-primary-fixed)" stroke-opacity=".3" />
+        {position === 'core' && <path d="M-14 0 0-8 14 0 0 8Z" fill="var(--color-primary-fixed)" />}
+      </g>
+    </g>
+  ))}
+</svg>

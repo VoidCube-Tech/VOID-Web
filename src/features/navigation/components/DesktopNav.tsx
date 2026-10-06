@@ -31,7 +31,6 @@ export function DesktopNav({ content, currentPath, locale }: Props) {
 				>
 					{content.landingPage}
 				</a>
-				<ServicesMenu content={content} currentPath={currentPath} locale={locale} mode="desktop" />
 				<a
 					href={getLocalizedPath("/about", locale)}
 					aria-current={currentRoute === "/about" ? "page" : undefined}
@@ -40,6 +39,7 @@ export function DesktopNav({ content, currentPath, locale }: Props) {
 				>
 					{content.about}
 				</a>
+				<ServicesMenu content={content} currentPath={currentPath} locale={locale} mode="desktop" />
 				<LanguageSelector content={content} currentPath={currentPath} locale={locale} mode="desktop" />
 			</div>
 			<div className="hidden items-center justify-self-end gap-1 md:flex">

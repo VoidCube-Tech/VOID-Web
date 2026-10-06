@@ -1,9 +1,9 @@
 import type { ContactContent } from "./content";
-import { catalogProducts, selectedModules, type CatalogProduct, type QuoteCatalog } from "../catalog";
+import { catalogProducts, selectedModules, missingRequiredModuleGroup, validModuleRelations, type CatalogProduct, type QuoteCatalog } from "../catalog";
 export type Step = 1 | 2 | 3;
 export interface QuoteContext { readonly productId: string; readonly moduleIds: readonly string[] }
 export function quoteSteps(product?: CatalogProduct): readonly Step[] {
-  return product ? product.modules.some(module => !module.required) ? [2, 1, 3] : [1, 3] : [1, 2, 3];
+  return product ? product.modules.some(module => module.enabled !== false && !module.required) ? [2, 1, 3] : [1, 3] : [1, 2, 3];
 }
 export type Field = "name" | "company" | "solutions" | "budgetRange" | "deadline";
 export interface CatalogSolutionSelection {
@@ -121,6 +121,11 @@ export function validateSolution(solution: SolutionSelection, catalog: QuoteCata
     return length < 20 || length > 2000 ? c.errors.description : undefined;
   }
   const product = catalogProducts(catalog).find(item => item.id === solution.productId);
+  if (product) {
+    const missing = missingRequiredModuleGroup(product, solution.moduleIds);
+    if (missing) return missing.requiredMessage;
+  }
+  if (product && !validModuleRelations(product, solution.moduleIds)) return c.wizard.selectError;
   if (!product || solution.id !== product.id || solution.moduleIds.some(id => !product.modules.some(module => module.id === id)) || product.modules.some(module => module.required && !solution.moduleIds.includes(module.id))) return c.wizard.selectError;
 }
 export function validateQuoteStep(state: QuoteState, step: Step, catalog: QuoteCatalog, c: ContactContent, contextual = false): QuoteState["errors"] {
@@ -133,7 +138,8 @@ export function validateQuoteStep(state: QuoteState, step: Step, catalog: QuoteC
   }
   if (step === 2) {
     const identities = new Set(state.selectedSolutions.map(solution => solution.id));
-    if (!state.selectedSolutions.length || identities.size !== state.selectedSolutions.length || state.selectedSolutions.some(solution => validateSolution(solution, catalog, c))) errors.solutions = c.wizard.selectError;
+    const solutionError = state.selectedSolutions.map(solution => validateSolution(solution, catalog, c)).find(Boolean);
+    if (!state.selectedSolutions.length || identities.size !== state.selectedSolutions.length || solutionError) errors.solutions = solutionError ?? c.wizard.selectError;
     if (!contextual && !Object.hasOwn(c.budgetOptions, state.budgetRange)) errors.budgetRange = c.errors.option;
     if (!contextual && !Object.hasOwn(c.deadlineOptions, state.deadline)) errors.deadline = c.errors.option;
   }

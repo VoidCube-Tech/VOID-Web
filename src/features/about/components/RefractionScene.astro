@@ -1,0 +1,63 @@
+---
+const prefix = `about-refraction-${crypto.randomUUID()}`;
+const rays = Array.from({ length: 22 }, (_, index) => {
+  const start = 100 + index * 27;
+  const bend = start + Math.sin(index * 1.7) * 190;
+  const focus = 292 + index * 9;
+  return {
+    path: `M-20 ${start} C180 ${bend}, 315 ${680 - index * 24}, 600 ${focus}`,
+    refracted: `M535 ${focus + 45} C640 ${focus - 42}, 755 ${focus + 64}, 892 ${focus + 18}`,
+    output: `M850 ${focus + 18} C1040 ${focus + 18}, 1200 ${focus + 18}, 1420 ${focus + 18}`,
+    opacity: 0.15 + (index % 4) * 0.08,
+  };
+});
+const glass = 'M608 94 978 224 782 730 412 600Z';
+---
+
+<svg class="about-refraction" viewBox="0 0 1400 820" preserveAspectRatio="xMidYMid slice" fill="none" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id={`${prefix}-glass`} x1="420" y1="130" x2="950" y2="690" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--color-on-primary-container)" stop-opacity=".03" />
+      <stop offset=".25" stop-color="var(--color-primary)" stop-opacity=".18" />
+      <stop offset=".49" stop-color="var(--color-background)" stop-opacity=".78" />
+      <stop offset=".72" stop-color="var(--color-primary-container)" stop-opacity=".38" />
+      <stop offset="1" stop-color="var(--color-primary-fixed)" stop-opacity=".12" />
+    </linearGradient>
+    <linearGradient id={`${prefix}-edge`} x1="450" y1="100" x2="820" y2="745" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--color-on-surface)" stop-opacity=".85" />
+      <stop offset=".35" stop-color="var(--color-primary)" stop-opacity=".25" />
+      <stop offset=".7" stop-color="var(--color-on-surface)" stop-opacity=".04" />
+      <stop offset="1" stop-color="var(--color-primary)" stop-opacity=".7" />
+    </linearGradient>
+    <linearGradient id={`${prefix}-beam`} x1="850" y1="410" x2="1400" y2="410" gradientUnits="userSpaceOnUse">
+      <stop stop-color="var(--color-primary-fixed)" stop-opacity=".8" />
+      <stop offset=".55" stop-color="var(--color-primary)" stop-opacity=".38" />
+      <stop offset="1" stop-color="var(--color-primary)" stop-opacity="0" />
+    </linearGradient>
+    <radialGradient id={`${prefix}-light`}>
+      <stop stop-color="var(--color-primary)" stop-opacity=".16" />
+      <stop offset="1" stop-color="var(--color-primary)" stop-opacity="0" />
+    </radialGradient>
+    <clipPath id={`${prefix}-clip`}><path d={glass} /></clipPath>
+  </defs>
+  <ellipse cx="745" cy="428" rx="500" ry="350" fill={`url(#${prefix}-light)`} />
+  <g stroke="var(--color-on-surface-variant)" stroke-width="1">
+    {rays.map(ray => <path d={ray.path} opacity={ray.opacity} />)}
+  </g>
+  <g stroke={`url(#${prefix}-beam)`} stroke-width="1.5">
+    {rays.map(ray => <path d={ray.output} opacity=".72" />)}
+  </g>
+  <path d="M608 94 626 82 996 212 978 224Z" fill="var(--color-on-primary-container)" fill-opacity=".12" stroke={`url(#${prefix}-edge)`} />
+  <path d="M978 224 996 212 800 718 782 730Z" fill="var(--color-primary-container)" fill-opacity=".4" stroke={`url(#${prefix}-edge)`} />
+  <path d={glass} fill={`url(#${prefix}-glass)`} stroke={`url(#${prefix}-edge)`} stroke-width="1.5" />
+  <g clip-path={`url(#${prefix}-clip)`}>
+    <g stroke="var(--color-primary-fixed)" stroke-width="2">
+      {rays.map((ray, index) => <path d={ray.refracted} opacity={index % 3 === 0 ? '.65' : '.18'} />)}
+    </g>
+    <path d="M603 95 433 608 458 620 649 111Z" fill="var(--color-on-surface)" fill-opacity=".07" />
+    <path d="M965 231 780 713 739 699 926 217Z" fill="var(--color-primary)" fill-opacity=".1" />
+    <path d="M643 100 470 646M702 117 513 666" stroke="var(--color-on-surface)" stroke-opacity=".05" stroke-width="20" />
+  </g>
+  <path d="M608 94 412 600" stroke="var(--color-on-primary-container)" stroke-opacity=".65" stroke-width="2" />
+  <path d="M412 600 782 730" stroke={`url(#${prefix}-edge)`} stroke-width="2" />
+</svg>

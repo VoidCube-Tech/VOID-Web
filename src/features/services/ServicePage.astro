@@ -13,18 +13,19 @@ const { product, content, page, hero, sections, catalog, locale } = service;
 const quoteDialogId = `service-quote-${product.id}`;
 const buttonClass = `${navigationGlassControlClass} inline-flex min-h-12 items-center rounded-ui px-7 py-3 font-bold text-primary-fixed focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary`;
 ---
-<main class:list={['relative z-10 mx-auto max-w-6xl px-6 pb-32 pt-40 sm:px-10 sm:pt-48', { 'service-cinematic': page.layout === 'cinematic', 'service-storytelling': sections.some(section => section.type === 'guided-demo') }]}>
-  <section aria-labelledby="service-title" class:list={['service-hero flex min-h-[60svh] flex-col justify-center pb-20 sm:pb-32', { 'items-center text-center': page.layout === 'cinematic' }]}>
+<main class:list={['relative z-10 mx-auto max-w-6xl px-6 pb-32 pt-40 sm:px-10 sm:pt-48', { 'service-cinematic': page.layout === 'cinematic', 'service-live-product': page.layout === 'live-product', 'service-storytelling': sections.some(section => section.type === 'guided-demo') }]}>
+  <section aria-labelledby="service-title" class:list={['service-hero flex min-h-[60svh] flex-col justify-center pb-20 sm:pb-32', { 'items-center text-center': page.layout !== 'standard' }]}>
     <p class="mb-6 text-lg text-primary">{content.name}</p>
     <h1 id="service-title" class="max-w-4xl font-secondary text-5xl leading-tight sm:text-7xl lg:text-8xl">{content.hero.title}</h1>
     <p class="mt-8 max-w-xl text-xl leading-relaxed text-on-surface-variant">{content.hero.description}</p>
-    <div class="mt-10"><button type="button" data-quote-product={product.id} aria-haspopup="dialog" aria-controls={quoteDialogId} class={buttonClass} style={liquidGlassPrimaryControlStyle}>{content.cta.label}</button></div>
-    {hero.type !== 'minimal' && <div class="mt-16 w-full"><ServiceHeroRenderer hero={hero} /></div>}
+    <div class="service-hero-action mt-10"><button type="button" data-quote-product={product.id} aria-haspopup="dialog" aria-controls={quoteDialogId} class={buttonClass} style={liquidGlassPrimaryControlStyle}>{content.hero.actionLabel ?? content.cta.label}</button></div>
+    {hero.type !== 'minimal' && <div class="service-hero-visual mt-16 w-full"><ServiceHeroRenderer hero={hero} /></div>}
   </section>
   {sections.map(section => <ServiceSectionRenderer section={section} quoteLabel={content.cta.label} />)}
   <section aria-labelledby="quote-title" class="service-quote mt-20 rounded-ui px-6 py-12 sm:p-16" style={liquidGlassSurfaceStyle} data-reveal>
     <h2 id="quote-title" class="max-w-3xl font-secondary text-4xl leading-tight sm:text-6xl">{content.cta.title}</h2>
     <p class="mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">{content.cta.description}</p>
+    {service.ctaPriceLabel && <p class="mt-6 text-sm text-on-surface-variant">{service.ctaPriceLabel}</p>}
     <button type="button" data-quote-product={product.id} aria-haspopup="dialog" aria-controls={quoteDialogId} class={`${buttonClass} mt-8`} style={liquidGlassPrimaryControlStyle}>{content.cta.label}</button>
   </section>
 </main>

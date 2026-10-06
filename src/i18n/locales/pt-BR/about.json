@@ -1,0 +1,57 @@
+{
+  "seo": {
+    "title": "Sobre a VoidCube",
+    "description": "Criamos sites, produtos e sistemas que transformam complexidade em clareza. Conheça a forma de pensar e construir da VoidCube."
+  },
+  "opening": {
+    "label": "Sobre a VoidCube",
+    "title": ["Complexidade.", "Com sentido."],
+    "intro": "Criamos sites, produtos e sistemas que fazem as partes do seu negócio trabalharem juntas.",
+    "purpose": "Existimos para dar forma ao que parece disperso. E abrir espaço para o que vem depois.",
+    "input": "Muitas partes.",
+    "output": "Uma direção.",
+    "caption": "Encontramos uma lógica entre as partes para que o todo faça sentido."
+  },
+  "possibilities": {
+    "title": ["Um núcleo.", "Várias possibilidades."],
+    "description": "Pensamos cada produto como parte de uma estrutura. O que resolve uma necessidade hoje pode se conectar a outras amanhã.",
+    "caption": "Uma base coerente. Espaço para novas conexões.",
+    "servicesLabel": "Essa ideia já toma forma em",
+    "products": {
+      "websites": "Uma presença que comunica.",
+      "void-events": "Uma operação que conecta."
+    }
+  },
+  "principles": {
+    "title": "O que orienta cada escolha.",
+    "items": {
+      "clarity": { "title": "Clareza", "description": "Fazer o essencial aparecer. Tornar o próximo passo compreensível." },
+      "evolution": { "title": "Evolução", "description": "Construir uma base que aceite novas possibilidades, sem pedir um novo começo." },
+      "context": { "title": "Contexto", "description": "Entender o negócio antes de definir a solução. Cada operação tem sua própria lógica." },
+      "utility": { "title": "Utilidade", "description": "Tecnologia precisa servir à operação. Toda escolha deve ajudar alguém a fazer algo melhor." }
+    }
+  },
+  "method": {
+    "title": ["Antes da forma,", "o contexto."],
+    "description": "Entendemos as partes. Encontramos a estrutura. Construímos as conexões. A solução cresce a partir daí.",
+    "controlLabel": "Explore nossa forma de trabalhar",
+    "hint": "Selecione uma etapa para ver a estrutura tomar forma.",
+    "steps": {
+      "understand": { "title": "Entender", "description": "Escutar, observar e reconhecer o que o negócio realmente precisa." },
+      "structure": { "title": "Estruturar", "description": "Dar uma lógica às partes. Definir o que é essencial e como tudo se relaciona." },
+      "build": { "title": "Construir", "description": "Transformar a estrutura em uma experiência que funciona no dia a dia." },
+      "connect": { "title": "Conectar", "description": "Fazer informações, serviços e processos trabalharem em conjunto." },
+      "evolve": { "title": "Evoluir", "description": "Abrir novas possibilidades sobre a base que já faz sentido." }
+    }
+  },
+  "closing": {
+    "title": ["O futuro precisa", "de uma boa base."],
+    "description": "Seu negócio muda. A estrutura deve ter espaço para acompanhar.",
+    "cta": {
+      "eyebrow": "Vamos construir o próximo passo",
+      "title": "Crescer sem começar de novo.",
+      "description": "Conte o contexto do seu negócio. Vamos encontrar uma base que faça sentido agora e possa continuar evoluindo.",
+      "cta": { "label": "Vamos conversar", "href": "/contact" }
+    }
+  }
+}

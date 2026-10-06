@@ -3,9 +3,16 @@ import type { ResolvedServiceHero } from '../types';
 import ServiceConceptFrame from './ServiceConceptFrame.astro';
 import ServiceMedia from './ServiceMedia.astro';
 import ServiceMediaCollection from './ServiceMediaCollection.astro';
+import LiveEventDemo from './LiveEventDemo';
+import { TypingText } from '../../../shared/components/TypingText';
+import '../eventPresentation.css';
 interface Props { hero: ResolvedServiceHero }
 const { hero } = Astro.props;
 ---
 {hero.type === 'concept' && <figure class="concept-hero-frame"><ServiceConceptFrame demo={hero.demo} /><figcaption class="mt-6 text-center text-sm text-on-surface-variant">{hero.demo.label}</figcaption></figure>}
+{hero.type === 'live-event' && <div class="mx-auto max-w-3xl">
+  <div class="mb-8 flex min-w-0 flex-wrap justify-center gap-x-2 gap-y-1 text-sm text-on-surface-variant sm:text-base"><span>{hero.demo.problemLabel}</span><TypingText client:load messages={hero.demo.problems} accessibleText={hero.demo.problems.join(' ')} cursor={false} /></div>
+  <LiveEventDemo client:load demo={hero.demo} />
+</div>}
 {hero.type === 'carousel' && <ServiceMediaCollection type="carousel" items={hero.items} eager />}
 {(hero.type === 'image' || hero.type === 'video') && <ServiceMedia media={hero} eager />}

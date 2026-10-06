@@ -1,0 +1,43 @@
+---
+import { methodStages, type AboutContent } from '../content';
+import CoreStructure from './CoreStructure.astro';
+interface Props { readonly content: AboutContent['method'] }
+const { content } = Astro.props;
+---
+
+<section class="about-method about-wrap" aria-labelledby="about-method-title">
+  <header class="about-method-header">
+    <h2 id="about-method-title" class="about-section-title font-secondary">
+      {content.title.map(line => <span>{line}</span>)}
+    </h2>
+    <p class="about-body-copy">{content.description}</p>
+  </header>
+  <fieldset class="about-workbench">
+    <legend class="sr-only">{content.controlLabel}</legend>
+    <div class="about-method-controls">
+      {methodStages.map((stage, index) => (
+        <div class="about-method-step">
+          <input
+            class="about-method-input sr-only"
+            type="radio"
+            name="about-method"
+            id={`about-method-${stage}`}
+            value={stage}
+            aria-describedby={`about-method-description-${stage}`}
+            checked={index === 0}
+          />
+          <label for={`about-method-${stage}`} class="about-method-option">
+            <span class="about-step-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <span class="about-step-title">{content.steps[stage].title}</span>
+            <span class="about-step-indicator" aria-hidden="true"></span>
+          </label>
+          <p id={`about-method-description-${stage}`} class="about-step-description">{content.steps[stage].description}</p>
+        </div>
+      ))}
+    </div>
+    <div class="about-method-visual" aria-hidden="true">
+      <CoreStructure />
+    </div>
+    <p class="about-method-hint">{content.hint}</p>
+  </fieldset>
+</section>

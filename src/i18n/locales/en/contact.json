@@ -38,10 +38,10 @@
   },
   "budgetOptions": {
     "discuss": "I'd like guidance",
-    "under5": "Under R$5,000",
-    "5to15": "R$5,000–R$15,000",
-    "15to50": "R$15,000–R$50,000",
-    "over50": "Over R$50,000"
+    "under5": "Under $5,000",
+    "5to15": "$5,000–$15,000",
+    "15to50": "$15,000–$50,000",
+    "over50": "Over $50,000"
   },
   "deadlineOptions": {
     "flexible": "Flexible / let's discuss",
@@ -135,7 +135,16 @@
     "periodLabels": {
       "month": "Monthly charge",
       "year": "Annual charge"
-    }
+    },
+    "free": "Free",
+    "totalInitialKnown": "Known initial total",
+    "totalPeriods": {
+      "month": "Known monthly total",
+      "year": "Known annual total"
+    },
+    "conflictHint": "Choose only one website option.",
+    "requiredChoice": "Choose one option",
+    "comingSoon": "Coming soon"
   },
   "contextual": {
     "title": "Quote for {name}",

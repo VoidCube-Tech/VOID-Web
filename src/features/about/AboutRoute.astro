@@ -1,0 +1,29 @@
+---
+import { defaultLocale, locales, type Locale } from '../../i18n/config';
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { getLocalizedPath } from '../navigation';
+import AboutPage from './AboutPage.astro';
+import { aboutContent } from './content';
+
+interface Props { readonly locale: Locale }
+const { locale } = Astro.props;
+const content = aboutContent[locale];
+const site = Astro.site;
+const alternates = site ? [
+  ...locales.map(language => ({
+    hreflang: language,
+    href: new URL(getLocalizedPath('/about', language), site),
+  })),
+  { hreflang: 'x-default', href: new URL(getLocalizedPath('/about', defaultLocale), site) },
+] : [];
+---
+
+<SiteLayout
+  lang={locale}
+  {...content.seo}
+  alternates={alternates}
+  robots="index, follow, max-image-preview:large"
+  socialLocale={locale === 'pt-BR' ? 'pt_BR' : 'en_US'}
+>
+  <AboutPage locale={locale} />
+</SiteLayout>

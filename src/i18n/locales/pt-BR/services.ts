@@ -11,10 +11,10 @@ export default {
   },
   "services": {
     "sites": {
-      "name": "Sites",
+      "name": "Landing Page",
       "description": "Uma presença digital para sua marca, serviços e ideias.",
       "seo": {
-        "title": "Sites | VoidCube",
+        "title": "Landing Page | VoidCube",
         "description": "Uma presença digital para sua marca, serviços e ideias."
       },
       "hero": {
@@ -171,185 +171,225 @@ export default {
       }
     },
     "void-events": {
-      "name": "Void Events",
-      "description": "Uma plataforma para conectar a experiência do seu evento.",
-      "seo": {
-        "title": "Void Events | VoidCube",
-        "description": "Uma plataforma para conectar a experiência do seu evento."
-      },
+      "name": "Void Gather",
+      "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada.",
       "hero": {
-        "title": "Conecte a experiência do seu evento.",
-        "description": "Uma plataforma para conectar a experiência do seu evento."
+        "title": "Cada evento. Cada vaga. Todo mundo no lugar certo.",
+        "description": "Organize eventos com capacidade limitada e saiba quem realmente confirmou presença.",
+        "actionLabel": "Organizar meus eventos"
       },
       "problem": {
-        "title": "Informações desconectadas tornam o evento mais difícil de acompanhar."
+        "title": "Quando as confirmações ficam espalhadas, organizar vira conferir tudo duas vezes."
       },
       "solution": {
-        "title": "Reúna a experiência do evento em uma plataforma adaptada às suas necessidades."
-      },
-      "features": {
-        "title": "Conecte a experiência",
-        "description": "Dê às informações do evento um lugar comum ao longo da experiência."
-      },
-      "results": {
-        "title": "Uma experiência fácil de acompanhar",
-        "description": "Facilite a compreensão do evento para todos os envolvidos."
-      },
-      "customization": {
-        "title": "Feito para seu contexto",
-        "description": "Converse com a gente sobre módulos, integrações e fluxos personalizados para seu negócio."
-      },
-      "cta": {
-        "title": "Vamos dar forma à sua solução.",
-        "description": "Conte o que seu negócio precisa. Definimos o escopo juntos.",
-        "label": "Solicitar orçamento"
-      }
-    },
-    "void-erp": {
-      "name": "Void ERP",
-      "description": "Uma plataforma de negócios para conectar suas operações.",
-      "seo": {
-        "title": "Void ERP | VoidCube",
-        "description": "Uma plataforma de negócios para conectar suas operações."
-      },
-      "hero": {
-        "title": "Abra espaço para seu negócio avançar.",
-        "description": "Uma plataforma de negócios para conectar suas operações."
-      },
-      "problem": {
-        "title": "Operações espalhadas dificultam enxergar o negócio como um todo."
-      },
-      "solution": {
-        "title": "Conecte suas operações em uma plataforma adaptada ao contexto do negócio."
-      },
-      "features": {
-        "title": "Reúna suas operações",
-        "description": "Organize a experiência do negócio em torno da forma como sua equipe trabalha."
-      },
-      "results": {
-        "title": "Uma visão compartilhada do negócio",
-        "description": "Dê à equipe um caminho mais claro para compreender operações conectadas."
-      },
-      "customization": {
-        "title": "Feito para seu contexto",
-        "description": "Converse com a gente sobre módulos, integrações e fluxos personalizados para seu negócio."
-      },
-      "cta": {
-        "title": "Vamos dar forma à sua solução.",
-        "description": "Conte o que seu negócio precisa. Definimos o escopo juntos.",
-        "label": "Solicitar orçamento"
-      }
-    },
-    "landing-page": {
-      "name": "Landing Page",
-      "description": "Uma página construída em torno da sua oferta, com uma mensagem clara e um próximo passo.",
-      "seo": {
-        "title": "Landing Page | VoidCube",
-        "description": "Landing Pages sob medida para sua oferta: clareza, responsividade e foco em uma ação. Converse com a VoidCube."
-      },
-      "hero": {
-        "title": "Um objetivo. Todo o foco.",
-        "description": "Uma página. Uma mensagem clara. Um caminho direto para a próxima ação."
-      },
-      "problem": {
-        "title": "O essencial ganha espaço.",
-        "description": "Quando tudo pede atenção, a mensagem se perde. Retiramos distrações para que sua oferta encontre o lugar certo."
-      },
-      "solution": {
-        "title": "Da ideia à experiência.",
-        "description": "Estrutura, hierarquia e identidade se encontram. Cada detalhe ajuda sua mensagem a chegar mais longe."
-      },
-      "features": {
-        "title": "A mesma intenção. Em qualquer tela.",
-        "description": "A composição se adapta. A mensagem continua clara. Experimente os formatos abaixo."
-      },
-      "results": {
-        "title": "Clareza que convida a agir.",
+        "title": "Uma aula especial também é um evento. Uma sessão também. Uma experiência também.",
         "items": [
           {
-            "title": "Uma mensagem que se entende.",
-            "description": "Sua oferta aparece com contexto, hierarquia e espaço para ser compreendida."
+            "title": "Academias e estúdios",
+            "description": "Aulas especiais, workshops, treinos e turmas limitadas."
           },
           {
-            "title": "Um próximo passo evidente.",
-            "description": "O caminho até o contato, cadastro ou compra acompanha o objetivo da sua campanha."
+            "title": "Espaços e locais",
+            "description": "Sessões, encontros e experiências com capacidade controlada."
           },
           {
-            "title": "Leve para chegar. Pronta para conectar.",
-            "description": "Conteúdo e recursos são escolhidos com atenção ao carregamento. Formulários e canais de contato podem se conectar à sua operação, conforme o escopo."
+            "title": "Empresas",
+            "description": "Treinamentos, workshops e encontros internos."
+          },
+          {
+            "title": "Comunidades",
+            "description": "Encontros recorrentes onde saber quem vai faz a diferença."
+          }
+        ]
+      },
+      "features": {
+        "title": "Da abertura das vagas à lista confirmada.",
+        "description": "Experimente uma confirmação. Conecte uma página. O evento continua no centro."
+      },
+      "results": {
+        "title": "Você organiza o evento. A plataforma organiza as confirmações.",
+        "items": [
+          {
+            "title": "Menos conferência manual",
+            "description": "Uma visão clara de quem confirmou."
+          },
+          {
+            "title": "Capacidade sob controle",
+            "description": "Saiba quantas vagas ainda existem."
+          },
+          {
+            "title": "Mais clareza para sua operação",
+            "description": "Evento, horário e participantes no mesmo lugar."
+          },
+          {
+            "title": "Estrutura para repetir",
+            "description": "Organize eventos recorrentes sem recomeçar do zero."
           }
         ]
       },
       "process": {
-        "title": "Sua ideia, bem acompanhada.",
-        "description": "Um processo claro, do primeiro entendimento à publicação e evolução.",
-        "items": [
-          {
-            "title": "Entender",
-            "description": "Conhecemos seu negócio, sua oferta e a ação que importa."
-          },
-          {
-            "title": "Planejar",
-            "description": "Organizamos a mensagem e o caminho que seu público vai percorrer."
-          },
-          {
-            "title": "Criar",
-            "description": "Damos forma à página com sua identidade e refinamos os detalhes juntos."
-          },
-          {
-            "title": "Conectar",
-            "description": "Alinhamos formulários e canais de contato ao que seu negócio precisa."
-          },
-          {
-            "title": "Publicar",
-            "description": "Preparamos a experiência para chegar ao seu público."
-          },
-          {
-            "title": "Evoluir",
-            "description": "Combinamos acompanhamento e melhorias conforme a necessidade e o escopo."
-          }
-        ]
+        "title": "Lotado é diferente de desorganizado.",
+        "description": "Chegar à capacidade é bom quando você sabe quem confirmou — e quando não cabe mais ninguém."
       },
-      "customization": {
-        "title": "Seu objetivo define a página.",
-        "description": "Sem formato engessado. Objetivo, identidade, público e oferta orientam a composição. Conteúdo, integrações e caminhos de contato se adaptam ao contexto do seu negócio."
+      "integrations": {
+        "title": "Você olha e sabe."
       },
       "cta": {
-        "title": "Qual é o seu próximo objetivo?",
-        "description": "Conte sua ideia. Vamos definir uma Landing Page que faça sentido para sua oferta.",
+        "title": "Seu próximo evento pode começar organizado.",
+        "description": "Conte como sua operação funciona e montamos o fluxo certo para ela.",
         "label": "Solicitar orçamento"
       },
-      "concept": {
-        "label": "Demonstração conceitual do serviço. Não representa um projeto de cliente.",
-        "brand": "Sua marca",
-        "headline": "Sua ideia merece espaço.",
-        "description": "Uma oferta clara. Um próximo passo.",
-        "action": "Vamos conversar",
-        "distractions": [
-          "Novidades",
-          "Explore",
-          "Mais opções"
+      "messageBand": {
+        "messages": [
+          "Quem confirmou?",
+          "Ainda tem vaga?",
+          "Uma pessoa desistiu.",
+          "Cabe mais alguém?",
+          "Essa turma já lotou?",
+          "Quem está nesse horário?"
         ],
-        "focusCaption": "Nesta demonstração, elementos secundários cedem espaço à mensagem e à ação principal.",
-        "buildCaption": "Composição conceitual: da estrutura inicial ao acabamento, com uma intenção em cada etapa.",
-        "buildStages": [
-          "Estrutura",
-          "Hierarquia",
-          "Tipografia",
-          "Composição visual",
-          "Ação principal",
-          "Acabamento"
-        ],
-        "responsiveCaption": "A mesma composição conceitual se reorganiza para cada formato.",
-        "devices": {
-          "label": "Escolha o formato da demonstração",
-          "desktop": "Desktop",
-          "tablet": "Tablet",
-          "mobile": "Celular"
+        "resolution": "Um lugar para saber o que vai acontecer — e quem realmente vai estar lá.",
+        "pauseLabel": "Pausar movimento",
+        "resumeLabel": "Retomar movimento"
+      },
+      "modules": {
+        "event-page": {
+          "title": "Criar Site / Página do evento",
+          "description": "Uma nova presença digital para sua empresa ou uma página dedicada aos seus eventos.",
+          "pricing": {
+            "initialLabel": "Criação",
+            "recurringLabel": "Suporte e manutenção",
+            "recurringDescription": "Inclui suporte, correções e manutenção contínua do site."
+          }
+        },
+        "existing-site": {
+          "title": "Importar / integrar site existente",
+          "description": "Conecte a plataforma ao site que sua empresa já possui. A importação é gratuita; a mensalidade cobre o acompanhamento posterior.",
+          "pricing": {
+            "initialLabel": "Importação",
+            "freeInitialLabel": "Gratuita",
+            "recurringLabel": "Suporte e manutenção",
+            "recurringDescription": "Inclui suporte, correções e manutenção contínua da integração/site."
+          }
+        },
+        "online-payment": {
+          "title": "Pagamento online",
+          "description": "Receba pagamentos diretamente no fluxo do evento."
         }
       },
+      "eventDemo": {
+        "label": "Demonstração conceitual. Pessoas e números ilustrativos; não representam clientes nem resultados reais.",
+        "problemLabel": "Problema:",
+        "problems": [
+          "Confirmações espalhadas.",
+          "Vagas sem controle.",
+          "Presença incerta.",
+          "Lista manual demais.",
+          "Quem realmente vai?",
+          "Esse horário já lotou?"
+        ],
+        "event": {
+          "name": "Treino especial",
+          "day": "Sábado",
+          "time": "09:00"
+        },
+        "labels": {
+          "seats": "Vagas",
+          "remaining": "Disponíveis",
+          "participants": "Presenças confirmadas",
+          "participant": "Participante",
+          "core": "Incluído na plataforma",
+          "connections": "Conexões adicionais",
+          "open": "Aberto",
+          "available": "Disponível",
+          "almostFull": "Quase cheio",
+          "full": "Lotado",
+          "pause": "Pausar demonstração",
+          "resume": "Retomar demonstração",
+          "confirm": "Simular confirmação",
+          "reset": "Recomeçar",
+          "previewPage": "Visualizar conexão",
+          "pageConnected": "Página conectada ao evento",
+          "pageAction": "Confirmar presença"
+        },
+        "coreItems": [
+          "Criação do evento",
+          "Data e horário",
+          "Capacidade e vagas",
+          "Confirmação de presença",
+          "Lista de participantes",
+          "Status do evento",
+          "Eventos recorrentes"
+        ],
+        "futureConnection": {
+          "type": "payment",
+          "title": "Pagamento online",
+          "status": "Em breve",
+          "description": "Possibilidade futura. Ainda não disponível para contratação."
+        },
+        "summary": {
+          "weekEventsLabel": "Eventos nesta semana",
+          "weekConfirmationsLabel": "Presenças confirmadas na semana",
+          "capacity": 20,
+          "confirmed": 18,
+          "weekEvents": 3,
+          "weekConfirmations": 42
+        },
+        "scenario": {
+          "capacity": 24,
+          "confirmations": [
+            16,
+            17,
+            18
+          ]
+        },
+        "capacityScenario": {
+          "capacity": 20,
+          "confirmations": [
+            12,
+            18,
+            20
+          ]
+        }
+      },
+      "seo": {
+        "title": "Void Gather — Organização de eventos | VoidCube",
+        "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada."
+      },
       "page": {
-        "preset": "cinematic-concept"
+        "preset": "live-platform",
+        "sections": {
+          "features": {
+            "type": "event-connections",
+            "moduleIds": [
+              "event-page"
+            ]
+          },
+          "integrations": {
+            "type": "operational-summary",
+            "showTitle": false
+          }
+        },
+        "pricingPlacement": "cta",
+        "order": [
+          "problem",
+          "solution",
+          "features",
+          "results",
+          "process",
+          "integrations"
+        ]
+      },
+      "pricing": {
+        "initialLabel": "Licença inicial",
+        "recurringLabel": "Mensalidade da plataforma",
+        "recurringDescription": "A mensalidade inclui suporte, correções e manutenção contínua da plataforma."
+      },
+      "moduleGroups": {
+        "event-presence": {
+          "label": "Como seu evento será disponibilizado?",
+          "requiredMessage": "Escolha como disponibilizar o evento: crie uma nova página ou integre um site existente."
+        }
       }
     }
   }

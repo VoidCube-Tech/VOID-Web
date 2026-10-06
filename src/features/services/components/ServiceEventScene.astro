@@ -1,0 +1,29 @@
+---
+import type { ResolvedSection } from '../resolveServicePageConfig';
+import EventConnections from './EventConnections';
+import LiveEventDemo from './LiveEventDemo';
+import { liquidGlassSurfaceStyle } from '../../../shared/effects/liquid-glass/liquidGlass';
+import '../eventPresentation.css';
+interface Props { section: Extract<ResolvedSection, { type: 'event-connections' | 'capacity-demo' | 'operational-summary' }> }
+const { section } = Astro.props;
+const { content, demo, id } = section;
+---
+<section id={id} aria-labelledby={section.type === 'operational-summary' && !section.showTitle ? undefined : `${id}-title`} class="min-w-0 py-16 sm:py-28">
+  {section.type !== 'operational-summary' && <header class:list={['mb-12', { 'mx-auto max-w-3xl text-center': section.type !== 'event-connections' }]} data-reveal>
+    <h2 id={`${id}-title`} class="max-w-4xl font-secondary text-4xl leading-tight sm:text-6xl">{content.title}</h2>
+    {content.description && <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{content.description}</p>}
+  </header>}
+  {section.type === 'event-connections' && <EventConnections client:visible demo={demo} modules={section.modules} productId={section.productId} quoteLabel={section.quoteLabel} />}
+  {section.type === 'capacity-demo' && <LiveEventDemo client:visible demo={demo} mode="capacity" />}
+  {section.type === 'operational-summary' && <figure class="navigation-glass mx-auto max-w-4xl rounded-ui p-6 sm:p-12" style={liquidGlassSurfaceStyle} data-reveal>
+    <figcaption class="mb-8 max-w-xl text-sm leading-relaxed text-on-surface-variant">{demo.label}</figcaption>
+    <dl class="grid grid-cols-3 gap-4 border-b border-outline-variant/40 pb-8 sm:gap-8">
+      {[{ value: demo.summary.capacity, label: demo.labels.seats }, { value: demo.summary.confirmed, label: demo.labels.participants }, { value: demo.summary.capacity - demo.summary.confirmed, label: demo.labels.remaining }].map(item => <div class="flex flex-col"><dt class="mt-3 text-xs leading-relaxed text-on-surface-variant sm:text-sm">{item.label}</dt><dd class="-order-1 font-secondary text-4xl text-primary sm:text-6xl">{item.value}</dd></div>)}
+    </dl>
+    <dl class="mt-8 grid gap-6 sm:grid-cols-2">
+      <div><dt class="text-sm text-on-surface-variant">{demo.summary.weekEventsLabel}</dt><dd class="mt-2 font-secondary text-3xl">{demo.summary.weekEvents}</dd></div>
+      <div><dt class="text-sm text-on-surface-variant">{demo.summary.weekConfirmationsLabel}</dt><dd class="mt-2 font-secondary text-3xl">{demo.summary.weekConfirmations}</dd></div>
+    </dl>
+  </figure>}
+  {section.type === 'operational-summary' && section.showTitle && <h2 id={`${id}-title`} class="mx-auto mt-12 max-w-3xl text-center font-secondary text-4xl leading-tight sm:text-6xl" data-reveal>{content.title}</h2>}
+</section>

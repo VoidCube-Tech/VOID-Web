@@ -17,6 +17,6 @@ export type EditorialPresentation =
   | { readonly type: 'concept'; readonly scene: 'focus' | 'build' | 'responsive' }
   | { readonly type: 'process' };
 export type StorytellingPresentation =
-  | { readonly type: 'message-band' }
+  | { readonly type: 'message-band'; readonly variant?: 'statements' | 'conversation' }
   | { readonly type: 'guided-demo' }
   | { readonly type: 'insight-panel' };

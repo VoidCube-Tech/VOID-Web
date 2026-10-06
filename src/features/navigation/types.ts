@@ -12,8 +12,5 @@ export interface NavigationContent {
 	readonly closeMenu: string;
 	readonly digitalPresence: string;
 	readonly businessPlatforms: string;
-	readonly websitesService: string;
-	readonly voidEventsService: string;
-	readonly voidErpService: string;
 	readonly currentLanguage: string;
 }
