@@ -66,12 +66,5 @@ const animation: HeroAnimation = {
 <HeroScroll distance={animation.desktop.scrollHeight ?? 300}>
 	<Hero client:load media={media} animation={animation} {...content} />
 
-	<div class="hero-following"><slot /></div>
+	<slot />
 </HeroScroll>
-
-<style>
-	@media (max-width: 767px) {
-		/* Keep the cloud's upper dispersion inside the following section on mobile. */
-		.hero-following { clip-path: inset(0 -100vmax -100vmax); }
-	}
-</style>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import type { HeroAnimation } from "./heroAnimation";
+import { mobileTransform } from "./heroAnimation";
 import { mediaForWidth, type HeroMedia } from "./heroMedia";
 import { useHeroAnimation } from "./useHeroAnimation";
 
@@ -22,8 +23,9 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 	const selectedSourceRef = useRef<string>("");
 	const [source, setSource] = useState<string>();
 	const [videoReady, setVideoReady] = useState(false);
+	const [mobileVideoFits, setMobileVideoFits] = useState(true);
 	const mobileVideoFit = animation.mobile.fit === "cover" ? "object-cover" : "object-contain";
-	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, brandingRef, contentRef, animation);
+	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, brandingRef, contentRef, animation, videoReady);
 	const contentAnimation = animation.content;
 	const brandingAnimation = animation.branding;
 	const brandingTextStyle = brandingAnimation ? {
@@ -40,6 +42,52 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 		"--hero-mobile-content-x": `${contentAnimation?.mobileX ?? contentAnimation?.x ?? 0}%`,
 		"--hero-mobile-content-y": `${contentAnimation?.mobileY ?? contentAnimation?.y ?? 68}%`,
 	} as CSSProperties;
+
+	useEffect(() => {
+		const viewport = viewportRef.current;
+		const video = videoRef.current;
+		const content = contentRef.current;
+		const track = sectionRef.current?.closest<HTMLElement>("[data-hero-scroll]");
+		const cloud = track?.querySelector<HTMLElement>("[data-problem-edge]");
+		if (!viewport || !video || !content || !cloud) return;
+		const measureRoom = () => {
+			if (window.innerWidth >= 768) {
+				setMobileVideoFits(true);
+				cloud.style.removeProperty("--problem-edge-space");
+				return;
+			}
+			if (!video.videoWidth || !video.videoHeight) return;
+			const rect = viewport.getBoundingClientRect();
+			const state = mobileTransform(animation.mobile, 1);
+			const fit = (animation.mobile.fit === "cover" ? Math.max : Math.min)(
+				rect.width / video.videoWidth, rect.height / video.videoHeight,
+			);
+			const angle = state.rotation * Math.PI / 180;
+			const mediaHeight = state.scale * fit * (
+				Math.abs(Math.cos(angle)) * video.videoHeight + Math.abs(Math.sin(angle)) * video.videoWidth
+			);
+			const centerY = rect.top + rect.height * (0.5 + state.y / 100);
+			const cta = content.querySelector("a");
+			if (!cta) return;
+			const fits = centerY - mediaHeight / 2 >= cta.getBoundingClientRect().bottom;
+			setMobileVideoFits(fits);
+			const edge = Number(cloud.dataset.problemEdge);
+			const cloudFits = fits && centerY + mediaHeight / 2 <= rect.bottom - edge;
+			cloud.style.setProperty("--problem-edge-space", cloudFits ? "0px" : `${edge}px`);
+		};
+		const observer = new ResizeObserver(measureRoom);
+		observer.observe(viewport);
+		observer.observe(content);
+		video.addEventListener("loadedmetadata", measureRoom);
+		window.addEventListener("resize", measureRoom, { passive: true });
+		measureRoom();
+		return () => {
+			observer.disconnect();
+			video.removeEventListener("loadedmetadata", measureRoom);
+			window.removeEventListener("resize", measureRoom);
+			cloud.style.removeProperty("--problem-edge-space");
+		};
+	}, [animation, source]);
 
 	useEffect(() => {
 		const updateSource = () => {
@@ -61,6 +109,8 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 
 		const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
 		const updatePlayback = () => {
+			// Cached media may already be ready before React observes loadeddata.
+			revealVideo();
 			if (motion.matches) video.pause();
 			else void video.play().catch(() => {});
 		};
@@ -75,7 +125,8 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 
 	const revealVideo = () => {
 		const video = videoRef.current;
-		if (!video || !source || video.currentSrc !== new URL(source, window.location.href).href) return;
+		if (!video || !source || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+			video.currentSrc !== new URL(source, window.location.href).href) return;
 		setVideoReady(true);
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) video.pause();
 	};
@@ -85,9 +136,9 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 			ref={sectionRef}
 			aria-label={title}
 			style={heroStyles}
-			className="relative isolate h-[var(--hero-mobile-height)] min-h-svh supports-[height:100dvh]:min-h-dvh text-on-surface md:h-[var(--hero-height)] md:min-h-0"
+			className="relative isolate h-[max(100svh,var(--hero-mobile-height))] supports-[height:100dvh]:h-[max(100dvh,var(--hero-mobile-height))] text-on-surface md:h-[var(--hero-height)] md:supports-[height:100dvh]:h-[var(--hero-height)]"
 		>
-			<div ref={viewportRef} className="relative h-[var(--hero-mobile-height)] overflow-hidden md:h-full">
+			<div ref={viewportRef} className="relative h-full overflow-hidden">
 				<div ref={videoWrapperRef} className="absolute inset-0 transform-gpu">
 					<video
 						ref={videoRef}
@@ -99,9 +150,11 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 						playsInline
 						preload="auto"
 						onLoadedData={revealVideo}
+						onCanPlay={revealVideo}
+						onPlaying={revealVideo}
 						onError={() => setVideoReady(false)}
 						aria-hidden="true"
-						className={`size-full ${mobileVideoFit} transition-opacity duration-150 motion-reduce:transition-none md:object-cover ${videoReady ? "opacity-100" : "opacity-0"}`}
+						className={`size-full ${mobileVideoFit} transition-opacity duration-150 motion-reduce:transition-none md:object-cover ${videoReady && mobileVideoFits ? "opacity-100" : "opacity-0"}`}
 					/>
 				</div>
 				<div className="absolute inset-0 bg-linear-to-t" aria-hidden="true" />

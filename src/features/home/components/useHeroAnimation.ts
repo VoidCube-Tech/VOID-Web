@@ -22,6 +22,7 @@ export function useHeroAnimation(
 	brandingRef: RefObject<HTMLDivElement | null>,
 	contentRef: RefObject<HTMLDivElement | null>,
 	animation: HeroAnimation,
+	mediaReady = true,
 ) {
 	useLayoutEffect(() => {
 		const section = sectionRef.current;
@@ -115,7 +116,7 @@ export function useHeroAnimation(
 			setBrandingProgress(1);
 		};
 		const playMobileAnimation = () => {
-			if (mobilePlayed || motion.matches || desktop) return;
+			if (mobilePlayed || motion.matches || desktop || !mediaReady) return;
 			mobilePlayed = true;
 			wrapper.style.willChange = "transform";
 			const start = transformValue(mobileTransform(animation.mobile, 0));
@@ -255,5 +256,5 @@ export function useHeroAnimation(
 			track?.removeEventListener('hero-measure', measure);
 			stopMobileAnimation();
 		};
-	}, [animation, brandingRef, contentRef, sectionRef, videoWrapperRef, viewportRef]);
+	}, [animation, brandingRef, contentRef, sectionRef, videoWrapperRef, viewportRef, mediaReady]);
 }

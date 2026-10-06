@@ -5,8 +5,11 @@ interface Props {
     readonly content: HomeContent["problem"];
 }
 const { content } = Astro.props;
+const dispersionSize = { top: 120, bottom: 160 } as const;
 ---
 
+<!-- Reveal the edge inside the mobile viewport only when the Hero has room. -->
+<div data-problem-edge={dispersionSize.top} class="flow-root pt-[var(--problem-edge-space,var(--problem-edge-top))] md:pt-0" style={`--problem-edge-top: ${dispersionSize.top}px`}>
 <CloudSection
     client:load
     height="auto"
@@ -19,7 +22,7 @@ const { content } = Astro.props;
     softness={0.65}
     edgeNoise={0.65}
     dispersion={{ top: true, bottom: true }}
-    dispersionSize={{ top: 120, bottom: 160 }}
+    dispersionSize={dispersionSize}
 >
     <div
         id="problem"
@@ -71,3 +74,4 @@ const { content } = Astro.props;
         </div>
     </div>
 </CloudSection>
+</div>
