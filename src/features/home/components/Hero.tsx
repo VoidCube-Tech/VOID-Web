@@ -85,9 +85,9 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 			ref={sectionRef}
 			aria-label={title}
 			style={heroStyles}
-			className="relative isolate h-[var(--hero-mobile-height)] text-on-surface md:h-[var(--hero-height)]"
+			className="relative isolate h-[var(--hero-mobile-height)] min-h-svh supports-[height:100dvh]:min-h-dvh text-on-surface md:h-[var(--hero-height)] md:min-h-0"
 		>
-			<div ref={viewportRef} className="relative h-full overflow-hidden">
+			<div ref={viewportRef} className="relative h-[var(--hero-mobile-height)] overflow-hidden md:h-full">
 				<div ref={videoWrapperRef} className="absolute inset-0 transform-gpu">
 					<video
 						ref={videoRef}
