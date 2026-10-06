@@ -1,0 +1,76 @@
+.void-loading { position: relative; isolation: isolate; }
+.void-loading-content {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--loading-transition, var(--duration-ui)) var(--ease-ui);
+}
+.void-loading[data-phase="exiting"] > .void-loading-content,
+.void-loading[data-phase="ready"] > .void-loading-content { opacity: 1; visibility: visible; }
+.void-loading-surface {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  min-height: min(20rem, 100svh);
+  padding: 1.5rem;
+  background: var(--color-background);
+  color: var(--color-on-surface);
+  opacity: 1;
+  transition: opacity var(--loading-transition, var(--duration-ui)) var(--ease-ui);
+}
+.void-loading-surface[data-fullscreen="true"] { position: fixed; min-height: 0; }
+.void-loading[data-phase="exiting"] > .void-loading-surface { opacity: 0; }
+.void-loading-presentation {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: 24rem;
+  text-align: center;
+  opacity: 0;
+  transition: opacity var(--loading-transition, var(--duration-ui)) var(--ease-ui);
+}
+.void-loading-presentation[data-visible="true"] { opacity: 1; }
+.void-loading-mark { width: var(--loading-size); height: var(--loading-size); }
+.void-loading-mark img { width: 100%; height: 100%; object-fit: contain; }
+.void-loading-text { margin: 0; font-family: var(--font-primary); color: var(--color-on-surface-variant); }
+.void-loading-retry {
+  min-height: 44px;
+  padding: .75rem 1.5rem;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-ui);
+  background: var(--color-surface-container-low);
+  color: var(--color-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.void-loading-retry:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 4px; }
+.void-loading-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+@media (prefers-reduced-motion: reduce) {
+  .void-loading-content, .void-loading-surface, .void-loading-presentation {
+    transition-timing-function: linear;
+  }
+}
+
+/* The document boundary preserves Astro slots and all independently hydrated islands. */
+.page-loading-enabled [data-loading-content] {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--loading-transition, var(--duration-ui)) var(--ease-ui);
+}
+.page-loading-enabled [data-loading-content][data-loading-phase="exiting"],
+.page-loading-enabled [data-loading-content][data-loading-phase="ready"] {
+  opacity: 1;
+  visibility: visible;
+}
+.void-loading-external { position: fixed; inset: 0; z-index: 1000; }
+.void-loading-external[data-phase="ready"] { display: none; }

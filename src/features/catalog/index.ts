@@ -23,6 +23,8 @@ export interface CatalogModuleGroup {
   readonly requiredMessage: string;
 }
 export interface CatalogModule {
+  readonly requiresProductId?: string;
+  readonly associationDescription?: string;
   readonly enabled?: boolean;
   readonly groupId?: string;
   readonly pricingCopy?: CatalogPricingCopy;
@@ -74,7 +76,7 @@ export function getQuoteCatalog(locale: Locale): QuoteCatalog {
         modules: product.modules.map(module => {
           const text = localized.modules?.[module.id];
           if (!text) throw new Error(`Missing localized module: ${locale}/${product.tag}/${module.id}`);
-          return { ...module, name: text.title, description: text.description, pricingCopy: text.pricing };
+          return { ...module, name: text.title, description: text.description, pricingCopy: text.pricing, associationDescription: text.associationDescription };
         }),
       };
     }),
@@ -82,6 +84,10 @@ export function getQuoteCatalog(locale: Locale): QuoteCatalog {
 }
 export function catalogProducts(catalog: QuoteCatalog) {
   return catalog.categories.flatMap(category => category.products);
+}
+// Order dependencies describe associations, not additional commercial charges.
+export function moduleAvailableInOrder(module: CatalogModule, productIds: readonly string[]) {
+  return !module.requiresProductId || productIds.includes(module.requiresProductId);
 }
 export function selectedModules(product: CatalogProduct, ids: readonly string[]) {
   const requested = new Set(ids);

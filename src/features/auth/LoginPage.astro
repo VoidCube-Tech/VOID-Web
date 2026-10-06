@@ -1,12 +1,12 @@
 ---
-import "../../styles/global.css";
+
 import type { Locale } from "../../i18n/config";
 import { getLocalizedPath } from "../navigation/routing/localePath";
 import { authContent } from "./content";
 import { LogoIcon } from "../navigation/components/LogoIcon";
 import { LoginForm } from "./components/LoginForm";
 import SpaceBackground from "../../shared/effects/SpaceBackground.astro";
-import DefaultHead from "../../shared/metadata/DefaultHead.astro";
+import DocumentLayout from "../../layouts/DocumentLayout.astro";
 interface Props {
   readonly locale: Locale;
 }
@@ -14,15 +14,15 @@ const { locale } = Astro.props;
 const content = authContent[locale];
 ---
 
-<html lang={locale}>
-  <DefaultHead
+<DocumentLayout
+    lang={locale}
+    bodyClass="bg-background font-primary text-on-surface"
     title={`${content.title} | VoidCube`}
     description={content.description}
     robots="noindex, follow"
     generator={null}
     socialLocale={locale === "pt-BR" ? "pt_BR" : undefined}
-  />
-  <body class="bg-background font-primary text-on-surface">
+>
     <SpaceBackground
       variant="auth"
       stars={{ density: 3, movement: true, speed: .35, directionX: .8, directionY: -.35, rotationSpeed: .08 }}
@@ -72,5 +72,4 @@ const content = authContent[locale];
         <div aria-hidden="true" class="hidden lg:block"></div>
       </main>
     </div>
-  </body>
-</html>
+</DocumentLayout>

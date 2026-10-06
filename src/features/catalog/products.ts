@@ -1,6 +1,7 @@
 import type { CatalogPrice, CatalogRecurringPrice } from './index';
 
 export interface CommercialModule {
+  readonly requiresProductId?: string;
   readonly id: string;
   readonly enabled?: boolean;
   readonly groupId?: string;
@@ -36,6 +37,7 @@ export const commercialProducts: readonly CommercialProduct[] = [
     modules: [
       { id: 'event-page', groupId: 'event-presence', price: { amountMinor: 80000, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, conflictsWith: ['existing-site'] },
       { id: 'existing-site', groupId: 'event-presence', price: { amountMinor: 0, currency: 'BRL' }, recurringPrice: { amountMinor: 20000, currency: 'BRL', interval: 'month' }, conflictsWith: ['event-page'] },
+      { id: 'order-landing-page', groupId: 'event-presence', requiresProductId: 'websites', includedInBase: true },
       { id: 'online-payment', enabled: false },
     ],
   },

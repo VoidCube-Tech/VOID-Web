@@ -1,0 +1,25 @@
+---
+import "../styles/global.css";
+import DefaultHead, { type Props as HeadProps } from "../shared/metadata/DefaultHead.astro";
+import LoadingShell from "../shared/loading/LoadingShell.astro";
+import type { PageResource } from "../shared/loading/PageLoading";
+import type { Locale } from "../i18n/config";
+
+interface Props extends HeadProps {
+  readonly lang: Locale;
+  readonly bodyClass?: string;
+  readonly loadingResources?: readonly PageResource[];
+}
+const { lang, bodyClass, loadingResources, ...headProps } = Astro.props;
+---
+<html lang={lang}>
+  <DefaultHead {...headProps}>
+    <script is:inline>document.documentElement.classList.add("page-loading-enabled");</script>
+    <slot name="head" />
+  </DefaultHead>
+  <body class={bodyClass}>
+    <LoadingShell locale={lang} resources={loadingResources}>
+      <slot />
+    </LoadingShell>
+  </body>
+</html>

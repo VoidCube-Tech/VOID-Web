@@ -91,6 +91,7 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 				<div ref={videoWrapperRef} className="absolute inset-0 transform-gpu">
 					<video
 						ref={videoRef}
+						data-loading-resource="initial-hero-video"
 						src={source}
 						muted
 						autoPlay

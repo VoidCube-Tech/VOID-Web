@@ -22,14 +22,10 @@ export interface AboutContent {
     readonly purpose: string;
     readonly input: string;
     readonly output: string;
-    readonly caption: string;
   };
   readonly possibilities: {
     readonly title: readonly string[];
     readonly description: string;
-    readonly caption: string;
-    readonly servicesLabel: string;
-    readonly products: Readonly<Record<'websites' | 'void-events', string>>;
   };
   readonly principles: {
     readonly title: string;

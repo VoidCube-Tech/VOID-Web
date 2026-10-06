@@ -3,14 +3,14 @@ import type { Locale } from "../../../i18n/config";
 import type { ContactContent } from "../content";
 import { catalogProducts, selectedModules, formatProductPrice, type QuoteCatalog } from "../../catalog";
 import { ModuleSelection } from './ModuleSelection';
-import { validateSolution, type QuoteState, type QuoteAction } from "../quoteModel";
+import { validateSolution, selectedProductIds, type QuoteState, type QuoteAction } from "../quoteModel";
 import { MaterialIcon } from "../../navigation";
 import { quoteAction, quoteControl, quoteOption, quoteSecondary } from "./quoteStyles";
 
 interface Props { state: QuoteState; dispatch: Dispatch<QuoteAction>; catalog: QuoteCatalog; content: ContactContent; locale: Locale }
 export function SolutionPicker({ state, dispatch, catalog, content: c, locale }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const opener = useRef<HTMLElement | null>(null);
   const draft = state.draft;
   const product = draft?.mode === "catalog" ? catalogProducts(catalog).find(item => item.id === draft.productId) : undefined;
@@ -23,17 +23,17 @@ export function SolutionPicker({ state, dispatch, catalog, content: c, locale }:
         opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
         dialog.current?.showModal();
       }
-      heading.current?.focus();
+      closeButton.current?.focus();
     } else if (dialog.current?.open) dialog.current.close();
   }, [state.dialogOpen]);
-  useEffect(() => { if (state.dialogOpen) heading.current?.focus(); }, [view, state.dialogOpen]);
+  useEffect(() => { if (state.dialogOpen) closeButton.current?.focus(); }, [view, state.dialogOpen]);
   useEffect(() => {
     if (state.dialogError) dialog.current?.querySelector<HTMLElement>("#solution-description")?.focus();
   }, [state.dialogValidationAttempt]);
 
   function confirm() {
     if (!draft) return;
-    const error = validateSolution(draft, catalog, c);
+    const error = validateSolution(draft, catalog, c, state.selectedSolutions);
     if (error) { dispatch({ type: "dialogError", error }); return; }
     dispatch({ type: "confirmDialog" });
   }
@@ -46,9 +46,9 @@ export function SolutionPicker({ state, dispatch, catalog, content: c, locale }:
     }}>
     <div className="flex max-h-[calc(100svh-var(--spacing)*8)] flex-col">
       <div className="flex items-start justify-between gap-4 px-6 pt-6 sm:px-8 sm:pt-8">
-        <div><h2 ref={heading} id="solution-dialog-title" tabIndex={-1} className="rounded-ui font-secondary text-3xl focus-visible:outline-2 focus-visible:outline-primary">{view === "projects" ? c.wizard.dialogTitle : view === "custom" ? c.wizard.custom : product?.modules.length ? c.wizard.moduleTitle : c.wizard.editSolution}</h2>
+        <div><h2 id="solution-dialog-title" className="rounded-ui font-secondary text-3xl focus-visible:outline-2 focus-visible:outline-primary">{view === "projects" ? c.wizard.dialogTitle : view === "custom" ? c.wizard.custom : product?.modules.length ? c.wizard.moduleTitle : c.wizard.editSolution}</h2>
           <p id="solution-dialog-description" className="mt-2 text-sm leading-relaxed text-on-surface-variant">{view === "projects" ? c.wizard.dialogDescription : view === "custom" ? c.wizard.customHelp : name}</p></div>
-        <button type="button" onClick={() => dispatch({ type: "cancelDialog" })} aria-label={c.wizard.close} className={`${quoteAction} shrink-0 px-3`}><MaterialIcon name="close" /></button>
+        <button ref={closeButton} type="button" onClick={() => dispatch({ type: "cancelDialog" })} aria-label={c.wizard.close} className={`${quoteAction} shrink-0 px-3`}><MaterialIcon name="close" /></button>
       </div>
       <div className="min-h-0 overflow-y-auto px-6 py-6 sm:px-8">
         {view === "projects" ? <div className="space-y-6">
@@ -74,7 +74,7 @@ export function SolutionPicker({ state, dispatch, catalog, content: c, locale }:
             <p id="solution-description-hint" className="mt-2 text-sm text-on-surface-variant">{c.descriptionHint}</p>
           </div> : product && draft?.mode === "catalog" && <div>
             {product.description && <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">{product.description}</p>}
-            <ModuleSelection product={product} selectedIds={draft.moduleIds} content={c} locale={locale} onChange={moduleIds => dispatch({ type: "draft", solution: { ...draft, moduleIds } })} />
+            <ModuleSelection productIds={selectedProductIds(state.selectedSolutions)} product={product} selectedIds={draft.moduleIds} content={c} locale={locale} onChange={moduleIds => dispatch({ type: "draft", solution: { ...draft, moduleIds } })} />
           </div>}
           {state.dialogError && <p id="solution-dialog-error" role="alert" className="mt-3 text-sm text-error">{state.dialogError}</p>}
         </div>}

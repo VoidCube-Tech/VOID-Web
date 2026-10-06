@@ -1,5 +1,8 @@
 ---
 import type { CSSProperties } from "react";
+import { Image, getImage } from "astro:assets";
+import moonSmall from "../../../assets/home/moon_720p.webp";
+import moonLarge from "../../../assets/home/moon_8k.webp";
 import type { HomeContent } from "../content/homeContent";
 interface Props {
     readonly content: HomeContent["solution"];
@@ -7,8 +10,8 @@ interface Props {
 const { content } = Astro.props;
 
 const background = {
-    small: "/assets/images/moon_720p.webp",
-    large: "/assets/images/moon_8k.webp",
+    small: moonSmall,
+    large: moonLarge,
     topMask: "/assets/masks/solution-edge-top.svg",
     bottomMask: "/assets/masks/solution-edge-bottom.svg",
     size: "cover",
@@ -17,6 +20,8 @@ const background = {
     opacity: 0.72,
     overlayOpacity: 0.78,
 } as const;
+
+const desktopBackground = await getImage({ src: background.large, format: "webp" });
 
 const backgroundStyle = {
     "--solution-background-size": background.size,
@@ -44,13 +49,14 @@ const backgroundStyle = {
         >
             <source
                 media="(min-width: 1280px)"
-                srcset={background.large}
+                srcset={desktopBackground.src}
                 type="image/webp"
             />
-            <img
+            <Image
                 src={background.small}
                 alt=""
-                loading="eager"
+                format="webp"
+                loading="lazy"
                 decoding="async"
                 class="size-full object-cover"
             />
@@ -115,13 +121,13 @@ const backgroundStyle = {
         mask-composite: add;
     }
 
-    .solution-visual img {
+    .solution-visual :global(img) {
         object-position: var(--solution-background-position-mobile);
         object-fit: var(--solution-background-size);
     }
 
     @media (min-width: 768px) {
-        .solution-visual img {
+        .solution-visual :global(img) {
             object-position: var(--solution-background-position);
         }
     }

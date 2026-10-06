@@ -1,20 +1,22 @@
 import { useId } from 'react';
 import type { Locale } from '../../../i18n/config';
-import { selectedModules, modulesConflict, formatInitialPrice, formatRecurringPrice, type CatalogModule, type CatalogModuleGroup, type CatalogProduct } from '../../catalog';
+import { selectedModules, moduleAvailableInOrder, modulesConflict, formatInitialPrice, formatRecurringPrice, type CatalogModule, type CatalogModuleGroup, type CatalogProduct } from '../../catalog';
 import type { ContactContent } from '../content';
 import { quoteOption } from './quoteStyles';
 interface Props {
   readonly product: CatalogProduct;
+  readonly productIds?: readonly string[];
   readonly selectedIds: readonly string[];
   readonly onChange: (ids: readonly string[]) => void;
   readonly content: ContactContent;
   readonly locale: Locale;
 }
-export function ModuleSelection({ product, selectedIds, onChange, content: c, locale }: Props) {
+export function ModuleSelection({ product, selectedIds, onChange, content: c, locale, productIds = [] }: Props) {
   const controlId = useId();
   const modules = selectedModules(product, selectedIds);
   if (!product.modules.length) return null;
   function card(module: CatalogModule, group?: CatalogModuleGroup) {
+    if (!moduleAvailableInOrder(module, productIds)) return null;
     const unavailable = module.enabled === false;
     const exclusive = !!group?.exclusive;
     const conflict = !exclusive && modules.some(item => item.id !== module.id && modulesConflict(item, module));

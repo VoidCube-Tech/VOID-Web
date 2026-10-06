@@ -4,7 +4,7 @@ import type { EventDemoContent, EventPresentation } from './eventTypes';
 import type { CatalogPricingCopy } from '../catalog';
 export type { ServiceConcept } from './conceptTypes';
 
-export interface ServiceImage { readonly src: string; readonly alt: string }
+export interface ServiceImage { readonly src: string; readonly alt: string; readonly width?: number; readonly height?: number }
 export type ServiceMedia =
   | ({ readonly type: 'image' } & ServiceImage)
   | { readonly type: 'video'; readonly src: string; readonly poster?: string; readonly label: string };
@@ -61,7 +61,7 @@ export interface ServiceContent {
   readonly pricing?: CatalogPricingCopy;
   readonly metrics?: { readonly title: string; readonly items: readonly { readonly value: string; readonly label: string; readonly source: string }[] };
   readonly moduleGroups?: Readonly<Record<string, { readonly label: string; readonly requiredMessage: string }>>;
-  readonly modules?: Readonly<Record<string, { readonly title: string; readonly description: string; readonly pricing?: CatalogPricingCopy }>>;
+  readonly modules?: Readonly<Record<string, { readonly title: string; readonly description: string; readonly associationDescription?: string; readonly pricing?: CatalogPricingCopy }>>;
   readonly cta: { readonly title: string; readonly description: string; readonly label: string };
   readonly page?: Partial<PagePresentation> & { readonly preset?: ServicePreset };
 }

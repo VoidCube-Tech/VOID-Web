@@ -16,6 +16,7 @@ export function SelectedSolutions({ solutions, content: c, compact = false, deta
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-bold">{solution.name}</h4>
           {!solution.pricingItems.length && solution.modules.length > 0 && <p className="mt-1 text-sm leading-relaxed text-on-surface-variant"><span className="sr-only">{c.wizard.modules}: </span>{solution.modules.join(", ")}</p>}
+          {solution.associations.map(note => <p key={note} className="mt-1 text-sm leading-relaxed text-on-surface-variant">{note}</p>)}
           {solution.mode === "custom" && <p className={`mt-1 whitespace-pre-wrap break-words text-sm leading-relaxed text-on-surface-variant ${compact ? "line-clamp-3" : ""}`}>{solution.description}</p>}
           {solution.pricingItems.length ? <div className="mt-2 space-y-4 text-sm">{solution.pricingItems.map(item => <div key={`${item.type}:${item.name}`}>
             {item.type === 'module' && <h5 className="font-bold">{item.name}</h5>}

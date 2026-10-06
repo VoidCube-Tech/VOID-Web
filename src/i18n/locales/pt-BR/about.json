@@ -9,18 +9,11 @@
     "intro": "Criamos sites, produtos e sistemas que fazem as partes do seu negócio trabalharem juntas.",
     "purpose": "Existimos para dar forma ao que parece disperso. E abrir espaço para o que vem depois.",
     "input": "Muitas partes.",
-    "output": "Uma direção.",
-    "caption": "Encontramos uma lógica entre as partes para que o todo faça sentido."
+    "output": "Uma direção."
   },
   "possibilities": {
     "title": ["Um núcleo.", "Várias possibilidades."],
-    "description": "Pensamos cada produto como parte de uma estrutura. O que resolve uma necessidade hoje pode se conectar a outras amanhã.",
-    "caption": "Uma base coerente. Espaço para novas conexões.",
-    "servicesLabel": "Essa ideia já toma forma em",
-    "products": {
-      "websites": "Uma presença que comunica.",
-      "void-events": "Uma operação que conecta."
-    }
+    "description": "Pensamos cada produto como parte de uma estrutura. O que resolve uma necessidade hoje pode se conectar a outras amanhã."
   },
   "principles": {
     "title": "O que orienta cada escolha.",

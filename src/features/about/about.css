@@ -81,12 +81,11 @@
   padding-right: 4%;
 }
 
-.about-page .about-optical-caption {
-  max-width: 19rem;
-  margin: -2.5rem 4% 0 auto;
-  font-size: .875rem;
-  line-height: 1.65;
-  color: var(--color-on-surface-variant);
+.about-page .about-editorial-glass {
+  min-width: 0;
+  max-width: 100%;
+  padding: clamp(1.25rem, 2.5vw, 2rem);
+  overflow-wrap: anywhere;
 }
 
 .about-page .about-opening-purpose {
@@ -145,50 +144,6 @@
   max-width: none;
   margin-left: -6rem;
 }
-
-.about-page .about-small-copy {
-  font-size: .875rem;
-  line-height: 1.65;
-  color: var(--color-on-surface-variant);
-}
-
-.about-page .about-core-scene figcaption {
-  max-width: 18rem;
-  margin: 1rem auto 0;
-  text-align: center;
-}
-
-.about-page .about-services-note {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  align-items: start;
-  gap: 2rem;
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid color-mix(in srgb, var(--color-outline-variant) 65%, transparent);
-}
-
-.about-page .about-service-links {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 2rem;
-}
-
-.about-page .about-service-links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 1.5rem;
-  min-height: 2.75rem;
-  font-size: 1.25rem;
-  color: var(--color-on-surface);
-  transition: color var(--duration-ui) var(--ease-ui);
-}
-
-.about-page .about-service-links a:hover { color: var(--color-primary); }
-.about-page .about-service-links a:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 6px; }
-.about-page .about-service-links svg { width: 1.125rem; height: 1.125rem; flex-shrink: 0; }
-.about-page .about-service-links p { margin-top: .5rem; font-size: .875rem; line-height: 1.65; color: var(--color-on-surface-variant); }
 
 .about-page .about-principles { padding-block: 5rem 9rem; }
 .about-page .about-principles-heading { margin-bottom: 5rem; font-size: 1rem; font-weight: 400; color: var(--color-on-surface-variant); }
@@ -317,7 +272,6 @@
 }
 
 @media (max-width: 1023px) {
-  .about-page .about-optical-caption { margin-top: 0; }
   .about-page .about-possibilities { gap: 3rem 1.5rem; }
   .about-page .about-core-scene .about-structure { width: calc(100% + 3rem); margin-left: -3rem; }
   .about-page .about-principle { width: 100%; margin-left: 0; grid-template-columns: minmax(0, 1fr) 15rem; }
@@ -343,23 +297,16 @@
     height: clamp(18rem, 75vw, 28rem);
     aspect-ratio: auto;
   }
-  .about-page .about-optical-labels { top: auto; bottom: 5rem; font-size: .6875rem; }
+  .about-page .about-optical-labels { top: auto; bottom: 0; font-size: .6875rem; }
   .about-page .about-optical-labels span:last-child { padding-right: 0; }
-  .about-page .about-optical-caption { max-width: 17rem; margin: 2rem 0 0 auto; font-size: .8125rem; }
   .about-page .about-opening-purpose { margin: 4.5rem 0 0; max-width: 23rem; font-size: clamp(1.875rem, 5.5vw, 2.75rem); }
   .about-page .about-possibilities { grid-template-columns: 1fr; gap: 2rem; padding-block: 7rem 4rem; }
   .about-page .about-core-copy,
-  .about-page .about-core-scene,
-  .about-page .about-services-note { grid-column: 1; }
+  .about-page .about-core-scene { grid-column: 1; }
   .about-page .about-section-title { font-size: clamp(2.5rem, 8.5vw, 4rem); }
   .about-page .about-body-copy { margin-top: 1.5rem; font-size: 1rem; }
   .about-page .about-core-scene { width: min(100%, 30rem); margin: 0 auto; }
   .about-page .about-core-scene .about-structure { width: 100%; margin: 0; }
-  .about-page .about-core-scene figcaption { margin-top: .5rem; }
-  .about-page .about-services-note { grid-template-columns: 1fr; gap: 1rem; margin-top: 2rem; }
-  .about-page .about-service-links { gap: 1.5rem; }
-  .about-page .about-service-links a { font-size: 1.0625rem; gap: .75rem; }
-  .about-page .about-service-links p { max-width: 12rem; font-size: .8125rem; }
   .about-page .about-principles { padding-block: 4rem 5rem; }
   .about-page .about-principles-heading { margin-bottom: 3.5rem; }
   .about-page .about-principles-list { gap: 3.5rem; }
@@ -389,11 +336,6 @@
   .about-page .about-workbench .structure-depth,
   .about-page .about-workbench .structure-face,
   .about-page .about-workbench .structure-inset,
-  .about-page .about-service-links a,
   .about-page .about-method-option { transition: none; }
 }
 
-@media (max-width: 359px) {
-  .about-page .about-service-links { grid-template-columns: 1fr; gap: 1rem; }
-  .about-page .about-service-links p { max-width: none; margin-top: 0; }
-}

@@ -18,7 +18,7 @@ export function ContextQuoteDialog({ id, productId, catalog, content, locale }: 
   const product = catalogProducts(catalog).find(item => item.id === productId || item.tag === productId);
   const [context, setContext] = useState<QuoteContext | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const opener = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function ContextQuoteDialog({ id, productId, catalog, content, locale }: 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     element.showModal();
-    heading.current?.focus();
+    closeButton.current?.focus();
     return () => {
       document.body.style.overflow = previousOverflow;
       if (element.open) element.close();
@@ -55,8 +55,8 @@ export function ContextQuoteDialog({ id, productId, catalog, content, locale }: 
       if (opener.current?.isConnected) opener.current.focus();
     }}>
     <div className="flex items-start justify-between gap-4 px-6 pt-6 sm:px-8 sm:pt-8">
-      <h2 ref={heading} id={`${id}-title`} tabIndex={-1} className="rounded-ui font-secondary text-3xl focus-visible:outline-2 focus-visible:outline-primary">{content.contextual.title.replace('{name}', product.name)}</h2>
-      <button type="button" onClick={() => dialog.current?.close()} aria-label={content.contextual.close} className={`${quoteAction} shrink-0 px-3`}><MaterialIcon name="close" /></button>
+      <h2 id={`${id}-title`} className="rounded-ui font-secondary text-3xl focus-visible:outline-2 focus-visible:outline-primary">{content.contextual.title.replace('{name}', product.name)}</h2>
+      <button ref={closeButton} type="button" onClick={() => dialog.current?.close()} aria-label={content.contextual.close} className={`${quoteAction} shrink-0 px-3`}><MaterialIcon name="close" /></button>
     </div>
     {context && <QuoteForm context={context} content={content} catalog={catalog} locale={locale} />}
   </dialog>;

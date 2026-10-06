@@ -1,0 +1,29 @@
+---
+import type { Locale } from "../../i18n/config";
+import { PageLoading, type PageResource } from "./PageLoading";
+import "./loading.css";
+
+interface Props {
+  readonly locale: Locale;
+  readonly resources?: readonly PageResource[];
+}
+const { locale, resources } = Astro.props;
+const contentId = "public-page-content";
+---
+<div id={contentId} data-loading-content data-loading-phase="short">
+  <script is:inline>
+    // Runs before the slot is parsed; no-JS documents remain accessible.
+    if (document.documentElement.classList.contains("page-loading-enabled")) {
+      const content = document.currentScript?.parentElement;
+      if (content) {
+        content.dataset.loadingStartedAt = String(performance.now());
+        content.inert = true;
+        content.setAttribute("aria-hidden", "true");
+        content.setAttribute("aria-busy", "true");
+      }
+    }
+  </script>
+  <slot />
+</div>
+<PageLoading client:load contentId={contentId} locale={locale} resources={resources} />
+<noscript><style>.void-loading { display: none !important; }</style></noscript>

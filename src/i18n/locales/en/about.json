@@ -9,18 +9,11 @@
     "intro": "We create websites, products, and systems that make the parts of your business work together.",
     "purpose": "We exist to give shape to what feels scattered. And make room for what comes next.",
     "input": "Many parts.",
-    "output": "One direction.",
-    "caption": "Transformation means finding a clear way through complexity."
+    "output": "One direction."
   },
   "possibilities": {
     "title": ["One core.", "Many possibilities."],
-    "description": "We see each product as part of a structure. What meets a need today can connect to new possibilities tomorrow.",
-    "caption": "A coherent foundation. Room for new connections.",
-    "servicesLabel": "This idea is already taking shape in",
-    "products": {
-      "websites": "A presence that communicates.",
-      "void-events": "An operation that connects."
-    }
+    "description": "We see each product as part of a structure. What meets a need today can connect to new possibilities tomorrow."
   },
   "principles": {
     "title": "What guides every choice.",

@@ -26,8 +26,14 @@
 			}
 		};
 
-		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start, { once: true });
-		else start();
+		const whenReady = () => {
+			const content = document.querySelector("[data-loading-content]");
+			if (root.classList.contains("page-loading-enabled") && content?.getAttribute("data-loading-phase") !== "ready") {
+				document.addEventListener("voidcube:page-ready", start, { once: true });
+			} else start();
+		};
+		if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", whenReady, { once: true });
+		else whenReady();
 	})();
 </script>
 

@@ -1,7 +1,7 @@
 ---
 import type { Locale } from '../../i18n/config';
-import { catalogProducts, getQuoteCatalog } from '../catalog';
-import { getLocalizedPath } from '../navigation';
+import { liquidGlassHeaderStyle } from '../../shared/effects/liquid-glass/liquidGlass';
+import '../../shared/effects/liquid-glass/liquidGlass.css';
 import ContactCTA from '../../shared/components/ContactCTA.astro';
 import RevealOnView from '../../shared/motion/RevealOnView.astro';
 import { aboutContent, principleIds } from './content';
@@ -14,68 +14,45 @@ import './about.css';
 interface Props { readonly locale: Locale }
 const { locale } = Astro.props;
 const content = aboutContent[locale];
-const products = catalogProducts(getQuoteCatalog(locale));
-const featuredIds = ['websites', 'void-events'] as const;
-const featuredProducts = featuredIds.map(id => {
-  const product = products.find(item => item.id === id);
-  if (!product) throw new Error(`Missing About product: ${id}`);
-  return { ...product, caption: content.possibilities.products[id] };
-});
 ---
 
 <main class="about-page text-on-surface" data-locale={locale}>
   <RevealOnView />
   <section class="about-opening about-wrap" aria-labelledby="about-title">
-    <div class="about-opening-intro">
+    <div class="about-opening-intro" data-reveal>
       <p class="about-page-label">{content.opening.label}</p>
       <p class="about-opening-definition">{content.opening.intro}</p>
     </div>
-    <h1 id="about-title" class="about-display font-secondary">
+    <h1 id="about-title" class="about-display font-secondary" data-reveal data-reveal-delay="1">
       {content.opening.title.map(line => <span>{line}</span>)}
     </h1>
-    <figure class="about-optical-scene">
+    <figure class="about-optical-scene" data-reveal data-reveal-delay="2">
       <RefractionScene />
       <div class="about-optical-labels" aria-hidden="true">
         <span>{content.opening.input}</span>
         <span>{content.opening.output}</span>
       </div>
-      <figcaption class="about-optical-caption">{content.opening.caption}</figcaption>
     </figure>
-    <p class="about-opening-purpose font-secondary">{content.opening.purpose}</p>
+    <p class="about-opening-purpose about-editorial-glass navigation-glass rounded-ui font-secondary" style={liquidGlassHeaderStyle} data-reveal>{content.opening.purpose}</p>
   </section>
 
   <section class="about-possibilities about-wrap" aria-labelledby="about-core-title">
-    <div class="about-core-copy">
+    <div class="about-core-copy" data-reveal>
       <h2 id="about-core-title" class="about-section-title font-secondary">
         {content.possibilities.title.map(line => <span>{line}</span>)}
       </h2>
       <p class="about-body-copy">{content.possibilities.description}</p>
     </div>
-    <figure class="about-core-scene">
+    <div class="about-core-scene" aria-hidden="true" data-reveal data-reveal-delay="1">
       <CoreStructure />
-      <figcaption class="about-small-copy">{content.possibilities.caption}</figcaption>
-    </figure>
-    <div class="about-services-note">
-      <p class="about-small-copy">{content.possibilities.servicesLabel}</p>
-      <ul class="about-service-links">
-        {featuredProducts.map(product => (
-          <li>
-            <a href={getLocalizedPath(`/services/${product.tag}`, locale)}>
-              <span>{product.name}</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false"><path d="M6 18 18 6M6 6H18V18" /></svg>
-            </a>
-            <p>{product.caption}</p>
-          </li>
-        ))}
-      </ul>
     </div>
   </section>
 
   <section class="about-principles about-wrap" aria-labelledby="about-principles-title">
-    <h2 id="about-principles-title" class="about-principles-heading">{content.principles.title}</h2>
+    <h2 id="about-principles-title" class="about-principles-heading" data-reveal>{content.principles.title}</h2>
     <dl class="about-principles-list">
-      {principleIds.map(kind => (
-        <div class={`about-principle about-principle-${kind}`}>
+      {principleIds.map((kind, index) => (
+        <div class={`about-principle about-principle-${kind}`} data-reveal data-reveal-delay={String(index + 1)}>
           <dt>
             <PrincipleMark kind={kind} />
             <span>{content.principles.items[kind].title}</span>
@@ -90,10 +67,10 @@ const featuredProducts = featuredIds.map(id => {
 
   <section class="about-closing about-wrap" aria-labelledby="about-future-title">
     <div class="about-open-frame" aria-hidden="true"><span></span><span></span><span></span></div>
-    <h2 id="about-future-title" class="about-future-title font-secondary">
+    <h2 id="about-future-title" class="about-future-title about-editorial-glass navigation-glass rounded-ui font-secondary" style={liquidGlassHeaderStyle} data-reveal>
       {content.closing.title.map(line => <span>{line}</span>)}
     </h2>
-    <p class="about-body-copy">{content.closing.description}</p>
+    <p class="about-body-copy" data-reveal data-reveal-delay="1">{content.closing.description}</p>
   </section>
   <ContactCTA content={content.closing.cta} locale={locale} />
 </main>

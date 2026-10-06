@@ -49,13 +49,14 @@ export function solutionSummary(solution: SolutionSelection, catalog: QuoteCatal
   const itemized = !!product?.pricingCopy || modules.some(module => !!module.pricingCopy);
   const pricingItems = product && itemized ? [
     pricingItem(product.name, 'product', product.pricingMode === 'fixed' ? product.basePrice : undefined, product.recurringPrice, product.pricingCopy),
-    ...modules.map(module => pricingItem(module.name, 'module', module.price, module.recurringPrice, module.pricingCopy, module.includedInBase)),
+    ...modules.filter(module => !module.requiresProductId).map(module => pricingItem(module.name, 'module', module.price, module.recurringPrice, module.pricingCopy, module.includedInBase)),
   ] : [];
   return {
     id: solution.id,
     mode: solution.mode,
     name: solution.mode === "custom" ? c.wizard.custom : product?.name ?? c.wizard.noSelection,
-    modules: modules.map(module => module.name),
+    modules: modules.filter(module => !module.requiresProductId).map(module => module.name),
+    associations: modules.flatMap(module => module.associationDescription ? [module.associationDescription] : []),
     baseValue: product?.basePrice ? formatCatalogPrice(product.basePrice, locale) : c.wizard.onRequest,
     initialValue: estimateText(amount, estimate.underConsultation, c),
     recurringValues,
@@ -94,7 +95,7 @@ function solutionMessage(solution: SolutionSummary, c: ContactContent) {
     `[${item.name}]`,
     `${item.initialLabel}: ${item.initialValue}`,
     ...item.recurringValues.flatMap(price => [`${price.label}: ${price.value}`, ...(price.description ? [price.description] : [])]),
-  ].join('\n')).join('\n\n');
+  ].join('\n')).join('\n\n') + (solution.associations.length ? `\n${solution.associations.join('\n')}` : '');
   return [
     `[${solution.name}]`,
     ...(solution.recurringValues.length ? [
@@ -105,6 +106,7 @@ function solutionMessage(solution: SolutionSummary, c: ContactContent) {
       `${c.wizard.modules}:`,
       ...solution.modules.map(name => `- ${name}`),
     ] : []),
+    ...solution.associations,
     ...(solution.mode === "custom" ? [solution.description] : []),
     ...(solution.recurringValues.length ? [] : [`${c.wizard.solutionEstimate}: ${solution.estimate}`]),
   ].join("\n");

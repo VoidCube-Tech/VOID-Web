@@ -4,7 +4,7 @@ import ServiceMedia from './ServiceMedia.astro';
 interface Props { type: 'carousel' | 'gallery'; items: readonly Media[]; eager?: boolean }
 const { type, items, eager = false } = Astro.props;
 ---
-<div tabindex={type === 'carousel' ? 0 : undefined} class:list={[
+<div tabindex={type === 'carousel' && items.length > 1 ? 0 : undefined} class:list={[
   'gap-6 focus-visible:outline-2 focus-visible:outline-primary',
   type === 'carousel' ? 'flex overflow-x-auto snap-x snap-mandatory pb-6' : 'grid md:grid-cols-2',
 ]}>

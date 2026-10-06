@@ -1,18 +1,19 @@
 ---
 import { methodStages, type AboutContent } from '../content';
 import CoreStructure from './CoreStructure.astro';
+import { liquidGlassHeaderStyle } from '../../../shared/effects/liquid-glass/liquidGlass';
 interface Props { readonly content: AboutContent['method'] }
 const { content } = Astro.props;
 ---
 
 <section class="about-method about-wrap" aria-labelledby="about-method-title">
   <header class="about-method-header">
-    <h2 id="about-method-title" class="about-section-title font-secondary">
+    <h2 id="about-method-title" class="about-section-title about-editorial-glass navigation-glass rounded-ui font-secondary" style={liquidGlassHeaderStyle} data-reveal>
       {content.title.map(line => <span>{line}</span>)}
     </h2>
-    <p class="about-body-copy">{content.description}</p>
+    <p class="about-body-copy" data-reveal data-reveal-delay="1">{content.description}</p>
   </header>
-  <fieldset class="about-workbench">
+  <fieldset class="about-workbench" data-reveal>
     <legend class="sr-only">{content.controlLabel}</legend>
     <div class="about-method-controls">
       {methodStages.map((stage, index) => (

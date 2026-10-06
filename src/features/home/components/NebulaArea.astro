@@ -1,7 +1,11 @@
+---
+import { Image } from "astro:assets";
+import nebula from "../../../assets/home/home-nebula.svg";
+---
 <div class="nebula-area relative isolate overflow-hidden">
 	<div class="nebula-background pointer-events-none absolute inset-0 z-0" aria-hidden="true">
-		<img
-			src="/assets/backgrounds/home-nebula.svg"
+		<Image
+			src={nebula}
 			alt=""
 			width="1440"
 			height="1200"
@@ -27,7 +31,7 @@
 		mask-image: linear-gradient(to bottom, transparent, black 14%, black 84%, transparent);
 	}
 
-	.nebula-cloud {
+	:global(.nebula-cloud) {
 		object-fit: cover;
 		object-position: center;
 		opacity: 0.78;
@@ -59,12 +63,12 @@
 			--nebula-drift-x: 0.5%;
 			--nebula-drift-y: 0.3%;
 		}
-		.nebula-cloud { opacity: 0.5; object-position: 65% center; }
+		:global(.nebula-cloud) { opacity: 0.5; object-position: 65% center; }
 		.nebula-background::before { display: none; }
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.nebula-cloud,
+		:global(.nebula-cloud),
 		.nebula-background::before { animation: none; transform: none; }
 	}
 </style>

@@ -34,7 +34,7 @@ const linkClass = "w-fit text-sm text-on-surface-variant transition-colors durat
 		<div class="grid gap-12 md:grid-cols-[minmax(14rem,1.5fr)_repeat(3,minmax(8rem,1fr))] md:gap-8">
 			<div>
 				<a href={getLocalizedPath("/", locale)} aria-label={content.logoLabel} class="group flex h-10 w-fit items-center gap-3 rounded-ui font-secondary text-xl font-bold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
-					<LogoIcon />
+					<LogoIcon loading="lazy" />
 					<span>Void<span class="text-primary">Cube</span></span>
 				</a>
 				<p class="mt-4 max-w-xs text-sm leading-relaxed text-on-surface-variant">{footer.brandDescription}</p>

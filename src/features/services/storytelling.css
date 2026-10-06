@@ -18,7 +18,7 @@
   .message-band-control { display: flex; }
   .message-band:has(.message-band-pause:checked) .message-band-track,
   .message-band-window:hover .message-band-track,
-  .message-band-window:focus-within .message-band-track { animation-play-state: paused; }
+  .message-band:has(.message-band-pause:focus-visible) .message-band-track { animation-play-state: paused; }
   .message-band:has(.message-band-pause:checked) .message-band-running { display: none; }
   .message-band:has(.message-band-pause:checked) .message-band-paused { display: inline; }
   .message-band:has(.message-band-pause:focus-visible) .message-band-control { outline: 2px solid var(--color-primary); outline-offset: var(--spacing); }

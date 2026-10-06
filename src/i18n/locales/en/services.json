@@ -1,6 +1,4 @@
-import type { ServicesLocale } from '../../../features/services/types';
-
-export default {
+{
   "labels": {
     "modules": "Shape your solution",
     "pricing": "A scope that fits your business",
@@ -171,7 +169,7 @@ export default {
       }
     },
     "void-events": {
-      "name": "Void Gather",
+      "name": "Event Organizer",
       "description": "An event management platform for capacity, RSVPs and participants at classes, sessions and experiences with limited places.",
       "hero": {
         "title": "Every event. Every place. Everyone where they belong.",
@@ -272,6 +270,11 @@ export default {
             "recurringDescription": "Includes support, fixes and ongoing integration/website maintenance."
           }
         },
+        "order-landing-page": {
+          "title": "Use the Landing Page in this quote",
+          "description": "Connect Event Organizer to the Landing Page already added to your request, without another creation charge or monthly fee.",
+          "associationDescription": "Uses the Landing Page added to this quote"
+        },
         "online-payment": {
           "title": "Online payment",
           "description": "Receive payments directly in the event flow."
@@ -353,7 +356,7 @@ export default {
         }
       },
       "seo": {
-        "title": "Void Gather — Event management | VoidCube",
+        "title": "Event Organizer — Event management | VoidCube",
         "description": "An event management platform for capacity, RSVPs and participants at classes, sessions and experiences with limited places."
       },
       "page": {
@@ -393,4 +396,4 @@ export default {
       }
     }
   }
-} satisfies ServicesLocale;
+}

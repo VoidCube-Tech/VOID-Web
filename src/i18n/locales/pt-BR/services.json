@@ -1,6 +1,4 @@
-import type { ServicesLocale } from '../../../features/services/types';
-
-export default {
+{
   "labels": {
     "modules": "Monte sua solução",
     "pricing": "Um escopo que acompanha seu negócio",
@@ -171,7 +169,7 @@ export default {
       }
     },
     "void-events": {
-      "name": "Void Gather",
+      "name": "Organizador de Eventos",
       "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada.",
       "hero": {
         "title": "Cada evento. Cada vaga. Todo mundo no lugar certo.",
@@ -272,6 +270,11 @@ export default {
             "recurringDescription": "Inclui suporte, correções e manutenção contínua da integração/site."
           }
         },
+        "order-landing-page": {
+          "title": "Usar Landing Page deste orçamento",
+          "description": "Conecte o Organizador de Eventos à Landing Page já adicionada ao pedido, sem nova cobrança de criação ou mensalidade.",
+          "associationDescription": "Usa a Landing Page adicionada neste orçamento"
+        },
         "online-payment": {
           "title": "Pagamento online",
           "description": "Receba pagamentos diretamente no fluxo do evento."
@@ -353,7 +356,7 @@ export default {
         }
       },
       "seo": {
-        "title": "Void Gather — Organização de eventos | VoidCube",
+        "title": "Organizador de Eventos — Organização de eventos | VoidCube",
         "description": "Plataforma de organização de eventos, vagas e confirmações para aulas, sessões e experiências com capacidade limitada."
       },
       "page": {
@@ -393,4 +396,4 @@ export default {
       }
     }
   }
-} satisfies ServicesLocale;
+}

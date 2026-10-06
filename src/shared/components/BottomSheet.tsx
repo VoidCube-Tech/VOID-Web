@@ -12,7 +12,7 @@ interface Props {
 export function BottomSheet({ id, title, openLabel, closeLabel, children }: Props) {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
-  const heading = useRef<HTMLHeadingElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const previousOverflow = useRef<string | null>(null);
   const [open, setOpen] = useState(false);
   const [closing, setClosing] = useState(false);
@@ -32,7 +32,7 @@ export function BottomSheet({ id, title, openLabel, closeLabel, children }: Prop
     document.body.style.overflow = 'hidden';
     dialog.current.showModal();
     setOpen(true);
-    heading.current?.focus();
+    closeButton.current?.focus();
   }
   function close() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) dialog.current?.close();
@@ -56,8 +56,8 @@ export function BottomSheet({ id, title, openLabel, closeLabel, children }: Prop
       onAnimationEnd={event => { if (event.target === event.currentTarget && closing) dialog.current?.close(); }}>
       <div className="bottom-sheet-content">
         <header className="flex shrink-0 items-start justify-between gap-4 border-b border-outline-variant/40 px-5 py-4">
-          <h2 ref={heading} id={`${id}-title`} tabIndex={-1} className="min-w-0 rounded-ui font-secondary text-2xl leading-snug focus-visible:outline-2 focus-visible:outline-primary">{title}</h2>
-          <button type="button" aria-label={closeLabel} onClick={close} className="flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-ui text-on-surface-variant focus-visible:outline-2 focus-visible:outline-primary"><span className="material-symbols-outlined" aria-hidden="true">close</span></button>
+          <h2 id={`${id}-title`} className="min-w-0 rounded-ui font-secondary text-2xl leading-snug focus-visible:outline-2 focus-visible:outline-primary">{title}</h2>
+          <button ref={closeButton} type="button" aria-label={closeLabel} onClick={close} className="flex min-h-12 min-w-12 shrink-0 items-center justify-center rounded-ui text-on-surface-variant focus-visible:outline-2 focus-visible:outline-primary"><span className="material-symbols-outlined" aria-hidden="true">close</span></button>
         </header>
         <div className="bottom-sheet-options min-h-0 overflow-y-auto overscroll-contain p-4">{children}</div>
       </div>

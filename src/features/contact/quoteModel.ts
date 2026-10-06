@@ -1,5 +1,5 @@
 import type { ContactContent } from "./content";
-import { catalogProducts, selectedModules, missingRequiredModuleGroup, validModuleRelations, type CatalogProduct, type QuoteCatalog } from "../catalog";
+import { catalogProducts, moduleAvailableInOrder, selectedModules, missingRequiredModuleGroup, validModuleRelations, type CatalogProduct, type QuoteCatalog } from "../catalog";
 export type Step = 1 | 2 | 3;
 export interface QuoteContext { readonly productId: string; readonly moduleIds: readonly string[] }
 export function quoteSteps(product?: CatalogProduct): readonly Step[] {
@@ -52,7 +52,7 @@ export type QuoteAction =
   | { type: 'updateModules'; productId: string; moduleIds: readonly string[] }
   | { type: "animationEnd" }
   | { type: "openDialog"; solutionId?: string }
-  | { type: "removeSolution"; solutionId: string }
+  | { type: "removeSolution"; solutionId: string; catalog: QuoteCatalog }
   | { type: "cancelDialog" }
   | { type: "chooseSolution"; solution: SolutionSelection }
   | { type: "draft"; solution: SolutionSelection }
@@ -86,7 +86,20 @@ export function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState
       return { ...state, dialogOpen: true, editingId: solution?.id ?? null, draft: solution ? cloneSolution(solution) : null,
         dialogView: solution?.mode ?? "projects", dialogError: "" };
     }
-    case "removeSolution": return { ...state, selectedSolutions: state.selectedSolutions.filter(item => item.id !== action.solutionId), errors: { ...state.errors, solutions: undefined }, feedback: "", preparedUrl: "" };
+    case "removeSolution": {
+      const remaining = state.selectedSolutions.filter(item => item.id !== action.solutionId);
+      const productIds = selectedProductIds(remaining);
+      const products = catalogProducts(action.catalog);
+      const selectedSolutions = remaining.map(solution => {
+        if (solution.mode !== 'catalog') return solution;
+        const product = products.find(item => item.id === solution.productId);
+        return { ...solution, moduleIds: solution.moduleIds.filter(id => {
+          const module = product?.modules.find(item => item.id === id);
+          return !!module && moduleAvailableInOrder(module, productIds);
+        }) };
+      });
+      return { ...state, selectedSolutions, errors: { ...state.errors, solutions: undefined }, feedback: '', preparedUrl: '' };
+    }
     case "cancelDialog": return { ...state, dialogOpen: false, draft: null, editingId: null, dialogError: "" };
     case "draft": return { ...state, draft: cloneSolution(action.solution), dialogError: "" };
     case "chooseSolution": {
@@ -115,17 +128,24 @@ export function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState
     case "feedback": return { ...state, feedback: action.feedback, preparedUrl: action.url ?? "" };
   }
 }
-export function validateSolution(solution: SolutionSelection, catalog: QuoteCatalog, c: ContactContent): string | undefined {
+export function selectedProductIds(solutions: readonly SolutionSelection[]): readonly string[] {
+  return solutions.flatMap(solution => solution.mode === 'catalog' ? [solution.productId] : []);
+}
+export function validateSolution(solution: SolutionSelection, catalog: QuoteCatalog, c: ContactContent, solutions: readonly SolutionSelection[] = []): string | undefined {
   if (solution.mode === "custom") {
     const length = solution.description.trim().length;
     return length < 20 || length > 2000 ? c.errors.description : undefined;
   }
   const product = catalogProducts(catalog).find(item => item.id === solution.productId);
   if (product) {
-    const missing = missingRequiredModuleGroup(product, solution.moduleIds);
+    const availableIds = solution.moduleIds.filter(id => {
+      const module = product.modules.find(item => item.id === id);
+      return !!module && moduleAvailableInOrder(module, selectedProductIds(solutions));
+    });
+    const missing = missingRequiredModuleGroup(product, availableIds);
     if (missing) return missing.requiredMessage;
   }
-  if (product && !validModuleRelations(product, solution.moduleIds)) return c.wizard.selectError;
+  if (product && (!validModuleRelations(product, solution.moduleIds) || product.modules.some(module => solution.moduleIds.includes(module.id) && !moduleAvailableInOrder(module, selectedProductIds(solutions))))) return c.wizard.selectError;
   if (!product || solution.id !== product.id || solution.moduleIds.some(id => !product.modules.some(module => module.id === id)) || product.modules.some(module => module.required && !solution.moduleIds.includes(module.id))) return c.wizard.selectError;
 }
 export function validateQuoteStep(state: QuoteState, step: Step, catalog: QuoteCatalog, c: ContactContent, contextual = false): QuoteState["errors"] {
@@ -138,7 +158,7 @@ export function validateQuoteStep(state: QuoteState, step: Step, catalog: QuoteC
   }
   if (step === 2) {
     const identities = new Set(state.selectedSolutions.map(solution => solution.id));
-    const solutionError = state.selectedSolutions.map(solution => validateSolution(solution, catalog, c)).find(Boolean);
+    const solutionError = state.selectedSolutions.map(solution => validateSolution(solution, catalog, c, state.selectedSolutions)).find(Boolean);
     if (!state.selectedSolutions.length || identities.size !== state.selectedSolutions.length || solutionError) errors.solutions = solutionError ?? c.wizard.selectError;
     if (!contextual && !Object.hasOwn(c.budgetOptions, state.budgetRange)) errors.budgetRange = c.errors.option;
     if (!contextual && !Object.hasOwn(c.deadlineOptions, state.deadline)) errors.deadline = c.errors.option;

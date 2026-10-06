@@ -4,7 +4,7 @@ interface Props { media: ServiceMedia; eager?: boolean }
 const { media, eager = false } = Astro.props;
 ---
 {media.type === 'image' ? (
-  <img src={media.src} alt={media.alt} loading={eager ? 'eager' : 'lazy'} decoding="async" class="aspect-video w-full rounded-ui object-cover" />
+  <img data-loading-resource={eager ? "initial-service-image" : undefined} src={media.src} alt={media.alt} width={media.width} height={media.height} loading={eager ? 'eager' : 'lazy'} decoding="async" class="aspect-video w-full rounded-ui object-cover" />
 ) : (
-  <video controls playsinline preload="metadata" poster={media.poster} aria-label={media.label} class="aspect-video w-full rounded-ui"><source src={media.src} /><a href={media.src}>{media.label}</a></video>
+  <video data-loading-resource={eager ? "initial-service-video" : undefined} controls playsinline preload="metadata" poster={media.poster} aria-label={media.label} class="aspect-video w-full rounded-ui"><source src={media.src} /><a href={media.src}>{media.label}</a></video>
 )}

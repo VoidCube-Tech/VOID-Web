@@ -5,7 +5,7 @@ import { MaterialIcon } from "../../navigation";
 import { WhatsAppIcon } from "../../../shared/components/WhatsAppIcon";
 import { whatsappNumber } from "../../../shared/config/contacts";
 import { catalogProducts, selectedModules, type QuoteCatalog } from "../../catalog";
-import { initialQuote, createContextQuote, quoteSteps, quoteReducer, validateQuoteStep, type Step, type Field, type QuoteContext } from "../quoteModel";
+import { initialQuote, createContextQuote, quoteSteps, quoteReducer, validateQuoteStep, selectedProductIds, type Step, type Field, type QuoteContext } from "../quoteModel";
 import { quoteSummary, buildQuoteMessage } from "../quoteSummary";
 import { SolutionPicker } from "./SolutionPicker";
 import { SelectedSolutions } from "./SelectedSolutions";
@@ -22,7 +22,6 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
   const [state, dispatch] = useReducer(quoteReducer, context, initial => initial ? createContextQuote(catalog, initial) : initialQuote);
   const form = useRef<HTMLFormElement>(null);
   const panel = useRef<HTMLDivElement>(null);
-  const title = useRef<HTMLHeadingElement>(null);
   const firstRender = useRef(true);
   const summary = quoteSummary(state, catalog, c, locale);
   const moving = !!state.transition;
@@ -43,12 +42,19 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
   }, [catalog, context]);
   useEffect(() => {
     if (firstRender.current) { firstRender.current = false; return; }
-    if (!state.transition) title.current?.focus();
+    if (!state.transition) {
+      const firstControl = panel.current?.querySelector<HTMLElement>('input:not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(:disabled), a[href]');
+      (firstControl ?? form.current?.querySelector<HTMLElement>('button[type="submit"]'))?.focus({ preventScroll: true });
+    }
   }, [state.step, state.transition]);
   useEffect(() => { if (panel.current) panel.current.scrollTop = 0; }, [state.step]);
   useEffect(() => {
     const first = (["name", "company", "solutions", "budgetRange", "deadline"] as Field[]).find(field => state.errors[field]);
-    if (first) form.current?.querySelector<HTMLElement>(`#quote-${first}`)?.focus();
+    if (first) {
+      const target = form.current?.querySelector<HTMLElement>(`#quote-${first}`);
+      const control = target?.matches('input, select, textarea, button') ? target : target?.querySelector<HTMLElement>('input:not(:disabled), button:not(:disabled)');
+      control?.focus();
+    }
   }, [state.validationAttempt]);
   useEffect(() => {
     if (!state.transition) return;
@@ -100,21 +106,21 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
     <div className="mt-5 overflow-hidden">
       <div ref={panel} className={`quote-step overflow-y-auto px-1 py-1 ${contextual ? 'max-h-96' : 'h-96'}`} data-phase={state.transition?.phase} data-direction={state.transition?.direction} inert={moving}
         onAnimationEnd={event => { if (event.target === event.currentTarget) dispatch({ type: "animationEnd" }); }}>
-        <h2 id="quote-step-title" ref={title} tabIndex={-1} className="rounded-ui font-secondary text-2xl focus-visible:outline-2 focus-visible:outline-primary">{stepNames[state.step - 1]}</h2>
+        <h2 id="quote-step-title" aria-live="polite" aria-atomic="true" className="rounded-ui font-secondary text-2xl focus-visible:outline-2 focus-visible:outline-primary">{stepNames[state.step - 1]}</h2>
         {state.step === 1 && <div className="mt-6 space-y-5">
           <div><label htmlFor="quote-name" className="text-sm font-bold">{c.labels.name}</label>
             <input id="quote-name" name="name" type="text" autoComplete="name" required minLength={2} maxLength={100} value={state.name} placeholder={c.placeholders.name} className={quoteControl} {...validation("name")} onChange={event => dispatch({ type: "field", field: "name", value: event.target.value })} />{error("name")}</div>
           <div><label htmlFor="quote-company" className="text-sm font-bold">{c.labels.company}</label>
             <input id="quote-company" name="company" type="text" autoComplete="organization" maxLength={150} value={state.company} placeholder={c.placeholders.company} className={quoteControl} {...validation("company")} onChange={event => dispatch({ type: "field", field: "company", value: event.target.value })} />{error("company")}</div>
         </div>}
-        {state.step === 2 && contextual && product && contextSelection?.mode === 'catalog' && <div id="quote-solutions" tabIndex={-1} className="mt-5 space-y-5" {...validation('solutions')}>
-          <ModuleSelection product={product} selectedIds={contextSelection.moduleIds} content={c} locale={locale} onChange={moduleIds => dispatch({ type: 'updateModules', productId: product.id, moduleIds })} />{error('solutions')}
+        {state.step === 2 && contextual && product && contextSelection?.mode === 'catalog' && <div id="quote-solutions" className="mt-5 space-y-5" {...validation('solutions')}>
+          <ModuleSelection productIds={selectedProductIds(state.selectedSolutions)} product={product} selectedIds={contextSelection.moduleIds} content={c} locale={locale} onChange={moduleIds => dispatch({ type: 'updateModules', productId: product.id, moduleIds })} />{error('solutions')}
         </div>}
         {state.step === 2 && !contextual && <div className="mt-5 space-y-5">
           <section aria-labelledby="selected-solutions-title">
             <h3 id="selected-solutions-title" className="mb-3 text-sm font-bold">{c.wizard.selectedSolutions}</h3>
             <SelectedSolutions solutions={summary.solutions} content={c} compact onEdit={solutionId => dispatch({ type: "openDialog", solutionId })} onRemove={solutionId => {
-              dispatch({ type: "removeSolution", solutionId });
+              dispatch({ type: "removeSolution", solutionId, catalog });
               form.current?.querySelector<HTMLElement>("#quote-solutions")?.focus();
             }} />
             <button id="quote-solutions" type="button" aria-haspopup="dialog" className={`${quoteSecondary} mt-3 w-full justify-between`} {...validation("solutions")} onClick={() => dispatch({ type: "openDialog" })}>

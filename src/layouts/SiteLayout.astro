@@ -1,29 +1,29 @@
 ---
-import "../styles/global.css";
+import DocumentLayout from "./DocumentLayout.astro";
+import type { PageResource } from "../shared/loading/PageLoading";
 import type { Locale } from "../i18n/config";
 import Footer from "../features/navigation/components/Footer.astro";
 import { Header } from "../features/navigation/components/Header";
 import { navigationContent } from "../features/navigation/content";
 import SpaceBackground from "../shared/effects/SpaceBackground.astro";
 
-import DefaultHead, { type Props as HeadProps } from "../shared/metadata/DefaultHead.astro";
+import type { Props as HeadProps } from "../shared/metadata/DefaultHead.astro";
 
 interface Props extends HeadProps {
 	readonly lang: Locale;
 	readonly showFooter?: boolean;
+	readonly loadingResources?: readonly PageResource[];
 }
 
-const { lang, showFooter = true, ...headProps } = Astro.props;
+const { lang, showFooter = true, loadingResources, ...headProps } = Astro.props;
 ---
 
-<html lang={lang}>
-	<DefaultHead {...headProps}>
-		<slot name="head" />
-	</DefaultHead>
-	<body>
-		<Header client:load content={navigationContent[lang]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={lang} />
-		<SpaceBackground />
-		<slot />
-		{showFooter && <Footer locale={lang} currentPath={`${Astro.url.pathname}${Astro.url.search}`} />}
-	</body>
-</html>
+<DocumentLayout lang={lang} {...headProps} loadingResources={loadingResources}>
+	<slot name="head" slot="head" />
+
+	<Header client:load content={navigationContent[lang]} currentPath={`${Astro.url.pathname}${Astro.url.search}`} locale={lang} />
+	<SpaceBackground />
+	<slot />
+	{showFooter && <Footer locale={lang} currentPath={`${Astro.url.pathname}${Astro.url.search}`} />}
+
+</DocumentLayout>
