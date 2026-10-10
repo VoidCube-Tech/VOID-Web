@@ -1,3 +1,4 @@
+import { formTool, respondToAgent } from "../../../shared/discovery/webMcp";
 import { useRef, useState } from "react";
 import type { AuthContent } from "../content";
 import {
@@ -26,9 +27,9 @@ export function LoginForm({ content, contactHref }: Props) {
     <section aria-labelledby="login-title" className="relative w-full">
       <h1 id="login-title" className="text-center font-secondary text-4xl leading-tight">{content.title}</h1>
       <p className="mt-3 text-center text-base leading-relaxed text-on-surface-variant">{content.description}</p>
-      <form className="mt-6 space-y-4" onSubmit={(event) => { event.preventDefault(); setFeedback(true); }}>
-        <div><label htmlFor="login-email" className="mb-2 block text-sm font-bold">{content.email}</label><input id="login-email" type="email" autoComplete="username" required className={control} /></div>
-        <div><label htmlFor="login-password" className="mb-2 block text-sm font-bold">{content.password}</label><input id="login-password" type="password" autoComplete="current-password" required className={control} /></div>
+      <form {...formTool("login_availability", content.unavailable)} className="mt-6 space-y-4" onSubmit={(event) => { event.preventDefault(); setFeedback(true); respondToAgent(event.nativeEvent, { status: "unavailable", message: content.unavailable }); }}>
+        <div><label htmlFor="login-email" className="mb-2 block text-sm font-bold">{content.email}</label><input id="login-email" name="email" type="email" autoComplete="username" required className={control} /></div>
+        <div><label htmlFor="login-password" className="mb-2 block text-sm font-bold">{content.password}</label><input id="login-password" name="password" type="password" autoComplete="current-password" required className={control} /></div>
         <button type="submit" className={`${action} min-h-12 w-full border border-primary-container bg-primary px-5 font-bold text-on-primary transition-colors duration-ui ease-ui hover:bg-on-primary-container motion-reduce:transition-none`}>{content.submit}</button>
         <p role="status" className="text-sm leading-relaxed text-on-surface-variant">{feedback ? content.unavailable : ""}</p>
       </form>

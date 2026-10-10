@@ -5,7 +5,7 @@ export interface QuoteContext { readonly productId: string; readonly moduleIds: 
 export function quoteSteps(product?: CatalogProduct): readonly Step[] {
   return product ? product.modules.some(module => module.enabled !== false && !module.required) ? [2, 1, 3] : [1, 3] : [1, 2, 3];
 }
-export type Field = "name" | "company" | "solutions" | "budgetRange" | "deadline";
+export type Field = "name" | "company" | "solutions" | "deadline";
 export interface CatalogSolutionSelection {
   readonly id: string;
   readonly mode: "catalog";
@@ -24,7 +24,6 @@ export interface QuoteState {
   name: string;
   company: string;
   selectedSolutions: readonly SolutionSelection[];
-  budgetRange: string;
   deadline: string;
   errors: Partial<Record<Field, string>>;
   validationAttempt: number;
@@ -40,11 +39,11 @@ export interface QuoteState {
   preparedUrl: string;
 }
 export const initialQuote: QuoteState = {
-  step: 1, name: "", company: "", selectedSolutions: [], budgetRange: "", deadline: "",
+  step: 1, name: "", company: "", selectedSolutions: [], deadline: "",
   errors: {}, validationAttempt: 0, draft: null, editingId: null, dialogOpen: false, dialogView: "projects",
   dialogError: "", dialogValidationAttempt: 0, queryInitialized: false, transition: null, feedback: "", preparedUrl: "",
 };
-type TextField = "name" | "company" | "budgetRange" | "deadline";
+type TextField = "name" | "company" | "deadline";
 export type QuoteAction =
   | { type: "field"; field: TextField; value: string }
   | { type: "errors"; errors: QuoteState["errors"]; feedback: string }
@@ -160,7 +159,6 @@ export function validateQuoteStep(state: QuoteState, step: Step, catalog: QuoteC
     const identities = new Set(state.selectedSolutions.map(solution => solution.id));
     const solutionError = state.selectedSolutions.map(solution => validateSolution(solution, catalog, c, state.selectedSolutions)).find(Boolean);
     if (!state.selectedSolutions.length || identities.size !== state.selectedSolutions.length || solutionError) errors.solutions = solutionError ?? c.wizard.selectError;
-    if (!contextual && !Object.hasOwn(c.budgetOptions, state.budgetRange)) errors.budgetRange = c.errors.option;
     if (!contextual && !Object.hasOwn(c.deadlineOptions, state.deadline)) errors.deadline = c.errors.option;
   }
   return errors;

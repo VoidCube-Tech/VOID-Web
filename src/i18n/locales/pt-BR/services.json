@@ -12,7 +12,7 @@
       "name": "Landing Page",
       "description": "Uma presença digital clara para apresentar sua oferta, fortalecer sua marca e transformar interesse em oportunidade.",
       "seo": {
-        "title": "Landing Page",
+        "title": "Landing pages | VoidCube",
         "description": "Crie uma presença digital clara para apresentar sua marca, seus serviços e transformar interesse em oportunidade."
       },
       "hero": {
@@ -169,9 +169,28 @@
             "type": "insight-panel"
           }
         }
+      },
+      "pricing": {
+        "initialLabel": "Criação",
+        "recurringLabel": "Hospedagem e acompanhamento",
+        "recurringDescription": "Hospedagem do site, solicitações de alteração, suporte em quedas ou outros problemas, correções com automação quando aplicável e métricas do site com sugestões mensais de mudanças. Inclui {capacity}."
+      },
+      "offerDetails": {
+        "includes": [
+          "Criação e configuração da Landing Page.",
+          "Apresentação da marca, oferta e contato.",
+          "Experiência responsiva para diferentes telas."
+        ],
+        "recurringCoverage": "Hospedagem do site, solicitações de alteração, suporte em quedas ou outros problemas, correções com automação quando aplicável e métricas do site com sugestões mensais de mudanças. Inclui {capacity}.",
+        "support": "Solicitações de alteração e suporte caso o site caia ou apresente problemas. Correções com automação quando aplicável. Métricas e sugestões mensais de mudanças incluídas.",
+        "integrations": [
+          "Pode ser conectada ao Organizador de Eventos para apresentar eventos e encaminhar confirmações."
+        ],
+        "title": "O que sua Landing Page inclui.",
+        "description": "Entenda o investimento na criação da página e o que está incluído na mensalidade de hospedagem, acompanhamento e suporte."
       }
     },
-    "void-events": {
+    "organizador-de-eventos": {
       "name": "Organizador de Eventos",
       "description": "Organize eventos, vagas e confirmações em uma experiência simples para sua equipe e para quem participa.",
       "hero": {
@@ -260,7 +279,7 @@
           "pricing": {
             "initialLabel": "Criação",
             "recurringLabel": "Suporte e manutenção",
-            "recurringDescription": "Inclui suporte, correções e manutenção contínua do site."
+            "recurringDescription": "Hospedagem do site, solicitações de alteração, suporte em quedas ou outros problemas, correções com automação quando aplicável e métricas do site com sugestões mensais de mudanças. Inclui {capacity}."
           }
         },
         "existing-site": {
@@ -270,7 +289,7 @@
             "initialLabel": "Integração",
             "freeInitialLabel": "Gratuita",
             "recurringLabel": "Suporte e manutenção",
-            "recurringDescription": "Inclui suporte, correções e manutenção contínua da integração com o site."
+            "recurringDescription": "Hospedagem do site, solicitações de alteração, suporte em quedas ou outros problemas, correções com automação quando aplicável e métricas do site com sugestões mensais de mudanças. Inclui {capacity}."
           }
         },
         "order-landing-page": {
@@ -280,7 +299,7 @@
         },
         "online-payment": {
           "title": "Pagamento online",
-          "description": "Permita que inscrições e pagamentos façam parte da mesma experiência do evento."
+          "description": "Pagamento online está em desenvolvimento. Ainda não pode ser contratado, selecionado ou incluído no orçamento."
         }
       },
       "eventDemo": {
@@ -331,7 +350,7 @@
           "type": "payment",
           "title": "Pagamento online",
           "status": "Em breve",
-          "description": "Integração planejada para levar pagamentos diretamente ao fluxo do evento."
+          "description": "Pagamento online está em desenvolvimento. Ainda não pode ser contratado, selecionado ou incluído no orçamento."
         },
         "summary": {
           "weekEventsLabel": "Eventos nesta semana",
@@ -359,7 +378,7 @@
         }
       },
       "seo": {
-        "title": "Organizador de Eventos",
+        "title": "Gestão de eventos | VoidCube",
         "description": "Organize eventos, vagas e confirmações em uma plataforma criada para tornar sua operação mais simples e a experiência de participação mais clara."
       },
       "page": {
@@ -388,15 +407,53 @@
       },
       "pricing": {
         "initialLabel": "Licença inicial",
-        "recurringLabel": "Mensalidade da plataforma",
-        "recurringDescription": "Inclui suporte, correções e manutenção contínua para manter a plataforma funcionando e evoluindo."
+        "recurringLabel": "Capacidade da plataforma e suporte",
+        "recurringDescription": "Uso da capacidade computacional contratada para a operação da plataforma, com suporte, correções e manutenção em caso de queda ou outros problemas. Inclui {capacity}. A cobrança não é por usuário."
       },
       "moduleGroups": {
         "event-presence": {
           "label": "Como as pessoas acessarão seus eventos?",
           "requiredMessage": "Escolha uma opção para disponibilizar seus eventos: crie uma nova página, integre um site existente ou use uma Landing Page já adicionada ao orçamento."
         }
+      },
+      "offerDetails": {
+        "includes": [
+          "Criação de eventos, data e horário.",
+          "Capacidade, controle de vagas e confirmação de presença.",
+          "Participantes, status e eventos recorrentes."
+        ],
+        "recurringCoverage": "Uso da capacidade computacional contratada para a operação da plataforma, com suporte, correções e manutenção em caso de queda ou outros problemas. Inclui {capacity}. A cobrança não é por usuário.",
+        "support": "Suporte, correções e manutenção caso a plataforma caia ou apresente problemas. A mensalidade cobre principalmente os recursos computacionais usados pela operação.",
+        "integrations": [
+          "Escolha uma alternativa de presença digital. Uma Landing Page já incluída no orçamento pode ser conectada sem duplicar cobranças."
+        ],
+        "title": "Entenda sua operação de eventos.",
+        "description": "Veja o que a plataforma oferece para organizar eventos, vagas e confirmações, quais recursos a mensalidade cobre e quais conexões já estão disponíveis."
       }
+    }
+  },
+  "offerComparison": {
+    "title": "Entenda cada oferta.",
+    "description": "A página apresenta seu negócio. O Organizador de Eventos organiza eventos, vagas e confirmações. Criação, hospedagem e recursos da plataforma têm cobranças distintas.",
+    "labels": {
+      "offer": "Oferta",
+      "initial": "Investimento inicial",
+      "monthly": "Mensalidade",
+      "includes": "O que inclui",
+      "recurringCoverage": "O que a mensalidade cobre",
+      "support": "Como funciona o suporte",
+      "integrations": "Integrações e disponibilidade",
+      "capacity": "Recursos incluídos",
+      "billingBasis": "Como é cobrado"
+    },
+    "available": "Disponível",
+    "inDevelopment": "Em desenvolvimento — ainda não disponível para contratação.",
+    "noRecurrence": "Sem cobrança recorrente cadastrada",
+    "capacity": "{ram} de RAM + {storage} de armazenamento",
+    "unspecified": "Definido conforme o escopo",
+    "billingBasis": {
+      "hosting": "Mensalidade de hospedagem e acompanhamento do site.",
+      "resource-usage": "Cobrança pela carga computacional dentro dos recursos contratados, sem tarifa por usuário. A quantidade de usuários suportada depende do consumo de memória e da carga da aplicação."
     }
   }
 }

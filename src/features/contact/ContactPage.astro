@@ -16,7 +16,7 @@ const catalog = getQuoteCatalog(locale);
 const alternates = Astro.site ? [...locales.map(language => ({ hreflang: language, href: new URL(getLocalizedPath("/contact", language), Astro.site) })), { hreflang: "x-default", href: new URL(getLocalizedPath("/contact", defaultLocale), Astro.site) }] : [];
 ---
 <SiteLayout lang={locale} title={content.seo.title} description={content.seo.description} alternates={alternates} robots="index, follow, max-image-preview:large" socialLocale={locale === "pt-BR" ? "pt_BR" : "en_US"}>
-  <main class="relative z-10 mx-auto min-h-screen max-w-6xl px-6 pt-36 pb-28 text-on-surface sm:px-10 sm:pt-40 sm:pb-40">
+  <main class="relative z-10 mx-auto min-h-screen max-w-6xl px-2 pt-36 pb-28 text-on-surface md:px-10 sm:pt-40 sm:pb-40">
     <div class="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
       <div class="min-w-0 lg:pt-8">
         <p data-reveal class="hidden text-sm font-bold text-primary md:block">{content.eyebrow}</p>

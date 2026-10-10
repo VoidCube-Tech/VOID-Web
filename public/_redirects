@@ -1,0 +1,3 @@
+# Serve discovery manifests even when an upload omits hidden directories.
+/.well-known/ard.json /ard.json 200
+/.well-known/ai-catalog.json /ai-catalog.json 200

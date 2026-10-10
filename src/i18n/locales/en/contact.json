@@ -25,7 +25,6 @@
     "company": "Company",
     "service": "Product or service",
     "description": "About your project",
-    "budget": "Investment",
     "deadline": "Timeline"
   },
   "placeholders": {
@@ -33,15 +32,7 @@
     "company": "Company or organization (optional)",
     "service": "Choose a solution",
     "description": "What do you want to build, who is it for, and what result do you want to achieve?",
-    "budget": "Choose an investment range",
     "deadline": "Choose a timeline"
-  },
-  "budgetOptions": {
-    "discuss": "I'd like guidance",
-    "under5": "Under $5,000",
-    "5to15": "$5,000 to $15,000",
-    "15to50": "$15,000 to $50,000",
-    "over50": "Over $50,000"
   },
   "deadlineOptions": {
     "flexible": "Flexible / let's discuss",
@@ -49,7 +40,6 @@
     "quarter": "Within three months",
     "later": "More than three months"
   },
-  "budgetHint": "Your available investment range, separate from the solution's initial estimate.",
   "descriptionHint": "Between 20 and 2,000 characters.",
   "submit": "Continue on WhatsApp",
   "privacyHint": "Your details are only used to prepare your WhatsApp message. Nothing is stored on this site.",
@@ -107,7 +97,6 @@
     "partialEstimate": "{amount} + items priced on request",
     "basePrice": "Base price",
     "estimateHint": "This is an initial estimate, not a final price. Scope, investment, and timeline will be aligned before the project begins.",
-    "budgetLabel": "Your investment range",
     "emptyDescription": "To be defined together",
     "noSelection": "No solution selected",
     "close": "Close selection",

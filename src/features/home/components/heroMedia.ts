@@ -1,5 +1,6 @@
 export interface HeroMedia {
 	readonly mobile: string;
+	readonly poster?: string;
 	readonly desktop: string;
 	readonly tv: string;
 }

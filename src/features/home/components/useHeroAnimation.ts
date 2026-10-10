@@ -38,6 +38,7 @@ export function useHeroAnimation(
 		let frame = 0;
 		let lastFrameTime = 0;
 		let scrollDistance = 0;
+		let trackDocumentTop = 0;
 		let desktop = false;
 		let targetProgress = 0;
 		let renderedProgress = 0;
@@ -185,7 +186,7 @@ export function useHeroAnimation(
 		};
 		const updateTarget = () => {
 			if (!desktop) return;
-			const sectionTop = (track ?? section).getBoundingClientRect().top;
+			const sectionTop = trackDocumentTop - window.scrollY;
 			targetProgress = scrollDistance <= 0
 				? 1
 				: clampProgress(-sectionTop / scrollDistance);
@@ -198,6 +199,8 @@ export function useHeroAnimation(
 			measureFrame = 0;
 			desktop = window.innerWidth >= DESKTOP_WIDTH;
 			const rect = section.getBoundingClientRect();
+			const trackTop = (track ?? section).getBoundingClientRect().top;
+			trackDocumentTop = trackTop + window.scrollY;
 			scrollDistance = track && stage ? Math.max(0, track.offsetHeight - stage.offsetHeight) : 0;
 
 			if (desktop) {
@@ -206,7 +209,7 @@ export function useHeroAnimation(
 				stopMobileAnimation();
 				targetProgress = motion.matches || scrollDistance <= 0
 					? 1
-					: clampProgress(-(track ?? section).getBoundingClientRect().top / scrollDistance);
+					: clampProgress(-trackTop / scrollDistance);
 				stopFrame();
 				renderDesktopImmediately(targetProgress);
 			} else {

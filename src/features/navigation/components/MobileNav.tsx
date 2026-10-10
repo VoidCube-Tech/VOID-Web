@@ -34,10 +34,10 @@ export function MobileNav({ content, currentPath, locale, onClose, panelRef }: P
 				role="dialog"
 				aria-modal="true"
 				aria-label={content.mobileLabel}
-				style={liquidGlassPanelStyle}
-				className={`${navigationGlassPanelClass} absolute inset-y-0 right-0 flex w-full max-w-md flex-col rounded-l-ui p-4`}
+				style={{ ...liquidGlassPanelStyle, position: "absolute" }}
+				className={`${navigationGlassPanelClass} absolute inset-x-3 top-0 flex max-h-[calc(100dvh-5.25rem)] min-w-0 flex-col rounded-ui p-3 sm:inset-x-4 sm:p-4`}
 			>
-				<nav aria-label={content.mobileLabel} className="flex flex-1 flex-col gap-2 overflow-y-auto">
+				<nav aria-label={content.mobileLabel} className="flex min-h-0 flex-col gap-2 overflow-x-hidden overflow-y-auto">
 					<a href={getLocalizedPath("/", locale)} aria-current={isLandingPage(currentPath) ? "page" : undefined} onClick={onClose} style={liquidGlassControlStyle} className={controlClass}>
 						{content.landingPage}
 					</a>
@@ -46,11 +46,11 @@ export function MobileNav({ content, currentPath, locale, onClose, panelRef }: P
 						{content.about}
 					</a>
 					<LanguageSelector content={content} currentPath={currentPath} locale={locale} mode="mobile" onNavigate={onClose} />
-					<a href={getLocalizedPath("/contact", locale)} onClick={onClose} style={liquidGlassPrimaryControlStyle} className={`${navigationGlassControlClass} mt-2 flex min-h-12 items-center justify-center rounded-ui px-5 text-base font-bold text-primary-fixed`}>
-						{content.contact}
-					</a>
 					<a href={getLocalizedPath("/login", locale)} onClick={onClose} style={liquidGlassControlStyle} className={`${controlClass} justify-center text-base`}>
 						{content.login}
+					</a>
+					<a href={getLocalizedPath("/contact", locale)} onClick={onClose} style={liquidGlassPrimaryControlStyle} className={`${navigationGlassControlClass} mt-2 flex min-h-12 items-center justify-center rounded-ui px-5 text-base font-bold text-primary-fixed`}>
+						{content.contact}
 					</a>
 				</nav>
 			</div>

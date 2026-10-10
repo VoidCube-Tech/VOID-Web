@@ -72,7 +72,6 @@ export function quoteSummary(state: QuoteState, catalog: QuoteCatalog, c: Contac
   const recurringValues = total.recurringPrices.map(price => ({ interval: price.interval, label: c.pricing.periodLabels[price.interval], value: formatRecurringPrice(price, locale, c.pricing.intervals) }));
   return {
     solutions: state.selectedSolutions.map(solution => solutionSummary(solution, catalog, c, locale)),
-    budget: Object.entries(c.budgetOptions).find(([id]) => id === state.budgetRange)?.[1] ?? "",
     deadline: Object.entries(c.deadlineOptions).find(([id]) => id === state.deadline)?.[1] ?? "",
     initialEstimate: estimateText(amount, total.underConsultation, c),
     knownInitialEstimate: amount,
@@ -115,7 +114,7 @@ function solutionsMessage(summary: MessageSummary, c: ContactContent) {
   return [c.wizard.selectedSolutions, ...summary.solutions.map(solution => solutionMessage(solution, c))].join("\n\n");
 }
 function negotiationMessage(summary: MessageSummary, c: ContactContent) {
-  return [...(summary.budget ? [`${c.wizard.budgetLabel}: ${summary.budget}`] : []), ...(summary.deadline ? [`${c.labels.deadline}: ${summary.deadline}`] : [])].join("\n");
+  return [...(summary.deadline ? [`${c.labels.deadline}: ${summary.deadline}`] : [])].join("\n");
 }
 function finalNotices(summary: MessageSummary, c: ContactContent) {
   return [...(summary.underConsultation ? [c.wizard.consultationHint] : []), c.wizard.estimateHint].join("\n\n");

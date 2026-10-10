@@ -1,0 +1,35 @@
+---
+import type { ResolvedOfferComparison } from '../resolveOfferComparison';
+interface Props { comparison: ResolvedOfferComparison }
+const { comparison: { copy, offers } } = Astro.props;
+const rows = ['initial', 'monthly', 'includes', 'recurringCoverage', 'capacity', 'billingBasis', 'integrations', 'support'] as const;
+---
+{offers.length > 0 && <section aria-labelledby="offer-comparison-title" class="min-w-0 py-16 sm:py-28" data-reveal>
+  <h2 id="offer-comparison-title" class="max-w-3xl font-secondary text-3xl leading-tight sm:text-5xl">{copy.title}</h2>
+  <p class="mt-6 max-w-2xl text-lg leading-relaxed text-on-surface-variant">{copy.description}</p>
+  <div class="mt-8 rounded-ui sm:overflow-x-auto border border-outline-variant">
+    <table class="w-full max-sm:block sm:min-w-xl text-left text-sm leading-relaxed">
+      <caption class="sr-only">{copy.title}</caption>
+      <thead class="bg-surface-container max-sm:block"><tr class="max-sm:flex max-sm:flex-col">
+        <th scope="col" class="p-4 font-bold max-sm:pb-2 sm:p-6">{copy.labels.offer}</th>
+        {offers.map(offer => <th scope="col" class="min-w-0 break-words p-4 font-bold text-primary max-sm:pt-0 sm:p-6">{offer.name}</th>)}
+      </tr></thead>
+      <tbody class="max-sm:block">{rows.map(row => <tr class="border-t border-outline-variant max-sm:flex max-sm:flex-col">
+        <th scope="row" class="min-w-0 break-words p-4 align-top font-bold max-sm:pb-2 sm:p-6">{copy.labels[row]}</th>
+        {offers.map(offer => <td class="min-w-0 break-words p-4 align-top text-on-surface-variant max-sm:pt-0 sm:p-6">
+          {row === 'includes' && <ul class="space-y-2">{offer.includes.map(item => <li>{item}</li>)}</ul>}
+          {row === 'integrations' && <div class="space-y-4">
+            {offer.integrations.map(item => <p>{item}</p>)}
+            {offer.connections.map(connection => <div>
+              <p class="font-bold text-on-surface">{connection.name}</p>
+              <p class:list={['text-xs', { 'text-primary': connection.available }]}>{connection.status}</p>
+              {connection.description && <p class="mt-1">{connection.description}</p>}
+              {connection.price && <p class="mt-1">{connection.price}</p>}
+            </div>)}
+          </div>}
+          {row !== 'includes' && row !== 'integrations' && offer[row]}
+        </td>)}
+      </tr>)}</tbody>
+    </table>
+  </div>
+</section>}

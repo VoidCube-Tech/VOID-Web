@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { edgeFragmentShader, edgeVertexShader } from "./cloudEdgeSource";
 import type { CloudEdgeAppearance, CloudEdgeName } from "./cloudSectionTypes";
 
@@ -37,6 +37,18 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 
 export function CloudEdge({ edge, size, appearance }: Props) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
+	const [active, setActive] = useState(false);
+	// Compile each edge's shaders only when that canvas approaches the viewport.
+	useEffect(() => {
+		const canvas = canvasRef.current;
+		if (!canvas) return;
+		if (!("IntersectionObserver" in window)) { setActive(true); return; }
+		const observer = new IntersectionObserver(entries => {
+			if (entries.some(entry => entry.isIntersecting)) { setActive(true); observer.disconnect(); }
+		}, { rootMargin: "120px" });
+		observer.observe(canvas);
+		return () => observer.disconnect();
+	}, []);
 	const rendererRef = useRef<Renderer | null>(null);
 	const sizeRef = useRef(size);
 	sizeRef.current = size;
@@ -59,6 +71,7 @@ export function CloudEdge({ edge, size, appearance }: Props) {
 		: { top: -crossBleed, left: 0, width: "100%", height: `calc(100% + ${crossBleed * 2}px)` };
 
 	useEffect(() => {
+		if (!active) return;
 		const canvas = canvasRef.current;
 		const gl = canvas?.getContext("webgl", { alpha: true, antialias: false, premultipliedAlpha: false });
 		if (!canvas || !gl) return;
@@ -160,7 +173,7 @@ export function CloudEdge({ edge, size, appearance }: Props) {
 			gl.deleteBuffer(buffer);
 			gl.deleteProgram(program);
 		};
-	}, [edge, horizontal]);
+	}, [edge, horizontal, active]);
 
 	useEffect(() => {
 		const renderer = rendererRef.current;
@@ -196,7 +209,7 @@ export function CloudEdge({ edge, size, appearance }: Props) {
 		const direction = uniform("u_direction");
 		if (direction) gl.uniform2f(direction, appearance.directionX, appearance.directionY);
 		syncAnimation();
-	}, [appearanceKey, edge]);
+	}, [appearanceKey, edge, active]);
 
 	return (
 		<div aria-hidden="true" className="pointer-events-none absolute z-0 overflow-clip" style={placement}>

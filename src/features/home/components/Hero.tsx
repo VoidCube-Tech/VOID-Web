@@ -7,13 +7,12 @@ import { useHeroAnimation } from "./useHeroAnimation";
 export interface HeroProps {
 	readonly media: HeroMedia;
 	readonly animation: HeroAnimation;
-	readonly eyebrow: string;
 	readonly title: string;
 	readonly description: string;
 	readonly cta: { readonly label: string; readonly href: string };
 }
 
-export function Hero({ media, animation, eyebrow, title, description, cta }: HeroProps) {
+export function Hero({ media, animation, title, description, cta }: HeroProps) {
 	const sectionRef = useRef<HTMLElement>(null);
 	const viewportRef = useRef<HTMLDivElement>(null);
 	const videoWrapperRef = useRef<HTMLDivElement>(null);
@@ -23,9 +22,17 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 	const selectedSourceRef = useRef<string>("");
 	const [source, setSource] = useState<string>();
 	const [videoReady, setVideoReady] = useState(false);
+	const [pageReady, setPageReady] = useState(false);
+	useEffect(() => {
+		const ready = () => setPageReady(true);
+		document.addEventListener("voidcube:page-ready", ready);
+		if (!document.documentElement.classList.contains("page-loading-enabled") ||
+			document.querySelector<HTMLElement>("[data-loading-content]")?.dataset.loadingPhase === "ready") ready();
+		return () => document.removeEventListener("voidcube:page-ready", ready);
+	}, []);
 	const [mobileVideoFits, setMobileVideoFits] = useState(true);
 	const mobileVideoFit = animation.mobile.fit === "cover" ? "object-cover" : "object-contain";
-	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, brandingRef, contentRef, animation, videoReady);
+	useHeroAnimation(sectionRef, viewportRef, videoWrapperRef, brandingRef, contentRef, animation, pageReady);
 	const contentAnimation = animation.content;
 	const brandingAnimation = animation.branding;
 	const brandingTextStyle = brandingAnimation ? {
@@ -93,7 +100,9 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 		const updateSource = () => {
 			const nextSource = mediaForWidth(media, window.innerWidth);
 			if (selectedSourceRef.current === nextSource) return;
+			const initial = !selectedSourceRef.current;
 			selectedSourceRef.current = nextSource;
+			if (initial) return;
 			setVideoReady(false);
 			setSource(nextSource);
 		};
@@ -125,8 +134,8 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 
 	const revealVideo = () => {
 		const video = videoRef.current;
-		if (!video || !source || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
-			video.currentSrc !== new URL(source, window.location.href).href) return;
+		if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA ||
+			(source && video.currentSrc !== new URL(source, window.location.href).href)) return;
 		setVideoReady(true);
 		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) video.pause();
 	};
@@ -143,6 +152,8 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 					<video
 						ref={videoRef}
 						data-loading-resource="initial-hero-video"
+						data-loading-readiness={media.poster ? "poster" : "frame"}
+						poster={media.poster}
 						src={source}
 						muted
 						autoPlay
@@ -154,8 +165,12 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 						onPlaying={revealVideo}
 						onError={() => setVideoReady(false)}
 						aria-hidden="true"
-						className={`size-full ${mobileVideoFit} transition-opacity duration-150 motion-reduce:transition-none md:object-cover ${videoReady && mobileVideoFits ? "opacity-100" : "opacity-0"}`}
-					/>
+						className={`size-full ${mobileVideoFit} transition-opacity duration-150 motion-reduce:transition-none md:object-cover ${(videoReady || media.poster) && mobileVideoFits ? "opacity-100" : "opacity-0"}`}
+					>
+						<source media="(max-width: 767px)" src={media.mobile} type="video/webm" />
+						<source media="(min-width: 1920px)" src={media.tv} type="video/webm" />
+						<source src={media.desktop} type="video/webm" />
+					</video>
 				</div>
 				<div className="absolute inset-0 bg-linear-to-t" aria-hidden="true" />
 				{brandingAnimation && (
@@ -169,9 +184,6 @@ export function Hero({ media, animation, eyebrow, title, description, cta }: Her
 				)}
 				<div className="absolute right-0 left-[var(--hero-mobile-content-x)] top-[var(--hero-mobile-content-y)] z-10 md:left-[var(--hero-content-x)] md:top-[var(--hero-content-y)]">
 					<div ref={contentRef} inert aria-hidden="true" className="max-w-7xl px-6 pb-12 opacity-0 will-change-[transform,opacity] sm:px-10 md:pb-20">
-						<div className="mb-4 flex items-center justify-between gap-6 font-mono text-xs uppercase tracking-[0.2em]">
-							<p className="text-primary">{eyebrow}</p>
-						</div>
 						<h1 className="max-w-4xl font-secondary text-5xl leading-tight sm:text-7xl lg:text-8xl">{title}</h1>
 						<p className="mt-6 max-w-xl text-base leading-relaxed text-on-surface-variant sm:text-lg">{description}</p>
 						<a href={cta.href} className="mt-8 inline-flex min-h-12 items-center rounded-ui bg-primary px-7 font-medium text-on-primary transition-colors hover:bg-primary-fixed focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">{cta.label}</a>

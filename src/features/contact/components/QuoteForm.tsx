@@ -1,4 +1,5 @@
-import { useEffect, useReducer, useRef, type FormEvent } from "react";
+import { formTool, respondToAgent } from "../../../shared/discovery/webMcp";
+import { useEffect, useReducer, useRef, useId, type FormEvent } from "react";
 import type { Locale } from "../../../i18n/config";
 import type { ContactContent } from "../content";
 import { MaterialIcon } from "../../navigation";
@@ -16,6 +17,7 @@ import { liquidGlassAuthPrimaryControlStyle, navigationGlassControlClass } from 
 
 interface Props { content: ContactContent; catalog: QuoteCatalog; locale: Locale; context?: QuoteContext }
 export function QuoteForm({ content: c, catalog, locale, context }: Props) {
+  const toolId = useId().replace(/[^a-zA-Z0-9_]/g, "");
   const contextual = !!context;
   const product = context ? catalogProducts(catalog).find(item => item.id === context.productId || item.tag === context.productId) : undefined;
   const flow = quoteSteps(product);
@@ -49,7 +51,7 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
   }, [state.step, state.transition]);
   useEffect(() => { if (panel.current) panel.current.scrollTop = 0; }, [state.step]);
   useEffect(() => {
-    const first = (["name", "company", "solutions", "budgetRange", "deadline"] as Field[]).find(field => state.errors[field]);
+    const first = (["name", "company", "solutions", "deadline"] as Field[]).find(field => state.errors[field]);
     if (first) {
       const target = form.current?.querySelector<HTMLElement>(`#quote-${first}`);
       const control = target?.matches('input, select, textarea, button') ? target : target?.querySelector<HTMLElement>('input:not(:disabled), button:not(:disabled)');
@@ -71,18 +73,20 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
   }
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (moving || state.dialogOpen) return;
+    if (moving || state.dialogOpen) { respondToAgent(event.nativeEvent, { status: "busy" }); return; }
     const steps: Step[] = state.step === 3 ? [1, 2] : [state.step];
     for (const step of steps) {
       const errors = validateQuoteStep(state, step, catalog, c, contextual);
       if (Object.keys(errors).length) {
         if (state.step !== step) dispatch({ type: "navigate", step: flow.includes(step) ? step : flow[0], animate: false });
         dispatch({ type: "errors", errors, feedback: c.errors.summary });
+        respondToAgent(event.nativeEvent, { status: "validation-error", message: c.errors.summary });
         return;
       }
     }
-    if (currentIndex < flow.length - 1) { navigate(flow[currentIndex + 1]); return; }
+    if (currentIndex < flow.length - 1) { navigate(flow[currentIndex + 1]); respondToAgent(event.nativeEvent, { status: "next-step", step: flow[currentIndex + 1] }); return; }
     const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(buildQuoteMessage(state, catalog, c, locale))}`;
+    respondToAgent(event.nativeEvent, { status: "message-prepared", message: "WhatsApp handoff prepared; no message has been sent." });
     try {
       window.open(url, "_blank", "noopener,noreferrer");
       // Secure window.open may return null even when the tab opens.
@@ -98,7 +102,9 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
   }
   const progress = c.wizard.progress.replace("{current}", String(currentIndex + 1)).replace("{total}", String(flow.length));
   const contextSelection = state.selectedSolutions.find(solution => solution.mode === 'catalog' && solution.productId === product?.id);
-  return <form ref={form} onSubmit={submit} noValidate aria-labelledby="quote-step-title" className={contextual ? 'p-6 sm:p-8' : "rounded-ui border border-outline-variant bg-surface-container/90 p-6 sm:p-8 lg:p-10"}>
+  return <form {...formTool(`quote_${context?.productId.replace(/[^a-zA-Z0-9_]/g, "_") ?? "contact"}_step_${state.step}_${toolId}`, locale === "pt-BR"
+    ? `Etapa ${state.step} do orçamento: ${stepNames[state.step - 1]}. Preencha os campos visíveis e aguarde confirmação do usuário. A revisão abre o WhatsApp; não envia mensagens.`
+    : `Quote step ${state.step}: ${stepNames[state.step - 1]}. Fill visible fields and wait for user confirmation. Review opens WhatsApp; no messages are sent.`, !moving && !state.dialogOpen)} ref={form} onSubmit={submit} noValidate aria-labelledby="quote-step-title" className={contextual ? 'p-6 sm:p-8' : "rounded-ui border border-outline-variant bg-surface-container/90 px-2 py-6 md:p-8 lg:p-10"}>
     <div aria-label={progress} className="flex items-center gap-4">
       <span className="shrink-0 text-sm font-bold text-primary">{progress}</span>
       <div aria-hidden="true" className="flex flex-1 gap-2">{flow.map((step, index) => <span key={step} className={`h-1 flex-1 rounded-ui ${index <= currentIndex ? "bg-primary" : "bg-outline-variant"}`} />)}</div>
@@ -126,20 +132,19 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
             <button id="quote-solutions" type="button" aria-haspopup="dialog" className={`${quoteSecondary} mt-3 w-full justify-between`} {...validation("solutions")} onClick={() => dispatch({ type: "openDialog" })}>
               {c.wizard.addSolution}<MaterialIcon name="add" /></button>{error("solutions")}
           </section>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div><label htmlFor="quote-budgetRange" className="text-sm font-bold">{c.wizard.budgetLabel}</label><select id="quote-budgetRange" name="budgetRange" required className={quoteControl} value={state.budgetRange} {...validation("budgetRange", "quote-budget-hint")} onChange={event => dispatch({ type: "field", field: "budgetRange", value: event.target.value })}>
-              <option value="" disabled>{c.placeholders.budget}</option>{Object.entries(c.budgetOptions).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select>{error("budgetRange")}</div>
+          <div className="grid gap-5">
             <div><label htmlFor="quote-deadline" className="text-sm font-bold">{c.labels.deadline}</label><select id="quote-deadline" name="deadline" required className={quoteControl} value={state.deadline} {...validation("deadline")} onChange={event => dispatch({ type: "field", field: "deadline", value: event.target.value })}>
               <option value="" disabled>{c.placeholders.deadline}</option>{Object.entries(c.deadlineOptions).map(([id, label]) => <option key={id} value={id}>{label}</option>)}</select>{error("deadline")}</div>
-          </div><p id="quote-budget-hint" className="text-sm text-on-surface-variant">{c.budgetHint}</p>
+          </div>
         </div>}
         {state.step === 3 && <QuoteReview state={state} summary={summary} content={c} navigate={navigate} contextual={contextual} canEditModules={flow.includes(2)} />}
       </div>
     </div>
-    <div className="mt-6 flex gap-3">
-      {currentIndex > 0 && <button type="button" disabled={moving} className={quoteSecondary} onClick={() => navigate(flow[currentIndex - 1])}><MaterialIcon name="arrow_back" />{c.wizard.back}</button>}
-      <button type="submit" disabled={moving} style={liquidGlassAuthPrimaryControlStyle} className={`${navigationGlassControlClass} ${quoteAction} flex-1 text-primary-fixed`}>
-        {state.step === 3 ? c.submit : c.wizard.continue}{state.step === 3 ? <WhatsAppIcon className="size-5 shrink-0" /> : <MaterialIcon name="arrow_forward" />}</button>
+    <div className="mt-6 flex flex-col gap-3 md:flex-row md:flex-wrap">
+      <button type="submit" disabled={moving} style={liquidGlassAuthPrimaryControlStyle} className={`${navigationGlassControlClass} ${quoteAction} w-full whitespace-nowrap text-primary-fixed md:order-2 md:w-auto md:flex-1`}>
+        <span>{state.step === 3 ? c.submit : c.wizard.continue}</span>{state.step === 3 ? <WhatsAppIcon className="size-5 shrink-0" /> : <MaterialIcon name="arrow_forward" />}</button>
+
+      {currentIndex > 0 && <button type="button" disabled={moving} className={`${quoteSecondary} w-full whitespace-nowrap md:order-1 md:w-auto md:shrink-0`} onClick={() => navigate(flow[currentIndex - 1])}><MaterialIcon name="arrow_back" />{c.wizard.back}</button>}
     </div>
     {state.step === 3 && <p className="mt-4 text-sm leading-relaxed text-on-surface-variant">{c.privacyHint}</p>}
     <p role="status" aria-live="polite" aria-atomic="true" className="mt-3 text-sm text-primary">{state.feedback}</p>
@@ -147,6 +152,3 @@ export function QuoteForm({ content: c, catalog, locale, context }: Props) {
     {!contextual && <SolutionPicker state={state} dispatch={dispatch} catalog={catalog} content={c} locale={locale} />}
   </form>;
 }
-
-
-

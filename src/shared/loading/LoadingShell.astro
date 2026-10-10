@@ -1,29 +1,62 @@
 ---
 import type { Locale } from "../../i18n/config";
-import { PageLoading, type PageResource } from "./PageLoading";
-import "./loading.css";
+import type { PageResource } from "./pageResources";
+import logo from "../../../public/VoidCube_LOGO.svg?raw";
 
-interface Props {
-  readonly locale: Locale;
-  readonly resources?: readonly PageResource[];
-}
-const { locale, resources } = Astro.props;
-const contentId = "public-page-content";
+interface Props { readonly locale: Locale; readonly resources?: readonly PageResource[] }
+const { locale, resources = [] } = Astro.props;
+const text = locale === "pt-BR"
+  ? { loading: "Preparando sua experiência", error: "Não foi possível preparar esta página.", retry: "Tentar novamente" }
+  : { loading: "Preparing your experience", error: "Unable to prepare this page.", retry: "Try again" };
+
+const symbol = logo.replaceAll('id="', 'id="loading-').replaceAll('url(#', 'url(#loading-');
 ---
-<div id={contentId} data-loading-content data-loading-phase="short">
+<div id="public-page-loading" class="void-loading void-loading-external" data-phase="short" data-error={text.error}>
+  <div class="void-loading-surface" data-fullscreen="true">
+    <div class="void-loading-presentation" data-visible="true">
+      <div class="void-loading-mark" aria-hidden="true" set:html={symbol} />
+      <p role="status" aria-live="polite" class="void-loading-text">{text.loading}</p>
+      <button type="button" class="void-loading-retry" hidden>{text.retry}</button>
+    </div>
+  </div>
+</div>
+<div id="public-page-content" data-loading-content data-loading-phase="short">
   <script is:inline>
-    // Runs before the slot is parsed; no-JS documents remain accessible.
     if (document.documentElement.classList.contains("page-loading-enabled")) {
-      const content = document.currentScript?.parentElement;
-      if (content) {
-        content.dataset.loadingStartedAt = String(performance.now());
-        content.inert = true;
-        content.setAttribute("aria-hidden", "true");
-        content.setAttribute("aria-busy", "true");
-      }
+      const content = document.currentScript.parentElement;
+      const overlay = document.getElementById("public-page-loading");
+      content.inert = true;
+      content.setAttribute("aria-hidden", "true");
+      content.setAttribute("aria-busy", "true");
+      let done = false;
+      const long = setTimeout(() => { if (!done) overlay.dataset.phase = "long"; }, 800);
+      const cleanup = () => {
+        done = true;
+        clearTimeout(long);
+        clearTimeout(safety);
+        document.removeEventListener("voidcube:loading-controlled", cleanup);
+        window.removeEventListener("pagehide", leave);
+      };
+      const release = () => {
+        cleanup();
+        content.dataset.loadingPhase = "ready";
+        content.inert = false;
+        content.removeAttribute("aria-hidden");
+        content.setAttribute("aria-busy", "false");
+        overlay.hidden = true;
+        document.dispatchEvent(new CustomEvent("voidcube:loading-failsafe"));
+        document.dispatchEvent(new CustomEvent("voidcube:page-ready"));
+      };
+      const leave = () => release();
+      const safety = setTimeout(release, 10000);
+      document.addEventListener("voidcube:loading-controlled", cleanup, { once: true });
+      window.addEventListener("pagehide", leave, { once: true });
     }
   </script>
   <slot />
 </div>
-<PageLoading client:load contentId={contentId} locale={locale} resources={resources} />
+<script id="public-page-loading-resources" type="application/json" set:html={JSON.stringify(resources).replaceAll("<", "\u003c")} />
+<script>
+  import "./pageLoadingRuntime";
+</script>
 <noscript><style>.void-loading { display: none !important; }</style></noscript>

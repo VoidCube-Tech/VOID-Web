@@ -1,0 +1,25 @@
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=604800
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/pt-BR/llms.txt
+  Content-Type: text/plain; charset=utf-8
+
+/.well-known/ard.json
+  Content-Type: application/json; charset=utf-8
+
+/.well-known/ai-catalog.json
+  Content-Type: application/json; charset=utf-8
+
+/ard.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: no-cache
+
+/ai-catalog.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: no-cache

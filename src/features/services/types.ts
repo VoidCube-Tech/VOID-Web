@@ -41,7 +41,27 @@ export interface PagePresentation {
   readonly order: readonly SectionId[];
   readonly sections: Partial<Record<EditorialSectionId, EditorialPresentation | StorytellingPresentation | EventPresentation>>;
 }
+export interface ServiceOfferDetails {
+  readonly title: string;
+  readonly description: string;
+  readonly includes: readonly string[];
+  readonly recurringCoverage: string;
+  readonly support: string;
+  readonly integrations: readonly string[];
+}
+export interface ServiceOfferComparisonCopy {
+  readonly title: string;
+  readonly description: string;
+  readonly labels: { readonly offer: string; readonly initial: string; readonly monthly: string; readonly includes: string; readonly recurringCoverage: string; readonly support: string; readonly integrations: string; readonly capacity: string; readonly billingBasis: string };
+  readonly capacity: string;
+  readonly billingBasis: Readonly<Record<'hosting' | 'resource-usage', string>>;
+  readonly unspecified: string;
+  readonly available: string;
+  readonly inDevelopment: string;
+  readonly noRecurrence: string;
+}
 export interface ServiceContent {
+  readonly offerDetails?: ServiceOfferDetails;
   readonly name: string;
   readonly description: string;
   readonly seo: { readonly title: string; readonly description: string; readonly image?: string; readonly imageAlt?: string };
@@ -66,6 +86,7 @@ export interface ServiceContent {
   readonly page?: Partial<PagePresentation> & { readonly preset?: ServicePreset };
 }
 export interface ServicesLocale {
+  readonly offerComparison: ServiceOfferComparisonCopy;
   readonly labels: { readonly modules: string; readonly pricing: string; readonly consultation: string; readonly from: string; readonly included: string; readonly media: string };
   readonly services: Readonly<Record<string, ServiceContent>>;
 }

@@ -1,5 +1,6 @@
 ---
 import type { ResolvedServicePage } from './resolveServicePageConfig';
+import ServiceOfferComparison from './components/ServiceOfferComparison.astro';
 import ServiceHeroRenderer from './components/ServiceHeroRenderer.astro';
 import ServiceSectionRenderer from './components/ServiceSectionRenderer.astro';
 import RevealOnView from '../../shared/motion/RevealOnView.astro';
@@ -22,6 +23,7 @@ const buttonClass = `${navigationGlassControlClass} inline-flex min-h-12 items-c
     {hero.type !== 'minimal' && <div class="service-hero-visual mt-16 w-full"><ServiceHeroRenderer hero={hero} /></div>}
   </section>
   {sections.map(section => <ServiceSectionRenderer section={section} quoteLabel={content.cta.label} />)}
+  <ServiceOfferComparison comparison={service.offerComparison} />
   <section aria-labelledby="quote-title" class="service-quote mt-20 rounded-ui px-6 py-12 sm:p-16" style={liquidGlassSurfaceStyle} data-reveal>
     <h2 id="quote-title" class="max-w-3xl font-secondary text-4xl leading-tight sm:text-6xl">{content.cta.title}</h2>
     <p class="mt-6 max-w-xl text-lg leading-relaxed text-on-surface-variant">{content.cta.description}</p>

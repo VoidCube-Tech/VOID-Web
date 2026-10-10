@@ -5,6 +5,11 @@ import { servicesContent } from '../services/content';
 
 // Public quote contract. Amounts use integer minor units; included modules
 // never add a second charge. Initial and recurring charges remain separate.
+export interface CatalogResources {
+  readonly ram: { readonly amount: number; readonly unit: 'MB' | 'GB' };
+  readonly storage: { readonly amount: number; readonly unit: 'GB' };
+}
+export type RecurringBasis = 'hosting' | 'resource-usage';
 export interface CatalogPrice { readonly amountMinor: number; readonly currency: string }
 export type BillingInterval = 'month' | 'year';
 export interface CatalogRecurringPrice extends CatalogPrice { readonly interval: BillingInterval }
@@ -23,6 +28,7 @@ export interface CatalogModuleGroup {
   readonly requiredMessage: string;
 }
 export interface CatalogModule {
+  readonly resources?: CatalogResources;
   readonly requiresProductId?: string;
   readonly associationDescription?: string;
   readonly enabled?: boolean;
@@ -39,6 +45,8 @@ export interface CatalogModule {
   readonly conflictsWith?: readonly string[];
 }
 export interface CatalogProduct {
+  readonly resources?: CatalogResources;
+  readonly recurringBasis?: RecurringBasis;
   readonly pricingCopy?: CatalogPricingCopy;
   readonly id: string;
   readonly name: string;
@@ -67,7 +75,7 @@ export function getQuoteCatalog(locale: Locale): QuoteCatalog {
     products: commercialProducts.filter(product => product.categoryId === category.id).map(product => {
       const localized = copy[product.tag];
       if (!localized) throw new Error(`Missing localized service: ${locale}/${product.tag}`);
-      return { ...product, name: localized.name, description: localized.description, pricingCopy: localized.pricing,
+      return { ...product, name: localized.name, description: localized.description, pricingCopy: resolvePricingCopy(localized.pricing, product.resources, locale),
         moduleGroups: product.moduleGroups?.map(group => {
           const text = localized.moduleGroups?.[group.id];
           if (!text) throw new Error(`Missing localized module group: ${locale}/${product.tag}/${group.id}`);
@@ -76,7 +84,7 @@ export function getQuoteCatalog(locale: Locale): QuoteCatalog {
         modules: product.modules.map(module => {
           const text = localized.modules?.[module.id];
           if (!text) throw new Error(`Missing localized module: ${locale}/${product.tag}/${module.id}`);
-          return { ...module, name: text.title, description: text.description, pricingCopy: text.pricing, associationDescription: text.associationDescription };
+          return { ...module, name: text.title, description: text.description, pricingCopy: resolvePricingCopy(text.pricing, module.resources, locale), associationDescription: text.associationDescription };
         }),
       };
     }),
@@ -174,4 +182,17 @@ export function formatProductPrice(product: CatalogProduct, locale: Locale, inte
   return product.recurringPrice && validCatalogPrice(product.recurringPrice)
     ? `${initial} + ${formatRecurringPrice(product.recurringPrice, locale, intervals)}`
     : initial;
+}
+
+export function formatCatalogResources(resources: CatalogResources | undefined, locale: Locale): string | undefined {
+  if (!resources) return undefined;
+  const number = new Intl.NumberFormat(locale);
+  return servicesContent[locale].offerComparison.capacity
+    .replace('{ram}', `${number.format(resources.ram.amount)} ${resources.ram.unit}`)
+    .replace('{storage}', `${number.format(resources.storage.amount)} ${resources.storage.unit}`);
+}
+function resolvePricingCopy(copy: CatalogPricingCopy | undefined, resources: CatalogResources | undefined, locale: Locale): CatalogPricingCopy | undefined {
+  if (!copy) return undefined;
+  const capacity = formatCatalogResources(resources, locale);
+  return { ...copy, recurringDescription: capacity ? copy.recurringDescription?.replace('{capacity}', capacity) : copy.recurringDescription };
 }

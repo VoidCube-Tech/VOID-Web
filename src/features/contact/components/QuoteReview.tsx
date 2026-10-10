@@ -24,7 +24,7 @@ export function QuoteReview({ state, summary, content: c, navigate, contextual, 
       {summary.underConsultation && <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{c.wizard.consultationHint}</p>}
       <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">{c.wizard.estimateHint}</p></div>}
     {!contextual && <>
-      <dl className="grid gap-3 sm:grid-cols-2"><div><dt className="text-sm text-on-surface-variant">{c.wizard.budgetLabel}</dt><dd className="mt-1 text-sm font-bold">{summary.budget}</dd></div><div><dt className="text-sm text-on-surface-variant">{c.labels.deadline}</dt><dd className="mt-1 text-sm font-bold">{summary.deadline}</dd></div></dl>
+      <dl className="grid gap-3"><div><dt className="text-sm text-on-surface-variant">{c.labels.deadline}</dt><dd className="mt-1 text-sm font-bold">{summary.deadline}</dd></div></dl>
     </>}
     {contextual && !summary.solutions.some(solution => solution.pricingItems.length) && <p className="text-sm leading-relaxed text-on-surface-variant">{summary.underConsultation ? c.wizard.consultationHint : c.wizard.estimateHint}</p>}
     <div className="flex flex-wrap gap-2"><button type="button" className={`${quoteAction} px-0 text-primary`} onClick={() => navigate(1)}>{c.wizard.editAbout}</button>{(!contextual || canEditModules) && <button type="button" className={`${quoteAction} text-primary`} onClick={() => navigate(2)}>{contextual ? c.wizard.editModules : c.wizard.editSolutions}</button>}</div>

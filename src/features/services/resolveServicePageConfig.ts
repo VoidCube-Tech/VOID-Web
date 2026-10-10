@@ -3,6 +3,7 @@ import { catalogProducts, getQuoteCatalog, formatCatalogPrice, formatProductPric
 import { contactContent } from '../contact/content';
 import { servicesContent } from './content';
 import type { EditorialBlock, PagePresentation, ResolvedServiceHero, ServiceConcept } from './types';
+import { resolveOfferComparison } from './resolveOfferComparison';
 import { servicePagePresets } from './presets';
 import type { GuidedDemoContent, InsightPanelContent, MessageBandContent } from './storytellingTypes';
 import type { EventDemoContent } from './eventTypes';
@@ -97,7 +98,7 @@ export function resolveServicePageConfig(tag: string, locale: Locale) {
         if (page.media) sections.push({ type: 'media', id, title: labels.media, presentation: page.media });
         break;
       case 'pricing':
-        sections.push(editorialSection(id, { title: labels.pricing, description: page.pricingPlacement === 'section' ? priceLabel : undefined, note: page.pricingPlacement === 'section' ? content.pricing?.recurringDescription : undefined }));
+        sections.push(editorialSection(id, { title: labels.pricing, description: page.pricingPlacement === 'section' ? priceLabel : undefined, note: page.pricingPlacement === 'section' ? product.pricingCopy?.recurringDescription : undefined }));
         break;
       default: {
         const block = content[id];
@@ -105,6 +106,6 @@ export function resolveServicePageConfig(tag: string, locale: Locale) {
       }
     }
   }
-  return { product, content, page, hero, sections, catalog, locale, ctaPriceLabel: page.pricingPlacement === 'cta' ? priceLabel : undefined };
+  return { product, content, page, hero, sections, catalog, locale, offerComparison: resolveOfferComparison(product, locale), ctaPriceLabel: page.pricingPlacement === 'cta' ? priceLabel : undefined };
 }
 export type ResolvedServicePage = NonNullable<ReturnType<typeof resolveServicePageConfig>>;

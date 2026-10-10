@@ -32,9 +32,9 @@
   transition: opacity var(--loading-transition, var(--duration-ui)) var(--ease-ui);
 }
 .void-loading-presentation[data-visible="true"] { opacity: 1; }
-.void-loading-mark { width: var(--loading-size); height: var(--loading-size); }
-.void-loading-mark img { width: 100%; height: 100%; object-fit: contain; }
-.void-loading-text { margin: 0; font-family: var(--font-primary); color: var(--color-on-surface-variant); }
+.void-loading-mark { width: var(--loading-size, 72px); height: var(--loading-size, 72px); }
+.void-loading-mark img, .void-loading-mark svg { width: 100%; height: 100%; object-fit: contain; }
+.void-loading-text { margin: 0; font-family: system-ui, sans-serif; color: var(--color-on-surface-variant); }
 .void-loading-retry {
   min-height: 44px;
   padding: .75rem 1.5rem;
@@ -74,3 +74,13 @@
 }
 .void-loading-external { position: fixed; inset: 0; z-index: 1000; }
 .void-loading-external[data-phase="ready"] { display: none; }
+
+.void-loading[hidden], .void-loading-retry[hidden] { display: none !important; }
+.void-loading[data-phase="long"] .void-loading-mark { animation: void-loading-float 1800ms infinite; }
+@keyframes void-loading-float {
+  0% { transform: translateY(0) rotate(0deg); animation-timing-function: cubic-bezier(.22,.65,.35,1); }
+  42% { transform: translateY(-18%) rotate(150deg); animation-timing-function: cubic-bezier(.45,0,.7,.35); }
+  88% { transform: translateY(0) rotate(340deg); animation-timing-function: ease-out; }
+  100% { transform: translateY(0) rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) { .void-loading .void-loading-mark { animation: none; } }

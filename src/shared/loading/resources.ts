@@ -6,7 +6,7 @@ export interface ResourceOptions {
 
 export type LoadingResource = ResourceOptions & (
   | { readonly type: "image"; readonly source: string | HTMLImageElement }
-  | { readonly type: "video"; readonly element: HTMLVideoElement }
+  | { readonly type: "video"; readonly element: HTMLVideoElement; readonly readiness?: "frame" | "poster" }
   | { readonly type: "font"; readonly font: string; readonly text?: string }
   | { readonly type: "asset"; readonly url: string }
   | { readonly type: "task"; readonly run: (signal: AbortSignal) => Promise<unknown> }
@@ -74,9 +74,14 @@ async function loadResource(resource: LoadingResource, signal: AbortSignal): Pro
     case "video": {
       // Reuse the page's element/buffer instead of fetching a second video.
       const video = resource.element;
+      // An explicit poster is sufficient for initial presentation; playback buffers independently.
+      if (resource.readiness === "poster" && video.poster) {
+        await loadResource({ id: resource.id, type: "image", source: video.poster }, signal);
+        return;
+      }
       video.preload = "auto";
       if (video.networkState === HTMLMediaElement.NETWORK_EMPTY) video.load();
-      await waitForMedia(video, () => video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA, "canplay", signal);
+      await waitForMedia(video, () => video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA, "loadeddata", signal);
       return;
     }
     case "font":

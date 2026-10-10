@@ -25,7 +25,6 @@
     "company": "Empresa",
     "service": "Produto ou serviço",
     "description": "Sobre o projeto",
-    "budget": "Investimento",
     "deadline": "Prazo"
   },
   "placeholders": {
@@ -33,15 +32,7 @@
     "company": "Empresa ou organização (opcional)",
     "service": "Escolha uma solução",
     "description": "O que você quer construir, para quem e qual resultado espera alcançar?",
-    "budget": "Escolha uma faixa de investimento",
     "deadline": "Escolha um prazo"
-  },
-  "budgetOptions": {
-    "discuss": "Quero orientação",
-    "under5": "Até R$ 5.000",
-    "5to15": "R$ 5.000 a R$ 15.000",
-    "15to50": "R$ 15.000 a R$ 50.000",
-    "over50": "Acima de R$ 50.000"
   },
   "deadlineOptions": {
     "flexible": "Flexível / podemos conversar",
@@ -49,7 +40,6 @@
     "quarter": "Até três meses",
     "later": "Mais de três meses"
   },
-  "budgetHint": "Sua faixa de investimento disponível, separada da estimativa inicial da solução.",
   "descriptionHint": "Entre 20 e 2.000 caracteres.",
   "submit": "Continuar pelo WhatsApp",
   "privacyHint": "Seus dados serão usados apenas para preparar a mensagem no WhatsApp. Nada é salvo neste site.",
@@ -107,7 +97,6 @@
     "partialEstimate": "{amount} + itens sob consulta",
     "basePrice": "Valor base",
     "estimateHint": "Esta é uma estimativa inicial, não um preço definitivo. Escopo, investimento e prazo serão alinhados antes da contratação.",
-    "budgetLabel": "Sua faixa de investimento",
     "emptyDescription": "A definir em conjunto",
     "noSelection": "Nenhuma solução selecionada",
     "close": "Fechar seleção",

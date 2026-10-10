@@ -12,7 +12,7 @@
       "name": "Landing Page",
       "description": "A clear digital presence to showcase your offer, strengthen your brand, and turn interest into opportunity.",
       "seo": {
-        "title": "Landing Page",
+        "title": "Landing pages | VoidCube",
         "description": "Create a clear digital presence to showcase your brand, present your services, and turn interest into opportunity."
       },
       "hero": {
@@ -169,9 +169,28 @@
             "type": "insight-panel"
           }
         }
+      },
+      "pricing": {
+        "initialLabel": "Creation",
+        "recurringLabel": "Hosting and care",
+        "recurringDescription": "Website hosting, change requests, support for outages or other issues, fixes using automation where applicable, and website metrics with monthly suggestions for improvements. Includes {capacity}."
+      },
+      "offerDetails": {
+        "includes": [
+          "Landing Page creation and setup.",
+          "Presentation of your brand, offer and contact.",
+          "Responsive experience across screen sizes."
+        ],
+        "recurringCoverage": "Website hosting, change requests, support for outages or other issues, fixes using automation where applicable, and website metrics with monthly suggestions for improvements. Includes {capacity}.",
+        "support": "Change requests and support if the website goes down or has issues. Fixes use automation where applicable. Metrics and monthly suggestions for improvements are included.",
+        "integrations": [
+          "Can connect to Event Organizer to present events and guide confirmations."
+        ],
+        "title": "What your Landing Page includes.",
+        "description": "Understand the investment in creating your page and what is included in the monthly hosting, care and support fee."
       }
     },
-    "void-events": {
+    "organizador-de-eventos": {
       "name": "Event Organizer",
       "description": "Organize events, availability, and confirmations in a simple experience for your team and your attendees.",
       "hero": {
@@ -260,7 +279,7 @@
           "pricing": {
             "initialLabel": "Creation",
             "recurringLabel": "Support and maintenance",
-            "recurringDescription": "Includes ongoing support, fixes, and website maintenance."
+            "recurringDescription": "Website hosting, change requests, support for outages or other issues, fixes using automation where applicable, and website metrics with monthly suggestions for improvements. Includes {capacity}."
           }
         },
         "existing-site": {
@@ -270,7 +289,7 @@
             "initialLabel": "Integration",
             "freeInitialLabel": "Free",
             "recurringLabel": "Support and maintenance",
-            "recurringDescription": "Includes ongoing support, fixes, and maintenance of the website integration."
+            "recurringDescription": "Website hosting, change requests, support for outages or other issues, fixes using automation where applicable, and website metrics with monthly suggestions for improvements. Includes {capacity}."
           }
         },
         "order-landing-page": {
@@ -280,7 +299,7 @@
         },
         "online-payment": {
           "title": "Online payments",
-          "description": "Bring registrations and payments into the same event experience."
+          "description": "Online payments are in development. They cannot yet be purchased, selected or included in a quote."
         }
       },
       "eventDemo": {
@@ -331,7 +350,7 @@
           "type": "payment",
           "title": "Online payments",
           "status": "Coming soon",
-          "description": "Planned integration to bring payments directly into the event flow."
+          "description": "Online payments are in development. They cannot yet be purchased, selected or included in a quote."
         },
         "summary": {
           "weekEventsLabel": "Events this week",
@@ -359,7 +378,7 @@
         }
       },
       "seo": {
-        "title": "Event Organizer",
+        "title": "Event management | VoidCube",
         "description": "Organize events, availability, and confirmations in a platform designed to simplify your operation and create a clearer attendee experience."
       },
       "page": {
@@ -388,15 +407,53 @@
       },
       "pricing": {
         "initialLabel": "Initial license",
-        "recurringLabel": "Platform monthly fee",
-        "recurringDescription": "Includes ongoing support, fixes, and maintenance to keep the platform running and evolving."
+        "recurringLabel": "Platform capacity and support",
+        "recurringDescription": "Use of the allocated computing capacity to operate the platform, with support, fixes and maintenance for outages or other issues. Includes {capacity}. Billing is not per user."
       },
       "moduleGroups": {
         "event-presence": {
           "label": "How will people access your events?",
           "requiredMessage": "Choose how your events will be available: create a new page, integrate an existing website, or use a Landing Page already included in the quote."
         }
+      },
+      "offerDetails": {
+        "includes": [
+          "Event creation, dates and times.",
+          "Capacity, available places and attendance confirmation.",
+          "Participants, status and recurring events."
+        ],
+        "recurringCoverage": "Use of the allocated computing capacity to operate the platform, with support, fixes and maintenance for outages or other issues. Includes {capacity}. Billing is not per user.",
+        "support": "Support, fixes and maintenance if the platform goes down or has issues. The monthly fee primarily covers computing resources used by the operation.",
+        "integrations": [
+          "Choose one digital presence option. A Landing Page already included in the quote can be connected without duplicate charges."
+        ],
+        "title": "Understand your event operation.",
+        "description": "See what the platform offers to organize events, capacity and confirmations, which resources the monthly fee covers and which connections are already available."
       }
+    }
+  },
+  "offerComparison": {
+    "title": "Understand each offer.",
+    "description": "The page presents your business. Event Organizer organizes events, capacity and confirmations. Creation, hosting and platform resources are billed separately.",
+    "labels": {
+      "offer": "Offer",
+      "initial": "Initial investment",
+      "monthly": "Monthly fee",
+      "includes": "What is included",
+      "recurringCoverage": "What the monthly fee covers",
+      "support": "How support works",
+      "integrations": "Integrations and availability",
+      "capacity": "Included resources",
+      "billingBasis": "Billing basis"
+    },
+    "available": "Available",
+    "inDevelopment": "In development — not yet available to purchase.",
+    "noRecurrence": "No recurring charge listed",
+    "capacity": "{ram} RAM + {storage} storage",
+    "unspecified": "Defined according to scope",
+    "billingBasis": {
+      "hosting": "Monthly website hosting and care.",
+      "resource-usage": "Billed for computational load within the allocated resources, with no per-user fee. Supported user volume depends on memory consumption and application load."
     }
   }
 }

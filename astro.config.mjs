@@ -15,6 +15,11 @@ const { PUBLIC_SITE_URL } = loadEnv(
 
 export default defineConfig({
   output: 'static',
+  build: { inlineStylesheets: 'always' },
+  redirects: {
+    '/services/void-events': '/services/organizador-de-eventos',
+    '/pt-BR/services/void-events': '/pt-BR/services/organizador-de-eventos',
+  },
   site: PUBLIC_SITE_URL || undefined,
 
   i18n: {

@@ -1,8 +1,11 @@
 ---
 import "../styles/global.css";
+import globalSource from "../styles/global.css?raw";
+import loadingStyles from "../shared/loading/loading.css?raw";
 import DefaultHead, { type Props as HeadProps } from "../shared/metadata/DefaultHead.astro";
+import { llmsPath } from "../shared/discovery/siteDiscovery";
 import LoadingShell from "../shared/loading/LoadingShell.astro";
-import type { PageResource } from "../shared/loading/PageLoading";
+import type { PageResource } from "../shared/loading/pageResources";
 import type { Locale } from "../i18n/config";
 
 interface Props extends HeadProps {
@@ -11,10 +14,22 @@ interface Props extends HeadProps {
   readonly loadingResources?: readonly PageResource[];
 }
 const { lang, bodyClass, loadingResources, ...headProps } = Astro.props;
+const tokens = new Set(["color-background", "color-on-surface", "color-on-surface-variant", "color-primary", "color-outline-variant", "color-surface-container-low", "radius-ui", "duration-ui", "ease-ui"]);
+const declarations = [...globalSource.matchAll(/--([\w-]+):\s*([^;]+);/g)].filter(([, name]) => tokens.has(name)).map(([, name, value]) => "--" + name + ":" + value + ";").join("");
+const criticalStyles = ":root{" + declarations + "}" + loadingStyles;
+const iconStyles = "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,arrow_back,arrow_forward,chat,chat_bubble,check,close,expand_more,language,mail,menu,open_in_full,person,photo_camera,play_circle,tune,visibility,work&display=block";
+const fontStyles = "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&family=Lato:wght@400;500;700&family=Newsreader:wght@400;500;700&display=swap";
 ---
 <html lang={lang}>
   <DefaultHead {...headProps}>
+    <style is:inline set:html={criticalStyles} />
+    <link id="site-fonts" rel="stylesheet" href={fontStyles} media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href={iconStyles} media="print" onload="this.media='all'" />
+    <noscript><link rel="stylesheet" href={fontStyles} /><link rel="stylesheet" href={iconStyles} /></noscript>
     <script is:inline>document.documentElement.classList.add("page-loading-enabled");</script>
+    <link rel="ard" href="/ard.json" />
+    <link rel="ai-catalog" href="/ai-catalog.json" />
+    <link rel="describedby" type="text/plain" href={llmsPath(lang)} />
     <slot name="head" />
   </DefaultHead>
   <body class={bodyClass}>

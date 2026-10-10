@@ -1,11 +1,10 @@
 {
+  "seo": { "title": "Websites and systems | VoidCube" },
   "hero": {
-    "eyebrow": "VoidCube connected digital experiences",
-    "title": "Ideas gain room to grow.",
-    "description": "We create digital experiences that turn ideas into presence, organization, and new possibilities for your business.",
+    "title": "Landing pages and custom systems.",
+    "description": "For small businesses looking to attract customers and simplify operations.",
     "cta": {
-      "label": "Let's talk",
-      "href": "#contact"
+      "label": "Request a quote on WhatsApp"
     }
   },
   "problem": {

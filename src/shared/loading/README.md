@@ -13,17 +13,16 @@ content remains accessible and the overlay is hidden by noscript.
 
 ## Page resource declarations
 
-Shared initial resources are the existing logo and the fonts used by navigation,
-body text and headings. SVG/CSS geometry and SpaceBackground have no external
-initial resources. About, Contact and Login need only that baseline.
+The shared logo is inline SVG with an immediately visible, localized status in a system font. Fonts do not gate loading unless explicitly declared.
+SVG/CSS geometry and SpaceBackground have no external initial resources.
+About, Contact and Login therefore normally release with a short fade.
 
 Explicit `data-loading-resource="resource-id"` markers on an image or video
 register that existing element with the shell. The adapter reads only these
 opt-in declarations inside its boundary. It never enumerates unmarked images,
 videos or arbitrary DOM assets.
 
-Home marks its hero video. The existing Hero island selects its responsive
-source, so Loading waits on that same element without selecting or fetching
+Home marks its hero video. Native video sources select the responsive asset before hydration, so Loading waits on that same element without selecting or fetching
 a second video. The decorative nebula below the fold stays outside the gate.
 
 Dynamic services inherit markers from ServiceMedia's existing `eager` flag,
@@ -45,7 +44,7 @@ Additional serializable declarations can be passed through either public layout:
 
 Prefer media markers to URL declarations when a rendered image/video exists:
 they preserve responsive image selection and the original video buffer.
-All global declarations are noncritical, so failed media/fonts time out and
+Declarations default to noncritical, so failed media/fonts time out and
 release the document to its native fallback instead of trapping navigation.
 A `voidcube:loading-settled` document event carries the LoadingReport for
 page-owned fallback handling. `voidcube:page-ready` starts the existing reveal
@@ -54,7 +53,7 @@ observer after content release, preventing reveals from running under the gate.
 ## Initial asynchronous page tasks
 
 For page-owned initialization, register a listener in an inline script within
-the page slot, before the shell hydrates. It appends normal LoadingResource
+the page slot, before the shell controller initializes. It appends normal LoadingResource
 tasks; they start in parallel with fonts/media and receive AbortSignal.
 Register only initialization necessary for first presentation.
 
@@ -116,8 +115,8 @@ export function InitialExperience() {
 The URLs above are illustrative; this module adds no assets, API or route.
 Pass an existing `HTMLImageElement` instead of a URL to share responsive
 `srcset`/`sizes` selection and avoid a mismatched preload. Images await load and
-`decode()`. Videos reuse the supplied element and await `HAVE_FUTURE_DATA`
-(`canplay`), without autoplay or requiring the entire file to download; streaming
+`decode()`. Videos reuse the supplied element and await `HAVE_CURRENT_DATA`
+(`loadeddata`), without autoplay or requiring the entire file to download; streaming
 playback can still buffer later. Fonts use `document.fonts.load(font, text)` and
 must already be declared in CSS. Raw `asset` resources fetch their complete body;
 use them for small generic assets, not as a substitute for video/font loading.
@@ -129,7 +128,7 @@ font requests and asset URLs share work within a batch. Normal browser cache
 policy is retained; caching/reuse across fetch destinations depends on server
 headers and browser policy. Nothing scans the DOM or cache-busts requests.
 
-Before the threshold only the neutral surface is visible. Completion triggers
+Before the threshold the static logo is visible on the shared surface. Completion triggers
 the fade immediately, without a minimum display duration. After the threshold
 the logo rises and rotates with acceleration/deceleration. Exit settles its
 current transform toward rest while fading; content crossfades beneath the
@@ -153,4 +152,31 @@ animations and timers are cleaned up on completion, restart and unmount.
 A custom logo is presentation-only; include it as a declared image resource if
 its decode is indispensable to the owning experience.
 
-The document shell reuses this same Loading component. No external dependency added.
+The document shell uses a native adapter sharing the resource engine, CSS and motion
+with the standalone React component. No external dependency added.
+
+
+The document shell renders its SVG, readable status and critical token-based CSS directly in HTML.
+The native controller shares preloading and motion with standalone Loading, without waiting for React hydration or global fonts. Only explicit resources gate release.
+A static logo appears immediately; 800ms enables motion. An inline 10s safety deadline prevents a failed controller from indefinitely hiding content.
+Astro-generated CSS is inline to avoid stylesheet network blocking. Google Fonts use a non-blocking link; explicitly declared fonts still wait for their stylesheet.
+
+Explicit videos may use `data-loading-readiness="poster"` with a `poster` URL.
+The resource engine decodes this fallback before release; playback buffers in
+parallel on the original video element. Without this opt-in it waits for a frame.
+Home uses its lightweight poster and 480p mobile video, and starts the existing
+intro animation after `voidcube:page-ready`. No video-specific page conditions
+were added to the shared loader. Media failure still releases the page's text.
+
+The initial status is visible text rather than a screen-reader-only line, so the
+first presentation is useful and eligible for LCP while the inline SVG paints
+without any asset request. The logo remains static until the animation threshold.
+
+Each cloud edge compiles its WebGL shaders only when its own canvas approaches
+the viewport (120px margin). Edges already visible still initialize normally,
+while distant edges avoid shader compilation during the Hero presentation.
+
+The Home hero selects the transparent 480p variant on mobile and an optimized
+1080p variant on larger viewports. The original 4K source remains available for
+asset authoring but is not selected for automatic playback. A static poster
+continues to provide the initial visual when video playback cannot load.

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { milliseconds, preloadResources, type LoadingReport, type LoadingResource } from "./resources";
 import "./loading.css";
+import { settleLoadingMark } from "./motion";
 
 type Phase = "short" | "long" | "exiting" | "ready" | "failed";
 
@@ -27,7 +28,7 @@ export interface LoadingProps {
 export function Loading({ resources, children, contentId, logo = "/VoidCube_LOGO.svg", text,
   options, onSettled }: LoadingProps) {
   const [phase, setPhase] = useState<Phase>("short");
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(true);
   const [attempt, setAttempt] = useState(0);
   const mark = useRef<HTMLDivElement>(null);
   const callback = useRef(onSettled);
@@ -47,14 +48,8 @@ export function Loading({ resources, children, contentId, logo = "/VoidCube_LOGO
     const stopMotion = () => { motion?.cancel(); motion = undefined; };
     const exit = () => {
       if (!current) return;
-      if (mark.current && motion && !preference.matches) {
-        const transform = getComputedStyle(mark.current).transform;
-        stopMotion();
-        motion = mark.current.animate(
-          [{ transform }, { transform: "translateY(0) rotate(0deg)" }],
-          { duration: transitionMs, easing: "ease-out", fill: "forwards" },
-        );
-      } else stopMotion();
+      stopMotion();
+      if (mark.current) motion = settleLoadingMark(mark.current, transitionMs);
       setPhase("exiting");
       exitTimer = setTimeout(() => {
         if (!current) return;
@@ -64,7 +59,8 @@ export function Loading({ resources, children, contentId, logo = "/VoidCube_LOGO
     };
     const changeMotion = () => { if (preference.matches) stopMotion(); };
     preference.addEventListener("change", changeMotion);
-    setVisible(false);
+    setVisible(true);
+    mark.current?.style.removeProperty("animation");
     setPhase("short");
     const initialStart = contentId && attempt === 0
       ? Number(document.getElementById(contentId)?.dataset.loadingStartedAt)
@@ -74,14 +70,6 @@ export function Loading({ resources, children, contentId, logo = "/VoidCube_LOGO
       if (!current || settled) return;
       setVisible(true);
       setPhase("long");
-      if (!preference.matches && mark.current) {
-        motion = mark.current.animate([
-          { transform: "translateY(0) rotate(0deg)", offset: 0, easing: "cubic-bezier(.22,.65,.35,1)" },
-          { transform: "translateY(-18%) rotate(150deg)", offset: .42, easing: "cubic-bezier(.45,0,.7,.35)" },
-          { transform: "translateY(0) rotate(340deg)", offset: .88, easing: "ease-out" },
-          { transform: "translateY(0) rotate(360deg)", offset: 1 },
-        ], { duration: 1800, iterations: Infinity });
-      }
     }, Math.max(0, thresholdMs - elapsed));
     // Factories run after mount, so callers may explicitly provide existing media refs.
     let declared: readonly LoadingResource[];
