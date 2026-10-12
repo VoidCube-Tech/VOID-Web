@@ -6,33 +6,33 @@ import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 const { PUBLIC_SITE_URL } = loadEnv(
-  // @ts-ignore
-  process.env.NODE_ENV ?? 'production',
-  // @ts-ignore
-  process.cwd(),
-  'PUBLIC_'
+    // @ts-ignore
+    process.env.NODE_ENV ?? 'production',
+    // @ts-ignore
+    process.cwd(),
+    'PUBLIC_'
 );
 
 export default defineConfig({
-  output: 'static',
-  build: { inlineStylesheets: 'always' },
-  redirects: {
-    '/services/void-events': '/services/organizador-de-eventos',
-    '/pt-BR/services/void-events': '/pt-BR/services/organizador-de-eventos',
-  },
-  site: PUBLIC_SITE_URL || undefined,
+    output: 'static',
+    build: { inlineStylesheets: 'always' },
+    redirects: {
+        '/services/void-events': '/services/organizador-de-eventos',
+        '/pt-BR/services/void-events': '/pt-BR/services/organizador-de-eventos',
+    },
+    site: PUBLIC_SITE_URL || undefined,
 
-  i18n: {
-    locales: ['en', 'pt-BR'],
-    defaultLocale: 'en',
-    routing: {
-      prefixDefaultLocale: false
+    i18n: {
+        locales: ['en', 'pt-BR'],
+        defaultLocale: 'en',
+        routing: {
+            prefixDefaultLocale: false
+        }
+    },
+
+    integrations: [react()],
+
+    vite: {
+        plugins: [tailwindcss()]
     }
-  },
-
-  integrations: [react()],
-
-  vite: {
-    plugins: [tailwindcss()]
-  }
 });
